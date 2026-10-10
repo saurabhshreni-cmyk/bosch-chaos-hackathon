@@ -1,3 +1,7 @@
+# Combined integration, 11 October 2026
+
+Branch feat/combined-scripts-dashboard combines pause-script commit 75ef90d and dashboard commit 44535dc on remote main 0e9b614. See docs/COMBINED_INTEGRATION.md. Pause cards detect local scripts and read their reports; execution remains gated on live cleanup proof. Earlier entries below are historical.
+
 ## Customer and Vehicle pause scripts, 2026-10-11
 
 Prepared pause-customer-api.ps1 and pause-vehicle-api.ps1 plus their shared

@@ -8,6 +8,34 @@ namespace Dashboard.Tests;
 
 public class DashboardIntegrationTests
 {
+    [Fact]
+    public async Task Combined_checkout_detects_pause_scripts_and_reads_their_reports()
+    {
+        using var app = new TestApp(StubAiHandler.For());
+        using var client = app.CreateClient();
+        // Availability is file metadata only. Synthetic files must never execute.
+        foreach (var script in new[] { "PauseExperiment.ps1", "pause-customer-api.ps1", "pause-vehicle-api.ps1" })
+            await File.WriteAllTextAsync(Path.Combine(app.ScriptsDirectory, script), "throw 'must never execute'");
+
+        var state = await client.GetFromJsonAsync<JsonNode>("/api/state");
+        foreach (var item in state!["preparedExperiments"]!.AsArray())
+        {
+            Assert.True(item!["scriptAvailable"]!.GetValue<bool>());
+            Assert.False(item["canExecute"]!.GetValue<bool>());
+        }
+
+        const string id = "20261011T020000000Z-c0ffee";
+        var folder = Path.Combine(app.ScriptsDirectory, "results", id);
+        Directory.CreateDirectory(folder);
+        await File.WriteAllTextAsync(Path.Combine(folder, "report.json"),
+            """{"RunId":"20261011T020000000Z-c0ffee","Experiment":"pause-customer-api","TargetService":"customermanagementapi","Restored":false,"Recovered":false,"Error":"synthetic rollback failure"}""");
+        var report = await client.GetFromJsonAsync<JsonNode>("/api/runs/" + id);
+        Assert.Equal("customermanagementapi", report!["TargetService"]!.GetValue<string>());
+        Assert.False(report["Recovered"]!.GetValue<bool>());
+        Assert.Equal("synthetic rollback failure", report["Error"]!.GetValue<string>());
+        Assert.Empty(app.Runner.Invocations);
+    }
+
     [Theory]
     [InlineData("20261011T001234Z", true)]
     [InlineData("20261011T001234Z-a1b2c3", true)]
