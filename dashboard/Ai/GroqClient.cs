@@ -46,7 +46,7 @@ public sealed class GroqClient(HttpClient http, AiOptions options) : IAiProvider
     /// not parse, or is not a plain string, yields nothing - a missing
     /// explanation is better than passing through arbitrary upstream text.
     /// </remarks>
-    private static string DescribeUpstreamError(string raw)
+    private static string DescribeUpstreamError(string raw, string apiKey)
     {
         if (string.IsNullOrWhiteSpace(raw)) return string.Empty;
         try
@@ -54,7 +54,12 @@ public sealed class GroqClient(HttpClient http, AiOptions options) : IAiProvider
             var message = JsonNode.Parse(raw)?["error"]?["message"]?.GetValue<string>();
             if (string.IsNullOrWhiteSpace(message)) return string.Empty;
 
-            var trimmed = message.Trim();
+            // Redact before truncation so a key crossing the display boundary
+            // cannot leak a prefix. The configured credential is never diagnostic.
+            var trimmed = message.Replace(apiKey, "[redacted]", StringComparison.Ordinal).Trim();
+            trimmed = System.Text.RegularExpressions.Regex.Replace(trimmed,
+                @"(?i)\b(?:authorization\s*[:=]\s*)?(?:bearer|basic)\s+\S+", "[redacted authorization]");
+            trimmed = new string(trimmed.Select(c => char.IsControl(c) ? ' ' : c).ToArray());
             if (trimmed.Length > 200) trimmed = trimmed[..200] + "…";
             return $" Upstream said: {trimmed}";
         }
@@ -67,12 +72,17 @@ public sealed class GroqClient(HttpClient http, AiOptions options) : IAiProvider
     public async Task<(bool Ok, string? Content, string? Error)> CompleteAsync(
         string systemPrompt, string userPrompt, string schemaName, JsonNode jsonSchema, CancellationToken ct)
     {
+        ct.ThrowIfCancellationRequested();
         var apiKey = Environment.GetEnvironmentVariable("GROQ_API_KEY");
         if (string.IsNullOrWhiteSpace(apiKey))
         {
             // Not an error worth retrying - simply nothing to send to.
             return (false, null, "GROQ_API_KEY is not set.");
         }
+        if (apiKey.Any(c => char.IsWhiteSpace(c) || char.IsControl(c)))
+            return (false, null, "GROQ_API_KEY contains invalid whitespace or control characters. Check its configuration.");
+        var configurationError = ProviderConfiguration.Validate(options.Groq.Endpoint, options.Groq.Model, options.Groq.TimeoutSeconds);
+        if (configurationError is not null) return (false, null, $"Groq configuration error. {configurationError}");
 
         var body = new JsonObject
         {
@@ -145,7 +155,7 @@ public sealed class GroqClient(HttpClient http, AiOptions options) : IAiProvider
                 // and a mistyped model id is the likeliest first failure. So the
                 // upstream message is taken from a known field if it parses as
                 // one, bounded, and nothing else is returned.
-                return (false, null, $"{reason}.{DescribeUpstreamError(raw)}");
+                return (false, null, $"{reason}.{DescribeUpstreamError(raw, apiKey)}");
             }
 
             try
