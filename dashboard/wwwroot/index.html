@@ -5,21 +5,33 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Pitstop Resilience Console</title>
 <link rel="icon" href="data:,">
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css?v=dashboard-integration-2">
 </head>
 <body>
+<a class="skip-link" href="#overview">Skip to live system overview</a>
 
 <header class="masthead">
-  <h1>Pitstop Resilience Console</h1>
+  <div class="brand-mark" aria-hidden="true">P</div><div><span class="eyebrow">PITSTOP / LOCAL CHAOS LAB</span><h1>Resilience Console</h1></div>
   <span class="sub">AI-assisted chaos engineering &middot; local sandbox</span>
   <span class="spacer"></span>
   <span class="freshness" id="freshness">connecting&hellip;</span>
 </header>
 
+<nav class="workspace-nav" aria-label="Dashboard sections">
+<a href="#overview">System overview</a><a href="#experiment-controls">Chaos laboratory</a>
+<a href="#assessment-panel">Evidence &amp; analysis</a><a href="#history-panel">Run history</a></nav>
+<section class="summary-grid" aria-label="Live summary">
+<div class="summary-card"><span>Containers running</span><strong id="summary-services">Waiting</strong><small id="summary-health">Awaiting observations</small></div>
+<div class="summary-card"><span>Module pages serving</span><strong id="summary-modules">Waiting</strong><small>Measured HTTP responses</small></div>
+<div class="summary-card"><span>Experiment activity</span><strong id="summary-activity">Waiting</strong><small id="summary-runs">Awaiting evidence</small></div>
+<div class="summary-card"><span>Emergency stop</span><strong id="summary-stop">Unknown</strong><small>Independent file-based control</small></div>
+</section>
+<div class="connection-banner" id="connection-banner" role="status" hidden></div>
+<div class="action-feedback" id="action-feedback" role="status" aria-live="polite" hidden></div>
 <main>
   <div class="stack">
 
-    <section class="panel">
+    <section class="panel" id="overview">
       <h2>Live system overview <span class="note" id="svc-summary"></span></h2>
       <div class="body">
         <div class="grid-services" id="services"><p class="empty">Loading&hellip;</p></div>
@@ -55,7 +67,7 @@
       </div>
     </section>
 
-    <section class="panel">
+    <section class="panel" id="assessment-panel">
       <h2>Resilience assessment <span class="note">deterministic &mdash; no model produced any number here</span></h2>
       <div class="body" id="assessment"><p class="empty">No assessment yet.</p></div>
     </section>
@@ -64,14 +76,14 @@
       <h2>AI explanation <span class="note">narrative only &mdash; scores above are unaffected</span></h2>
       <div class="body">
         <div class="controls">
-          <button id="btn-explain">Explain latest run</button>
+          <button id="btn-explain" disabled>Explain latest run</button>
           <span style="font-size:12px;color:var(--text-faint)" id="explain-target"></span>
         </div>
         <div id="ai-explanation"></div>
       </div>
     </section>
 
-    <section class="panel">
+    <section class="panel" id="history-panel">
       <h2>Experiment history</h2>
       <div class="body">
         <table>
@@ -96,12 +108,10 @@
         <div class="controls">
           <label style="font-size:12px;color:var(--text-faint)">Provider mode
             <select id="ai-mode">
-              <option value="Auto">Auto: Groq &rarr; Ollama</option>
               <option value="Groq">Groq only</option>
-              <option value="Ollama">Ollama only</option>
             </select>
           </label>
-          <button id="btn-recommend">AI Recommend Experiment</button>
+          <button id="btn-recommend" disabled>AI Recommend Experiment</button>
         </div>
         <div id="provider-status" class="legend"></div>
         <div id="ai-recommendation"></div>
@@ -109,9 +119,17 @@
       </div>
     </section>
 
-    <section class="panel">
+    <section class="panel" id="experiment-controls">
       <h2>Experiment controls <span class="note">operator approval required</span></h2>
       <div class="body" id="experiments"></div>
+    </section>
+
+    <section class="panel" id="prepared-panel" hidden>
+      <h2>Prepared experiments <span class="note">live verification pending</span></h2>
+      <div class="body"><p class="section-intro">Two API pause experiments are prepared.
+        Live cleanup must be verified before they can be approved here.</p>
+        <div id="prepared-experiments" class="prepared-grid"></div>
+      </div>
     </section>
 
     <section class="panel">
@@ -151,7 +169,8 @@
   </div>
 </main>
 
-<script src="app.js"></script>
-<script src="ai.js"></script>
+<script src="presentation.js?v=dashboard-integration-2"></script>
+<script src="app.js?v=dashboard-integration-2"></script>
+<script src="ai.js?v=dashboard-integration-2"></script>
 </body>
 </html>

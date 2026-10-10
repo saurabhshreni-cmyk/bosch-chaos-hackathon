@@ -30,6 +30,7 @@ public sealed class AiOptions
 
     public sealed class OllamaOptions
     {
+        public bool Enabled { get; init; } = false;
         public string BaseUrl { get; init; } = "http://localhost:11434";
 
         /// <summary>
@@ -55,6 +56,7 @@ public sealed class AiOptions
             },
             Ollama = new OllamaOptions
             {
+                Enabled = options.Ollama.Enabled,
                 BaseUrl = Environment.GetEnvironmentVariable("OLLAMA_BASE_URL") ?? options.Ollama.BaseUrl,
                 Model = Environment.GetEnvironmentVariable("OLLAMA_MODEL") ?? options.Ollama.Model,
                 TimeoutSeconds = options.Ollama.TimeoutSeconds,

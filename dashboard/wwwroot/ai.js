@@ -1,6 +1,6 @@
 // AI advisory layer.
 //
-// Grok output is rendered deliberately differently from measured values: dashed
+// Groq output is rendered deliberately differently from measured values: dashed
 // purple borders and an "AI" pill everywhere, so nobody reads a model's opinion
 // as a measurement. Approving a recommendation posts to the same endpoint as
 // the manual path, with the same explicit approval flag — the server revalidates
@@ -22,7 +22,8 @@ async function refreshAiStatus() {
 
     // Show every provider and why it is or is not usable, so a fallback is
     // never a mystery.
-    el('provider-status').innerHTML = (s.providers || []).map((p) => {
+    el('provider-status').innerHTML = (s.providers || []).filter(p => s.modes?.length !== 1 || p.provider === 'groq').map((rawProvider) => {
+      const p = dashboardPresentation.escapeTree(rawProvider);
       const cls = p.available ? 's-ok' : 's-unknown';
       return `<span title="${p.detail}"><i class="dot ${cls}"></i>
         <strong style="color:var(--text-dim)">${p.provider}</strong>
@@ -31,11 +32,19 @@ async function refreshAiStatus() {
 
     // Reflect the server's mode rather than assuming the select is authoritative;
     // the server decides, and another tab may have changed it.
-    if (s.mode && el('ai-mode').value !== s.mode) el('ai-mode').value = s.mode;
+    const modes = s.modes || ['Groq'];
+    el('ai-mode').innerHTML = modes.map(mode => '<option value="' +
+      dashboardPresentation.escape(mode) + '">' +
+      ({Groq:'Groq only',Auto:'Auto: Groq then Ollama',Ollama:'Ollama only'}[mode] || dashboardPresentation.escape(mode)) + '</option>').join('');
+    if (s.mode) el('ai-mode').value = s.mode;
+    el('ai-mode').disabled = modes.length === 1;
 
     el('btn-recommend').disabled = !active;
     el('btn-explain').disabled = !active;
   } catch {
+    el('btn-recommend').disabled = true;
+    el('btn-explain').disabled = true;
+    el('ai-status').textContent = 'Provider status unavailable';
     // Status is advisory. The rest of the page must not depend on it.
   }
 }
@@ -44,6 +53,8 @@ el('btn-recommend').addEventListener('click', async () => {
   const box = el('ai-recommendation');
   const btn = el('btn-recommend');
   btn.disabled = true;
+  aiRecommendation = null;
+  el('ai-discoveries').innerHTML = '';
   box.innerHTML = '<p class="empty">Asking the AI provider, with the live evidence…</p>';
   try {
     const result = await api('/api/ai/recommend', { method: 'POST' });
@@ -51,10 +62,10 @@ el('btn-recommend').addEventListener('click', async () => {
     renderRecommendation(result);
     renderDiscoveries(result);
   } catch (err) {
-    box.innerHTML = `<div class="ai-reject"><strong>No AI provider could answer.</strong> ${err.message}
+    box.innerHTML = `<div class="ai-reject"><strong>No AI provider could answer.</strong> ${dashboardPresentation.escape(err.message)}
       <p style="margin:6px 0 0;color:var(--text-dim)">Everything else on this page still works — pick an experiment manually below.</p></div>`;
   } finally {
-    btn.disabled = false;
+    await refreshAiStatus();
   }
 });
 
@@ -63,7 +74,8 @@ el('btn-recommend').addEventListener('click', async () => {
 // experiment for any of them.
 function renderDiscoveries(result) {
   const box = el('ai-discoveries');
-  const found = (result && result.discoveries) || [];
+  result = dashboardPresentation.escapeTree(result || {});
+  const found = result.discoveries || [];
   const dropped = (result && result.discoveriesRejected) || [];
 
   if (!found.length && !dropped.length) { box.innerHTML = ''; return; }
@@ -93,6 +105,7 @@ function renderDiscoveries(result) {
 }
 
 function renderRecommendation(result) {
+  result = dashboardPresentation.escapeTree(result);
   const box = el('ai-recommendation');
   const r = result.recommendation || {};
 
@@ -128,6 +141,7 @@ function renderRecommendation(result) {
       <dl>
         <dt>Target</dt><dd style="font-family:var(--mono)">${resolved.target} <span style="color:var(--text-faint)">(fixed by catalog)</span></dd>
         <dt>Duration</dt><dd>${r.durationSeconds}s <span style="color:var(--text-faint)">(allowed ${resolved.minDuration}–${resolved.maxDuration}s)</span></dd>
+        ${resolved.supportsDelay ? '<dt>Added latency</dt><dd>' + resolved.defaultDelayMs + 'ms (catalog default)</dd>' : ''}
         <dt>Hypothesis</dt><dd>${r.hypothesis}</dd>
         <dt>Expected impact</dt><dd>${r.expectedImpact}</dd>
         <dt>Why this one</dt><dd>${r.reasoning || '—'}</dd>
@@ -147,7 +161,7 @@ function renderRecommendation(result) {
       </div>
 
       <div class="controls" style="margin-top:11px">
-        <button class="danger" id="btn-ai-approve" ${pf.ok ? '' : 'disabled'}>Approve &amp; run this experiment</button>
+        <button class="danger" id="btn-ai-approve" ${pf.ok && backendReachable && !state?.killSwitchEngaged && !state?.run?.isRunning ? '' : 'disabled'}>Approve &amp; run this experiment</button>
         <button id="btn-ai-dismiss">Dismiss</button>
       </div>
     </div>`;
@@ -162,12 +176,19 @@ function renderRecommendation(result) {
 }
 
 async function runRecommended() {
-  if (!aiRecommendation) return;
+  if (!aiRecommendation?.allowed || !aiRecommendation?.resolved || !aiRecommendation?.preflight?.ok) return;
+  if (!backendReachable || state?.killSwitchEngaged || state?.run?.isRunning) {
+    feedback("The backend must be connected, STOP clear and the sandbox idle before approval."); return;
+  }
   const r = aiRecommendation.recommendation;
   const resolved = aiRecommendation.resolved;
 
+  const freshPreflight = await api('/api/preflight/' + encodeURIComponent(resolved.experiment)).catch(() => ({ok:false}));
+  if (!freshPreflight.ok) { feedback('Preflight changed. Request a new recommendation before approval.'); return; }
+  const delayMilliseconds = resolved.supportsDelay ? resolved.defaultDelayMs : undefined;
   const confirmed = window.confirm(
     'Approve the AI-recommended experiment?\n\n' +
+    (delayMilliseconds ? 'Added latency: ' + delayMilliseconds + 'ms\n' : '') +
     `Experiment: ${resolved.experiment}\nTarget: ${resolved.target}\n` +
     `Duration: ${r.durationSeconds}s\nRisk: ${r.risk}\n\n` +
     `Hypothesis:\n${r.hypothesis}\n\nExpected impact:\n${r.expectedImpact}\n\n` +
@@ -183,6 +204,7 @@ async function runRecommended() {
       body: JSON.stringify({
         experiment: resolved.experiment,
         durationSeconds: r.durationSeconds,
+        delayMilliseconds,
         approved: true,
         approvedBy: 'dashboard operator (AI-recommended)',
       }),
@@ -192,7 +214,7 @@ async function runRecommended() {
     aiRecommendation = null;
   } catch (err) {
     el('ai-recommendation').innerHTML +=
-      `<div class="ai-reject"><strong>Rejected by the server.</strong> ${err.message}</div>`;
+      `<div class="ai-reject"><strong>Rejected by the server.</strong> ${dashboardPresentation.escape(err.message)}</div>`;
     currentTarget = null;
   }
 }
@@ -209,14 +231,18 @@ el('btn-explain').addEventListener('click', async () => {
   box.innerHTML = '<p class="empty">Asking the AI provider to explain the evidence…</p>';
   try {
     const result = await api(`/api/ai/explain/${encodeURIComponent(runId)}`, { method: 'POST' });
-    renderExplanation(result.explanation, runId, result.provider);
+    renderExplanation(result.explanation, runId, result.provider, result.evidenceReferences);
   } catch (err) {
-    box.innerHTML = `<div class="ai-reject"><strong>No AI provider could answer.</strong> ${err.message}
+    box.innerHTML = `<div class="ai-reject"><strong>No AI provider could answer.</strong> ${dashboardPresentation.escape(err.message)}
       <p style="margin:6px 0 0;color:var(--text-dim)">The deterministic assessment above is unaffected.</p></div>`;
   }
 });
 
-function renderExplanation(e, runId, provider) {
+function renderExplanation(e, runId, provider, evidenceReferences) {
+  e = dashboardPresentation.escapeTree(e);
+  evidenceReferences = dashboardPresentation.escapeTree(evidenceReferences || []);
+  provider = dashboardPresentation.escape(provider);
+  runId = dashboardPresentation.escape(runId);
   const box = el('ai-explanation');
   if (!e) {
     box.innerHTML = '<p class="empty">No explanation returned.</p>';
@@ -237,7 +263,11 @@ function renderExplanation(e, runId, provider) {
       </dl>
       ${(e.weaknesses || []).length ? `<div style="font-size:12px;color:var(--text-faint)">Weaknesses:<ul>${list(e.weaknesses)}</ul></div>` : ''}
       ${(e.recommendations || []).length ? `<div style="font-size:12px;color:var(--text-faint);margin-top:7px">Recommendations:<ul>${list(e.recommendations)}</ul></div>` : ''}
-      ${(e.evidenceCited || []).length ? `<div class="evidence" style="margin-top:9px">${(e.evidenceCited || []).join(' · ')}</div>` : ''}
+      ${evidenceReferences.length ? '<div class="evidence">' + evidenceReferences.map(c =>
+        '<div class="evidence-reference"><strong>' + c.label + '</strong><span>' +
+        (c.value ?? 'Not resolved from supplied evidence') + '</span><small>' +
+        (c.resolved ? 'Verified field: ' : 'Unresolved citation: ') + c.reference + '</small></div>').join('') + '</div>'
+        : (e.evidenceCited || []).length ? '<div class="evidence">' + e.evidenceCited.join(' | ') + '</div>' : ''}
       ${(e.unsupported || []).length
         ? `<div class="ai-unsupported"><strong>Stated as unsupported by the evidence:</strong><ul>${list(e.unsupported)}</ul></div>`
         : ''}
