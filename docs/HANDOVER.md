@@ -1,3 +1,17 @@
+## Customer and Vehicle pause scripts, 2026-10-11
+
+Prepared pause-customer-api.ps1 and pause-vehicle-api.ps1 plus their shared
+PauseExperiment.ps1 runner, based on main 0e9b614. Dry runs are the default.
+Both experiments enforce fixed Compose-owned targets, a pinned local endpoint,
+healthy baseline, STOP checks, bounded duration and unaffected-page thresholds.
+A detached watchdog holds the shared lock and restores after parent termination.
+CSV/JSON evidence and scorer target mappings cover both APIs.
+
+Validation uses fake Docker, fake HTTP and synthetic reports. Both real Docker
+dry runs were also checked without injecting a fault. See chaos-scripts/README.md.
+The scripts remain outside ExperimentCatalog pending live cleanup verification.
+Existing live-watchdog gaps for crash experiments remain open.
+
 # START HERE
 
 > **Resuming in a new session? Read `docs/NEXT_LLM_CHECKLIST.md` first.** It
