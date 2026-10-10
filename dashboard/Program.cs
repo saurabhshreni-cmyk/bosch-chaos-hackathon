@@ -22,7 +22,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Resolved before the container is built so registrations can depend on it.
 var repoRoot = FindRepoRoot(builder.Environment.ContentRootPath)
     ?? throw new InvalidOperationException("Could not locate the repository root (no chaos-scripts directory found).");
-var chaosScripts = Path.Combine(repoRoot, "chaos-scripts");
+var chaosScripts = builder.Configuration["Chaos:ScriptsDirectory"] ?? Path.Combine(repoRoot, "chaos-scripts");
 var composeFile = Path.Combine(repoRoot, "src", "docker-compose.yml");
 var stopFile = Path.Combine(chaosScripts, "STOP");
 var resultsDir = Path.Combine(chaosScripts, "results");
@@ -50,6 +50,13 @@ builder.Services.AddSingleton<IExperimentRunner>(_ => new PowerShellExperimentRu
     repoRoot, chaosScripts, runState, entry => AppendAudit(entry)));
 builder.Services.AddScoped<AiProviderRouter>();
 var app = builder.Build();
+
+// Test-host configuration is applied during Build. Resolve runtime paths from
+// the final configuration so STOP, audit and reports follow those overrides.
+chaosScripts = app.Configuration["Chaos:ScriptsDirectory"] ?? Path.Combine(repoRoot, "chaos-scripts");
+stopFile = Path.Combine(chaosScripts, "STOP");
+resultsDir = Path.Combine(chaosScripts, "results");
+auditLog = Path.Combine(resultsDir, "audit.jsonl");
 
 // Experiments live in ExperimentCatalog so the runner and the AI-recommendation
 // validator can never drift apart on what is permitted.
@@ -89,6 +96,7 @@ app.MapGet("/api/state", async (CancellationToken ct) => Results.Json(new
         maxDelayMs = e.Value.MaxDelayMs,
         defaultDelayMs = e.Value.DefaultDelayMs,
     }),
+    preparedExperiments = PreparedExperiments.List(chaosScripts),
     run = runState.Snapshot(),
     killSwitchEngaged = File.Exists(stopFile),
     runs = ListRuns(),
@@ -97,7 +105,7 @@ app.MapGet("/api/state", async (CancellationToken ct) => Results.Json(new
 app.MapGet("/api/runs/{runId}", (string runId) =>
 {
     // Path traversal guard: run ids are timestamps this tool generates.
-    if (!runId.All(c => char.IsLetterOrDigit(c))) return Results.BadRequest(new { error = "Invalid run id." });
+    if (!ReportIds.IsValid(runId)) return Results.BadRequest(new { error = "Invalid run id." });
     var path = Path.Combine(resultsDir, runId, "report.json");
     var report = ReadJsonFile(path);
     return report is null ? Results.NotFound() : Results.Json(report, jsonOptions);
@@ -119,7 +127,7 @@ app.MapGet("/api/preflight/{name}", async (string name, CancellationToken ct) =>
 // a recommendation that passes validation is still only something to show a
 // human, who must approve it through /api/experiments/run as before.
 
-app.MapGet("/api/ai/status", async (AiProviderRouter router, CancellationToken ct) =>
+app.MapGet("/api/ai/status", async (AiProviderRouter router, AiOptions options, CancellationToken ct) =>
 {
     var providers = await router.GetStatusAsync(ct);
     return Results.Json(new
@@ -127,19 +135,21 @@ app.MapGet("/api/ai/status", async (AiProviderRouter router, CancellationToken c
         // Whether a key exists, never the key itself.
         providers,
         mode = router.Mode.ToString(),
-        modes = Enum.GetNames<AiMode>(),
+        modes = options.Ollama.Enabled ? Enum.GetNames<AiMode>() : new[] { nameof(AiMode.Groq) },
         activeProvider = await router.ResolveActiveProviderAsync(ct),
         configured = providers.Any(p => p.Available),
         note = "Deterministic scoring and the kill switch do not depend on any of these.",
     }, jsonOptions);
 });
 
-app.MapPost("/api/ai/mode", (ModeRequest request, AiModeStore store) =>
+app.MapPost("/api/ai/mode", (ModeRequest request, AiModeStore store, AiOptions options) =>
 {
     if (!Enum.TryParse<AiMode>(request.Mode, ignoreCase: true, out var mode))
     {
         return Results.BadRequest(new { error = $"Unknown mode. Permitted: {string.Join(", ", Enum.GetNames<AiMode>())}." });
     }
+    if (!options.Ollama.Enabled && mode != AiMode.Groq)
+        return Results.BadRequest(new { error = "This installation uses Groq only. Ollama is disabled." });
     store.Set(mode);
     AppendAudit(new { timestampUtc = DateTime.UtcNow, action = "ai.mode.changed", mode = mode.ToString() });
     return Results.Ok(new { mode = mode.ToString() });
@@ -235,6 +245,8 @@ app.MapPost("/api/ai/recommend", async (AiProviderRouter router, CancellationTok
             minDuration = validation.Spec.MinDuration,
             maxDuration = validation.Spec.MaxDuration,
             catalogRisk = validation.Spec.Risk,
+            supportsDelay = validation.Spec.SupportsDelay,
+            defaultDelayMs = validation.Spec.DefaultDelayMs,
             expectedBlastRadius = validation.Spec.ExpectedBlastRadius,
             recoveryPlan = validation.Spec.RecoveryPlan,
         },
@@ -244,7 +256,7 @@ app.MapPost("/api/ai/recommend", async (AiProviderRouter router, CancellationTok
 
 app.MapPost("/api/ai/explain/{runId}", async (string runId, AiProviderRouter router, CancellationToken ct) =>
 {
-    if (!runId.All(char.IsLetterOrDigit)) return Results.BadRequest(new { error = "Invalid run id." });
+    if (!ReportIds.IsValid(runId)) return Results.BadRequest(new { error = "Invalid run id." });
     var report = ReadJsonFile(Path.Combine(resultsDir, runId, "report.json"));
     if (report is null) return Results.NotFound(new { error = "No evidence found for that run." });
 
@@ -292,7 +304,8 @@ app.MapPost("/api/ai/explain/{runId}", async (string runId, AiProviderRouter rou
     {
         EvidenceCited = [.. EvidenceFormatter.ResolveAll(result.Value.EvidenceCited, evidence)],
     };
-    return Results.Json(new { ok = true, provider = result.Provider, attempts = result.Attempts, explanation }, jsonOptions);
+    return Results.Json(new { ok = true, provider = result.Provider, attempts = result.Attempts, explanation,
+        evidenceReferences = (result.Value?.EvidenceCited ?? []).Select(reference => EvidenceReferenceResolver.Resolve(reference, evidence)).ToArray() }, jsonOptions);
 });
 
 // ---- the only two state-changing endpoints --------------------------------

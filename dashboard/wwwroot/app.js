@@ -9,6 +9,9 @@ const el = (id) => document.getElementById(id);
 let state = null;
 let lastGoodFetch = null;
 let currentTarget = null;
+let experimentSignature = null;
+let backendReachable = false;
+const preflightResults = new Map();
 
 async function api(path, options) {
   const response = await fetch(path, options);
@@ -23,10 +26,17 @@ async function refresh() {
   try {
     state = await api('/api/state');
     lastGoodFetch = new Date();
+    backendReachable = true;
     render();
   } catch (err) {
+    backendReachable = false;
+    const banner = el('connection-banner'); banner.hidden = false;
+    banner.textContent = 'Connection lost. Values are last recorded observations. Injection is disabled until the backend reconnects.';
+    el('experiments').querySelectorAll('[data-run]').forEach(b => b.disabled = true);
+    const approve = el('btn-ai-approve'); if (approve) approve.disabled = true;
+    el('btn-clear').disabled = true;
     const f = el('freshness');
-    f.textContent = `backend unreachable — ${err.message}`;
+    f.textContent = `backend unreachable — ${dashboardPresentation.escape(err.message)}`;
     f.classList.add('stale');
   }
   // Poll faster while something is actually happening.
@@ -35,6 +45,9 @@ async function refresh() {
 }
 
 function render() {
+  el('connection-banner').hidden = true;
+  currentTarget = state.run?.isRunning ? (state.experiments || []).find(e => e.name === state.run.experiment)?.target || null : null;
+  renderSummary();
   renderFreshness();
   renderServices();
   renderModules();
@@ -44,10 +57,24 @@ function render() {
   renderGaps();
   renderRuns();
   renderExperiments();
+  renderPreparedExperiments();
   renderKillSwitch();
   renderTimeline();
 }
 
+function renderSummary() {
+  const s = dashboardPresentation.summary(state);
+  el('summary-services').textContent = s.services ? s.running + ' / ' + s.services : 'No services';
+  el('summary-health').textContent = s.healthy + ' readiness checks healthy | ' + s.unmeasured + ' not measured';
+  el('summary-modules').textContent = s.modules ? s.modulesHealthy + ' / ' + s.modules : 'Not measured';
+  el('summary-activity').textContent = s.active ? 'Running' : 'Idle';
+  el('summary-runs').textContent = s.runs + ' recorded run(s)';
+  el('summary-stop').textContent = s.stop ? 'Engaged' : 'Clear';
+  el('summary-stop').style.color = s.stop ? 'var(--warn)' : 'var(--text)';
+}
+function feedback(message) {
+  const box = el('action-feedback'); box.hidden = false; box.textContent = message;
+}
 function renderFreshness() {
   const f = el('freshness');
   const age = lastGoodFetch ? Math.round((Date.now() - lastGoodFetch) / 1000) : null;
@@ -153,7 +180,7 @@ function renderGraph() {
     const x1 = a.x + a.w, y1 = a.y + a.h / 2, x2 = b.x, y2 = b.y + b.h / 2;
     const mx = (x1 + x2) / 2;
     const isEvent = e.kind === 'publish' || e.kind === 'subscribe';
-    return `<path class="edge ${isEvent ? 'event' : ''}" d="M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}" />`;
+    return `<path class="edge ${isEvent ? 'event' : ''}" marker-end="url(#dependency-arrow)" d="M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}" />`;
   }).join('');
 
   const nodes = graph.nodes.map((n) => {
@@ -161,19 +188,24 @@ function renderGraph() {
     const classes = ['node'];
     if (n.kind === 'infrastructure') classes.push('infra');
     if (currentTarget && n.name === currentTarget) classes.push('target');
-    else if (currentTarget) classes.push('unaffected');
+    else {
+      const service = (state.services || []).find(s => s.name === n.name);
+      classes.push(service ? serviceClass(service) === 'ok' ? 'unaffected'
+        : serviceClass(service) === 'fail' ? 'unavailable' : 'unmeasured' : 'unmeasured');
+    }
     const label = n.name.length > 20 ? n.name.slice(0, 19) + '…' : n.name;
-    return `<g class="${classes.join(' ')}">
+    return `<g class="${classes.join(' ')}"><title>${dashboardPresentation.escape(n.name)}</title>
       <rect x="${p.x}" y="${p.y}" width="${p.w}" height="${p.h}"></rect>
       <text x="${p.x + 7}" y="${p.y + 16}">${label}</text>
     </g>`;
   }).join('');
 
   box.innerHTML = `<svg class="graph" viewBox="0 0 ${width} ${height}" role="img"
-      aria-label="Service dependency map">${edges}${nodes}</svg>
+      aria-label="Service dependency map"><defs><marker id="dependency-arrow" viewBox="0 0 10 10" refX="9" refY="5"
+markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/></marker></defs>${edges}${nodes}</svg>
     ${currentTarget ? `<p style="margin:9px 0 0;font-size:12px;color:var(--text-dim)">
       Highlighted: <strong style="color:var(--fail)">${currentTarget}</strong> is the live experiment target.
-      Everything else is expected to stay healthy &mdash; the monitoring table above is what confirms it.</p>` : ''}`;
+      Dependencies may propagate the fault. The module probes above show actual availability.</p>` : ''}`;
 }
 
 function renderAssessment() {
@@ -274,6 +306,15 @@ function renderRuns() {
 }
 
 function renderExperiments() {
+  const signature = JSON.stringify(state.experiments || []);
+  if (signature === experimentSignature) {
+    el('experiments').querySelectorAll('[data-run]').forEach(b =>
+      b.disabled = !backendReachable || !!state.run?.isRunning || !!state.killSwitchEngaged);
+    return;
+  }
+  const previousDelays = Object.fromEntries((state.experiments || []).filter(e => e.supportsDelay).map(e => [e.name, el('delay-' + e.name)?.value]));
+  const previousDurations = Object.fromEntries((state.experiments || []).map(e => [e.name, el('dur-' + e.name)?.value]));
+  experimentSignature = signature;
   const box = el('experiments');
   const running = state.run && state.run.isRunning;
   box.innerHTML = (state.experiments || []).map((e) => `
@@ -294,16 +335,38 @@ function renderExperiments() {
         ${e.supportsDelay ? `<label style="font-size:12px;color:var(--text-faint)">Delay ms
           <input type="number" min="${e.minDelayMs}" max="${e.maxDelayMs}" value="${e.defaultDelayMs}" id="delay-${e.name}">
         </label>` : ''}
-        <button class="danger" data-run="${e.name}" ${running ? 'disabled' : ''}>Approve &amp; inject</button>
+        <button class="danger" data-run="${e.name}" ${running || state.killSwitchEngaged || !backendReachable ? 'disabled' : ''}>Approve &amp; inject</button>
         <button data-preflight="${e.name}">Preflight</button>
       </div>
       <div class="blockers" id="blockers-${e.name}"></div>
     </div>`).join('');
 
+  (state.experiments || []).forEach(e => {
+    if (previousDurations[e.name] !== undefined) el('dur-' + e.name).value = previousDurations[e.name];
+    if (e.supportsDelay && previousDelays[e.name] !== undefined) el('delay-' + e.name).value = previousDelays[e.name];
+    if (preflightResults.has(e.name)) el('blockers-' + e.name).innerHTML = preflightResults.get(e.name);
+  });
   box.querySelectorAll('[data-preflight]').forEach((b) =>
     b.addEventListener('click', () => preflight(b.dataset.preflight)));
   box.querySelectorAll('[data-run]').forEach((b) =>
     b.addEventListener('click', () => approveAndRun(b.dataset.run)));
+}
+
+
+function renderPreparedExperiments() {
+  const box = el('prepared-experiments');
+  const entries = state.preparedExperiments || [];
+  box.innerHTML = entries.map(raw => {
+    const e = dashboardPresentation.escapeTree(raw);
+    return '<article class="prepared-card"><div class="prepared-header"><strong>' + e.name +
+      '</strong><span class="pill not-executable">Prepared</span></div><p>' + e.fault +
+      '</p><dl><dt>Target</dt><dd>' + e.target + '</dd><dt>Duration</dt><dd>' +
+      e.defaultDuration + 's default / ' + e.maxDuration + 's maximum</dd><dt>Recovery</dt><dd>' +
+      e.recovery + '</dd></dl><p class="prepared-status">' + e.status + '</p><small>' +
+      (e.scriptAvailable ? 'Scripts are present locally. Dashboard execution is pending verification.' :
+        'Scripts are in PR #3. Merge them before local verification.') + '</small></article>';
+  }).join('');
+  el('prepared-panel').hidden = !entries.length;
 }
 
 async function preflight(name) {
@@ -313,10 +376,12 @@ async function preflight(name) {
     const result = await api(`/api/preflight/${encodeURIComponent(name)}`);
     box.innerHTML = result.ok
       ? '<span style="color:var(--ok)">Preflight passed — a clean baseline exists.</span>'
-      : `Blocked:<ul>${result.blockers.map((b) => `<li>${b}</li>`).join('')}</ul>`;
+      : `Blocked:<ul>${result.blockers.map((b) => `<li>${dashboardPresentation.escape(b)}</li>`).join('')}</ul>`;
+    preflightResults.set(name, box.innerHTML);
     return result.ok;
   } catch (err) {
-    box.innerHTML = `Preflight failed: ${err.message}`;
+    box.innerHTML = `Preflight failed: ${dashboardPresentation.escape(err.message)}`;
+    preflightResults.delete(name);
     return false;
   }
 }
@@ -328,6 +393,10 @@ async function approveAndRun(name) {
   // rejects a delay on anything else.
   const delayInput = exp.supportsDelay ? el(`delay-${name}`) : null;
   const delayMilliseconds = delayInput ? Number(delayInput.value) : undefined;
+  if (!backendReachable) { feedback("Reconnect to the backend before injecting a fault."); return; }
+  if (state.killSwitchEngaged || state.run?.isRunning) { feedback("Clear STOP and wait for the active run to finish before approval."); return; }
+  const invalid = dashboardPresentation.validateExperiment(exp, duration, delayMilliseconds);
+  if (invalid) { feedback(invalid); return; }
   const ok = await preflight(name);
   if (!ok) return;
 
@@ -364,7 +433,7 @@ Risk: ${exp.risk}
     });
     el(`blockers-${name}`).innerHTML = '<span style="color:var(--accent)">Approved. Injecting…</span>';
   } catch (err) {
-    el(`blockers-${name}`).innerHTML = `Rejected: ${err.message}`;
+    el(`blockers-${name}`).innerHTML = `Rejected: ${dashboardPresentation.escape(err.message)}`;
     currentTarget = null;
   }
 }
@@ -374,18 +443,25 @@ function renderKillSwitch() {
   const engaged = state.killSwitchEngaged;
   pill.textContent = engaged ? 'STOP file present' : 'armed, not engaged';
   pill.className = `pill ${engaged ? 'high' : 'low'}`;
-  el('btn-clear').disabled = !engaged;
+  el('btn-clear').disabled = !engaged || !backendReachable || !!state.run?.isRunning;
+  const approve = el('btn-ai-approve');
+  if (approve) approve.disabled = !backendReachable || engaged || !!state.run?.isRunning || !aiRecommendation?.preflight?.ok;
 }
 
 el('btn-stop').addEventListener('click', async () => {
-  await api('/api/experiments/stop', { method: 'POST' });
-  refreshNow();
+  try {
+    await api('/api/experiments/stop', { method: 'POST' });
+    feedback('Emergency STOP engaged. The experiment script handles rollback.'); await refreshNow();
+  } catch (err) { feedback('Unable to engage STOP: ' + err.message); }
 });
 el('btn-clear').addEventListener('click', async () => {
-  await api('/api/experiments/clear-stop', { method: 'POST' });
-  refreshNow();
+  if (!window.confirm('Clear the emergency STOP file? Only continue if the sandbox is ready for another approved experiment.')) return;
+  try {
+    await api('/api/experiments/clear-stop', { method: 'POST' });
+    feedback('STOP cleared. Each experiment still requires preflight and explicit approval.'); await refreshNow();
+  } catch (err) { feedback('Unable to clear STOP: ' + err.message); }
 });
-async function refreshNow() { state = await api('/api/state'); lastGoodFetch = new Date(); render(); }
+async function refreshNow() { state = await api('/api/state'); lastGoodFetch = new Date(); backendReachable = true; render(); }
 
 // Timeline phases are derived from the experiment's own log lines, so the UI
 // follows what the script actually did rather than a guessed schedule.

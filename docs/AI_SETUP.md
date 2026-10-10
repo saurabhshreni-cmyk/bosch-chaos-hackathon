@@ -1,3 +1,28 @@
+# Local Groq-only console setup, 2026-10-11
+
+This installation disables Ollama by default. The server exposes only the Groq
+mode while disabled, regardless of a previously persisted Auto/Ollama selection.
+
+Start from the repository root with ./dashboard/start-local.ps1.
+It reads an existing process GROQ_API_KEY or the ignored agentic-chaos/.env,
+without printing or committing the key. No model request runs on startup.
+The dashboard stays stopped until the launcher is explicitly executed.
+
+The earlier provider documentation below also describes optional modes used in
+other installations and in stubbed tests.
+
+# Groq-only mode on this workstation
+
+Ollama fallback is disabled by default (Ai:Ollama:Enabled=false).
+The dashboard does not contact Ollama for status or completions in this mode.
+Set GROQ_API_KEY locally. Missing keys, provider errors and rate limits leave
+the deterministic dashboard working without an LLM response.
+The five-agent Python platform also accepts only Groq.
+
+See ../agentic-chaos/docs/setup.md for the new platform.
+The older optional-fallback instructions below apply only if an operator
+explicitly enables Ai:Ollama:Enabled. They are not needed for this workstation.
+
 # AI provider setup (Windows / PowerShell)
 
 The AI layer has two providers and degrades through them:

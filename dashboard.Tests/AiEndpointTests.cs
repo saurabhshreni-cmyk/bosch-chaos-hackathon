@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
 using Pitstop.ResilienceDashboard;
 using Xunit;
 
@@ -94,19 +95,38 @@ internal sealed class FakeExperimentRunner : IExperimentRunner
 /// be valid. Opt-in isolation would have had the same hole: the test that
 /// forgets is exactly the one that injects a fault.
 /// </remarks>
-internal class TestApp(StubAiHandler handler) : WebApplicationFactory<Program>
+internal class TestApp(StubAiHandler handler, bool enableOllama = true) : WebApplicationFactory<Program>
 {
     public StubAiHandler Handler { get; } = handler;
 
     public FakeExperimentRunner Runner { get; } = new();
 
-    protected override void ConfigureWebHost(Microsoft.AspNetCore.Hosting.IWebHostBuilder builder) =>
+    public string ScriptsDirectory => _scriptsDirectory;
+
+    private readonly string _scriptsDirectory = Path.Combine(Path.GetTempPath(), "pitstop-dashboard-test-" + Guid.NewGuid().ToString("N"));
+
+    protected override void ConfigureWebHost(Microsoft.AspNetCore.Hosting.IWebHostBuilder builder)
+    {
+        Directory.CreateDirectory(_scriptsDirectory);
+        builder.ConfigureAppConfiguration((_, config) =>
+            config.AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["Chaos:ScriptsDirectory"] = _scriptsDirectory,
+            }));
         builder.ConfigureServices(services =>
         {
+            services.AddSingleton(new AiOptions { Ollama = new AiOptions.OllamaOptions { Enabled = enableOllama } });
             services.AddHttpClient<GroqClient>().ConfigurePrimaryHttpMessageHandler(() => Handler);
             services.AddHttpClient<OllamaClient>().ConfigurePrimaryHttpMessageHandler(() => Handler);
             services.AddSingleton<IExperimentRunner>(Runner);
         });
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+        if (disposing && Directory.Exists(_scriptsDirectory)) Directory.Delete(_scriptsDirectory, recursive: true);
+    }
 }
 
 /// <summary>Builds provider-shaped envelopes around a structured payload.</summary>
@@ -161,6 +181,29 @@ public class AiEndpointTests : IDisposable
 
     private static readonly (HttpStatusCode, string) GoodOllama =
         (HttpStatusCode.OK, Envelope.Ollama(Envelope.Recommendation("kill-rabbitmq", "rabbitmq", 30)));
+
+    [Fact]
+    public async Task Groq_only_mode_never_contacts_Ollama_when_the_key_is_missing()
+    {
+        WithoutCloudKey();
+        using var app = new TestApp(StubAiHandler.For(ollama: GoodOllama), enableOllama: false);
+        using var client = app.CreateClient();
+        await client.GetAsync("/api/ai/status");
+        var body = await (await client.PostAsync("/api/ai/recommend", null)).Content.ReadFromJsonAsync<JsonNode>();
+        Assert.DoesNotContain("localhost", app.Handler.CalledHosts);
+        Assert.Contains("GROQ_API_KEY", body!["error"]!.GetValue<string>());
+    }
+
+    [Fact]
+    public async Task Groq_only_mode_never_falls_back_to_Ollama_on_cloud_failure()
+    {
+        WithCloudKey();
+        using var app = new TestApp(StubAiHandler.For(ollama: GoodOllama), enableOllama: false);
+        using var client = app.CreateClient();
+        await client.PostAsync("/api/ai/recommend", null);
+        Assert.DoesNotContain("localhost", app.Handler.CalledHosts);
+        Assert.Contains("api.groq.com", app.Handler.CalledHosts);
+    }
 
     // ---- provider selection -------------------------------------------------
 

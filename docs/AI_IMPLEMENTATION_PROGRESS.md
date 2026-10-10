@@ -345,3 +345,54 @@ Before running `network-delay` on a fresh checkout, build the sidecar once:
 docker build -t pitstop-netem:1.0 chaos-scripts/netem-image
 ```
 
+
+## Customer and Vehicle pause scripts, 2026-10-11
+
+Prepared pause-customer-api.ps1 and pause-vehicle-api.ps1 plus their shared
+PauseExperiment.ps1 runner, based on main 0e9b614. Dry runs are the default.
+Both experiments enforce fixed Compose-owned targets, a pinned local endpoint,
+healthy baseline, STOP checks, bounded duration and unaffected-page thresholds.
+A detached watchdog holds the shared lock and restores after parent termination.
+CSV/JSON evidence and scorer target mappings cover both APIs.
+
+Validation uses fake Docker, fake HTTP and synthetic reports. Both real Docker
+dry runs were also checked without injecting a fault. See chaos-scripts/README.md.
+The scripts remain outside ExperimentCatalog pending live cleanup verification.
+Existing live-watchdog gaps for crash experiments remain open.
+## Local follow-up, 2026-10-11
+
+Updated local main to 2e633f4 and preserved the earlier local dashboard/Python work
+on feat/add-api-chaos. Stopped and verified ports 5280, 8000 and 8501.
+
+Prepared two additional fixed-target pause experiments from the current main
+script conventions. Their shared runner uses ChaosSafety, a pinned named-pipe
+endpoint and a detached PowerShell guardian holding the cross-process lock.
+The guardian is tested against a fake Docker adapter under hard parent termination.
+This test does not prove real Docker pause/unpause recovery.
+
+Validation: 113 dashboard tests, 16 frontend checks, 12 fake-Docker/fake-HTTP
+chaos cases, and read-only Docker dry runs for both target APIs passed.
+The scorer now excludes each new target page from containment probes.
+Data integrity is explicitly unmeasured because no writes are issued.
+
+Phase 6's live crash-script watchdog gaps above remain open.
+The prepared pause scripts remain CLI-only until live cleanup is verified.
+No Phase 7 or Phase 8 completion is claimed. Existing STOP remains engaged.
+
+## Dashboard integration follow-up, 2026-10-11
+
+Current branch: feat/dashboard-integration, based on latest main 0e9b614.
+The console now shows prepared pause-script cards, keeps edited latency values,
+validates duration/delay, refreshes AI preflight and enforces Groq-only mode.
+Hyphenated pause-run reports are readable without permitting path traversal.
+The injected runner is preserved; tests isolate STOP, audit, mode and reports.
+
+Verified: 134 .NET tests and 36 frontend checks pass. HTML/asset references,
+launcher syntax and Git whitespace pass. Final isolated runs preserve the
+real STOP checksum. Ports 5280, 8000 and 8501 remain stopped.
+No live faults or application-specific external model calls were made.
+Use dashboard/start-local.ps1 to start when requested; it privately loads the
+existing ignored Groq .env if a process key is absent.
+New pause scripts remain outside the executable catalog pending live cleanup proof.
+See docs/DASHBOARD_IMPROVEMENTS.md. Earlier checkpoints below are historical.
+

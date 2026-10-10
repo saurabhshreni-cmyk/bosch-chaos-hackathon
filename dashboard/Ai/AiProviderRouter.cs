@@ -6,7 +6,7 @@ namespace Pitstop.ResilienceDashboard;
 
 /// <summary>
 /// Picks a provider and degrades through them: Groq first when a key is
-/// configured, then local Ollama, then nothing.
+/// configured. Local Ollama is disabled unless explicitly enabled.
 /// </summary>
 /// <remarks>
 /// "Then nothing" is a real outcome, not a bug. If no provider answers, the
@@ -17,9 +17,9 @@ namespace Pitstop.ResilienceDashboard;
 /// Every attempt is recorded so the UI can show what was tried and why it moved
 /// on, and so the provider that actually answered is always attributable.
 /// </remarks>
-public sealed class AiProviderRouter(GroqClient groq, OllamaClient ollama, AiModeStore modeStore)
+public sealed class AiProviderRouter(GroqClient groq, OllamaClient ollama, AiModeStore modeStore, AiOptions options)
 {
-    public AiMode Mode => modeStore.Current;
+    public AiMode Mode => options.Ollama.Enabled ? modeStore.Current : AiMode.Groq;
 
     /// <summary>
     /// The providers this mode permits, in order. This is the only place that
@@ -38,7 +38,8 @@ public sealed class AiProviderRouter(GroqClient groq, OllamaClient ollama, AiMod
         switch (mode)
         {
             case AiMode.Ollama:
-                providers.Add(ollama);
+                if (options.Ollama.Enabled) providers.Add(ollama);
+                else skipped.Add(new ProviderAttempt(ollama.Name, false, "Disabled by configuration."));
                 skipped.Add(new ProviderAttempt(groq.Name, false, "Skipped: mode is Ollama-only."));
                 break;
 
@@ -51,7 +52,8 @@ public sealed class AiProviderRouter(GroqClient groq, OllamaClient ollama, AiMod
             default:
                 if (GroqClient.IsConfigured) providers.Add(groq);
                 else skipped.Add(new ProviderAttempt(groq.Name, false, "Skipped: GROQ_API_KEY is not set."));
-                providers.Add(ollama);
+                if (options.Ollama.Enabled) providers.Add(ollama);
+                else skipped.Add(new ProviderAttempt(ollama.Name, false, "Disabled by configuration."));
                 break;
         }
 
@@ -65,12 +67,13 @@ public sealed class AiProviderRouter(GroqClient groq, OllamaClient ollama, AiMod
     };
 
     public async Task<IReadOnlyList<ProviderStatus>> GetStatusAsync(CancellationToken ct) =>
-        [await groq.GetStatusAsync(ct), await ollama.GetStatusAsync(ct)];
+        [await groq.GetStatusAsync(ct), options.Ollama.Enabled ? await ollama.GetStatusAsync(ct)
+            : new ProviderStatus("ollama", false, options.Ollama.Model, "Disabled. Groq-only mode.")];
 
     /// <summary>Which provider would answer right now under the current mode, or null.</summary>
     public async Task<string?> ResolveActiveProviderAsync(CancellationToken ct)
     {
-        var (providers, _) = PlanFor(modeStore.Current);
+        var (providers, _) = PlanFor(Mode);
         foreach (var provider in providers)
         {
             if (provider is GroqClient) return groq.Name;
@@ -83,7 +86,7 @@ public sealed class AiProviderRouter(GroqClient groq, OllamaClient ollama, AiMod
     public async Task<AiResult<T>> CompleteAsync<T>(
         string systemPrompt, string userPrompt, string schemaName, JsonNode jsonSchema, CancellationToken ct)
     {
-        var (ordered, attempts) = PlanFor(modeStore.Current);
+        var (ordered, attempts) = PlanFor(Mode);
 
         foreach (var provider in ordered)
         {
@@ -122,7 +125,7 @@ public sealed class AiProviderRouter(GroqClient groq, OllamaClient ollama, AiMod
 
         var summary = string.Join(" | ", attempts.Select(a => $"{a.Provider}: {a.Error}"));
         return AiResult<T>.Fail(
-            $"No AI provider could answer in {modeStore.Current} mode. {summary}. " +
+            $"No AI provider could answer in {Mode} mode. {summary}. " +
             "The deterministic assessment is unaffected.",
             attempts);
     }

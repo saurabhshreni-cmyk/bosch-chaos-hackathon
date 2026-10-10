@@ -1,3 +1,65 @@
+# Combined integration, 11 October 2026
+
+Branch feat/combined-scripts-dashboard combines pause-script commit 75ef90d and dashboard commit 44535dc on remote main 0e9b614. See docs/COMBINED_INTEGRATION.md. Pause cards detect local scripts and read their reports; execution remains gated on live cleanup proof. Earlier entries below are historical.
+
+## Customer and Vehicle pause scripts, 2026-10-11
+
+Prepared pause-customer-api.ps1 and pause-vehicle-api.ps1 plus their shared
+PauseExperiment.ps1 runner, based on main 0e9b614. Dry runs are the default.
+Both experiments enforce fixed Compose-owned targets, a pinned local endpoint,
+healthy baseline, STOP checks, bounded duration and unaffected-page thresholds.
+A detached watchdog holds the shared lock and restores after parent termination.
+CSV/JSON evidence and scorer target mappings cover both APIs.
+
+Validation uses fake Docker, fake HTTP and synthetic reports. Both real Docker
+dry runs were also checked without injecting a fault. See chaos-scripts/README.md.
+The scripts remain outside ExperimentCatalog pending live cleanup verification.
+Existing live-watchdog gaps for crash experiments remain open.
+# Dashboard integration, 2026-10-11
+
+Current branch: feat/dashboard-integration, based on latest main 0e9b614.
+The console now shows prepared pause-script cards, keeps edited latency values,
+validates duration/delay, refreshes AI preflight and enforces Groq-only mode.
+Hyphenated pause-run reports are readable without permitting path traversal.
+The injected runner is preserved; tests isolate STOP, audit, mode and reports.
+
+Verified: 134 .NET tests and 36 frontend checks pass. HTML/asset references,
+launcher syntax and Git whitespace pass. Final isolated runs preserve the
+real STOP checksum. Ports 5280, 8000 and 8501 remain stopped.
+No live faults or application-specific external model calls were made.
+Use dashboard/start-local.ps1 to start when requested; it privately loads the
+existing ignored Groq .env if a process key is absent.
+New pause scripts remain outside the executable catalog pending live cleanup proof.
+See docs/DASHBOARD_IMPROVEMENTS.md. Earlier checkpoints below are historical.
+
+# Local chaos-script update, 2026-10-11
+
+Local main and feat/add-api-chaos include GitHub main 2e633f4.
+The earlier dashboard/Python edits were preserved and main-update conflicts resolved.
+A backup remains in Git stash: local-dashboard-preserve-before-main-20261011.
+
+Local web servers on ports 5280, 8000 and 8501 are stopped and socket-checked.
+Docker services and the existing STOP file were preserved.
+Added pause-customer-api.ps1 and pause-vehicle-api.ps1, with a shared runner,
+dry-run defaults, Compose ownership checks, a pinned local endpoint, baseline
+and STOP checks, shared locking, detached watchdog recovery, and CSV/JSON evidence.
+The deterministic scorer now maps Customer and Vehicle targets correctly.
+
+Verified: 113 .NET tests, 16 frontend checks, and 12 isolated chaos contract cases
+(9 core cases plus 3 additional checks). Both real Docker dry runs succeeded.
+No live faults or application-specific Groq requests were made.
+The new experiments are not registered in the dashboard pending live cleanup proof.
+See chaos-scripts/README.md for commands, recovery and registration requirements.
+
+Earlier status notes below describe their respective checkpoints.
+
+# Local console verification, 2026-10-10
+
+GitHub main updated to b60365f. Local dashboard changes are on feat/dashboard-clarity.
+The existing C# console has 49 passing backend tests and 16 passing JavaScript
+regression checks. No live faults or application-specific Groq calls were made.
+See DASHBOARD_IMPROVEMENTS.md. The earlier main baseline below remains historical.
+
 # Project status
 
 Last updated: 2026-10-10, after PR #1 was merged · `main` (see `docs/HANDOVER.md`

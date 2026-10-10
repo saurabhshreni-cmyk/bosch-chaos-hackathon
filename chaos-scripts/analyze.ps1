@@ -35,7 +35,11 @@ if (-not $ReportPath) { throw 'No report.json found. Run an experiment first.' }
 # Which module page represents the injected service. A broker outage has no
 # target module - every module is on the unaffected read path - so containment
 # is measured across all of them.
-$targetModules = @{ workshopmanagementapi = 'WorkshopManagement' }
+$targetModules = @{
+    workshopmanagementapi = 'WorkshopManagement'
+    customermanagementapi = 'CustomerManagement'
+    vehiclemanagementapi = 'VehicleManagement'
+}
 $controlledRollbacks = @('Maximum fault duration reached', 'Manual kill switch')
 
 function Get-Dimension {
