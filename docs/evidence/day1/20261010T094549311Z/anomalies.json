@@ -1,0 +1,105 @@
+﻿{
+    "RunId":  "20261010T094549311Z",
+    "TargetService":  "workshopmanagementapi",
+    "Method":  "Deterministic availability checks and baseline median/MAD latency thresholds; not a trained AI model",
+    "Limitations":  "Small baseline; sequential read probes only; timeouts are censored latencies; no proof of data loss or write correctness.",
+    "Recovered":  true,
+    "RecoverySeconds":  1.24,
+    "ModuleStats":  [
+                        {
+                            "Module":  "CustomerManagement",
+                            "BaselineSamples":  3,
+                            "BaselineMedianMs":  100.4,
+                            "LatencyThresholdMs":  350.4,
+                            "ObservedSamples":  5,
+                            "FailedSamples":  0
+                        },
+                        {
+                            "Module":  "VehicleManagement",
+                            "BaselineSamples":  3,
+                            "BaselineMedianMs":  101.6,
+                            "LatencyThresholdMs":  351.6,
+                            "ObservedSamples":  5,
+                            "FailedSamples":  0
+                        },
+                        {
+                            "Module":  "WorkshopManagement",
+                            "BaselineSamples":  3,
+                            "BaselineMedianMs":  102.7,
+                            "LatencyThresholdMs":  352.7,
+                            "ObservedSamples":  5,
+                            "FailedSamples":  4
+                        }
+                    ],
+    "Anomalies":  [
+                      {
+                          "EvidenceId":  "E1",
+                          "Module":  "WorkshopManagement",
+                          "TimestampUtc":  "2026-10-10T09:46:03.9928884Z",
+                          "Phase":  "fault",
+                          "Kind":  "Availability failure",
+                          "Severity":  "high",
+                          "LatencyMs":  5049.6,
+                          "BaselineMedianMs":  102.7,
+                          "ThresholdMs":  352.7,
+                          "StatusCode":  null,
+                          "OfflinePage":  false
+                      },
+                      {
+                          "EvidenceId":  "E2",
+                          "Module":  "WorkshopManagement",
+                          "TimestampUtc":  "2026-10-10T09:46:10.1716517Z",
+                          "Phase":  "fault",
+                          "Kind":  "Availability failure",
+                          "Severity":  "high",
+                          "LatencyMs":  5007,
+                          "BaselineMedianMs":  102.7,
+                          "ThresholdMs":  352.7,
+                          "StatusCode":  null,
+                          "OfflinePage":  false
+                      },
+                      {
+                          "EvidenceId":  "E3",
+                          "Module":  "WorkshopManagement",
+                          "TimestampUtc":  "2026-10-10T09:46:16.3558980Z",
+                          "Phase":  "fault",
+                          "Kind":  "Availability failure",
+                          "Severity":  "high",
+                          "LatencyMs":  5023.1,
+                          "BaselineMedianMs":  102.7,
+                          "ThresholdMs":  352.7,
+                          "StatusCode":  null,
+                          "OfflinePage":  false
+                      },
+                      {
+                          "EvidenceId":  "E4",
+                          "Module":  "WorkshopManagement",
+                          "TimestampUtc":  "2026-10-10T09:46:20.1455301Z",
+                          "Phase":  "fault",
+                          "Kind":  "Availability failure",
+                          "Severity":  "high",
+                          "LatencyMs":  2656.6,
+                          "BaselineMedianMs":  102.7,
+                          "ThresholdMs":  352.7,
+                          "StatusCode":  200,
+                          "OfflinePage":  true
+                      },
+                      {
+                          "EvidenceId":  "E5",
+                          "Module":  "WorkshopManagement",
+                          "TimestampUtc":  "2026-10-10T09:46:22.5276383Z",
+                          "Phase":  "recovery",
+                          "Kind":  "Latency increase",
+                          "Severity":  "medium",
+                          "LatencyMs":  1068.8,
+                          "BaselineMedianMs":  102.7,
+                          "ThresholdMs":  352.7,
+                          "StatusCode":  200,
+                          "OfflinePage":  false
+                      }
+                  ],
+    "AiStatus":  "Not configured",
+    "AiModel":  null,
+    "AiFindings":  null,
+    "AiError":  null
+}

@@ -1,0 +1,115 @@
+﻿{
+    "RunId":  "20261010T101044622Z",
+    "TargetService":  "workshopmanagementapi",
+    "Method":  "Deterministic availability checks and baseline median/MAD latency thresholds; not a trained AI model",
+    "Limitations":  "Small baseline; sequential read probes only; timeouts are censored latencies; no proof of data loss or write correctness.",
+    "Recovered":  true,
+    "RecoverySeconds":  0.09,
+    "ModuleStats":  [
+                        {
+                            "Module":  "CustomerManagement",
+                            "BaselineSamples":  3,
+                            "BaselineMedianMs":  28.5,
+                            "LatencyThresholdMs":  278.5,
+                            "ObservedSamples":  5,
+                            "FailedSamples":  0
+                        },
+                        {
+                            "Module":  "VehicleManagement",
+                            "BaselineSamples":  3,
+                            "BaselineMedianMs":  25.6,
+                            "LatencyThresholdMs":  275.6,
+                            "ObservedSamples":  5,
+                            "FailedSamples":  0
+                        },
+                        {
+                            "Module":  "WorkshopManagement",
+                            "BaselineSamples":  3,
+                            "BaselineMedianMs":  39.5,
+                            "LatencyThresholdMs":  289.5,
+                            "ObservedSamples":  5,
+                            "FailedSamples":  2
+                        }
+                    ],
+    "Anomalies":  [
+                      {
+                          "EvidenceId":  "E1",
+                          "Module":  "WorkshopManagement",
+                          "TimestampUtc":  "2026-10-10T10:10:54.9077673Z",
+                          "Phase":  "fault",
+                          "Kind":  "Latency increase",
+                          "Severity":  "medium",
+                          "LatencyMs":  4565.6,
+                          "BaselineMedianMs":  39.5,
+                          "ThresholdMs":  289.5,
+                          "StatusCode":  200,
+                          "OfflinePage":  false
+                      },
+                      {
+                          "EvidenceId":  "E2",
+                          "Module":  "WorkshopManagement",
+                          "TimestampUtc":  "2026-10-10T10:11:00.9969120Z",
+                          "Phase":  "fault",
+                          "Kind":  "Availability failure",
+                          "Severity":  "high",
+                          "LatencyMs":  5021.2,
+                          "BaselineMedianMs":  39.5,
+                          "ThresholdMs":  289.5,
+                          "StatusCode":  null,
+                          "OfflinePage":  false
+                      },
+                      {
+                          "EvidenceId":  "E3",
+                          "Module":  "WorkshopManagement",
+                          "TimestampUtc":  "2026-10-10T10:11:07.0634838Z",
+                          "Phase":  "fault",
+                          "Kind":  "Availability failure",
+                          "Severity":  "high",
+                          "LatencyMs":  5007.7,
+                          "BaselineMedianMs":  39.5,
+                          "ThresholdMs":  289.5,
+                          "StatusCode":  null,
+                          "OfflinePage":  false
+                      },
+                      {
+                          "EvidenceId":  "E4",
+                          "Module":  "WorkshopManagement",
+                          "TimestampUtc":  "2026-10-10T10:11:11.5279482Z",
+                          "Phase":  "fault",
+                          "Kind":  "Latency increase",
+                          "Severity":  "medium",
+                          "LatencyMs":  3390.7,
+                          "BaselineMedianMs":  39.5,
+                          "ThresholdMs":  289.5,
+                          "StatusCode":  200,
+                          "OfflinePage":  false
+                      }
+                  ],
+    "AiStatus":  "Completed; interpretations require human review",
+    "AiModel":  "qwen2.5:1.5b",
+    "AiFindings":  [
+                       {
+                           "evidenceIds":  [
+                                               "E1",
+                                               "E2",
+                                               "E3"
+                                           ],
+                           "explanation":  "Multiple anomalies in the \u0027WorkshopManagement\u0027 module indicate prolonged latency and availability failures, which could indicate a system overload or a critical issue affecting the module\u0027s performance.",
+                           "confidence":  "high",
+                           "severity":  "high",
+                           "title":  "System Performance Issues in \u0027WorkshopManagement\u0027 Module",
+                           "recommendedFix":  "Monitor the module\u0027s performance closely, consider load balancing, and ensure that the system is configured to handle the expected traffic."
+                       },
+                       {
+                           "evidenceIds":  [
+                                               "E4"
+                                           ],
+                           "explanation":  "Another anomaly in the \u0027WorkshopManagement\u0027 module shows a latency increase, which is a significant concern as it could affect the module\u0027s responsiveness and reliability.",
+                           "confidence":  "high",
+                           "severity":  "medium",
+                           "title":  "Latency Increase in \u0027WorkshopManagement\u0027 Module",
+                           "recommendedFix":  "Investigate the root cause of the latency increase, which could involve optimizing database queries, improving network latency, or enhancing the module\u0027s processing capabilities."
+                       }
+                   ],
+    "AiError":  null
+}

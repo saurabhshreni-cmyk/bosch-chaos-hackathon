@@ -1,0 +1,30 @@
+﻿{
+    "RunId":  "20261010T101001857Z",
+    "Stage":  "Completed",
+    "Mode":  "AI: qwen2.5:1.5b",
+    "Execute":  true,
+    "Model":  "qwen2.5:1.5b",
+    "Plans":  [
+                  {
+                      "expectedImpact":  "The experiment aims to measure the response latency of the Workshop Management API under a 500 ms egress delay. This will help identify if the API is experiencing network latency issues, which could affect the performance of the system. The expected impact is to improve the overall performance and reliability of the system by reducing network latency.",
+                      "reason":  "The experiment is designed to measure the response latency of the Workshop Management API under a 500 ms egress delay. This will help identify if the API is experiencing network latency issues, which could affect the performance of the system. The expected impact is to improve the overall performance and reliability of the system by reducing network latency.",
+                      "durationSeconds":  20,
+                      "id":  "workshop-delay"
+                  }
+              ],
+    "Experiments":  [
+                        {
+                            "ExperimentId":  "workshop-delay",
+                            "RunId":  "20261010T101044622Z",
+                            "Category":  "network latency",
+                            "ReportPath":  "C:\\Users\\arpit\\OneDrive\\Desktop\\pitstop\\chaos-scripts\\results\\20261010T101044622Z\\report.json",
+                            "AnalysisPath":  "C:\\Users\\arpit\\OneDrive\\Desktop\\pitstop\\chaos-scripts\\results\\20261010T101044622Z\\anomalies.json",
+                            "Recovered":  true,
+                            "RecoverySeconds":  0.09,
+                            "RollbackReason":  "Maximum fault duration reached",
+                            "AnomalyCount":  4,
+                            "AiStatus":  "Completed; interpretations require human review"
+                        }
+                    ],
+    "Error":  null
+}

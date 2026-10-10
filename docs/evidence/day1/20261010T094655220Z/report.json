@@ -1,0 +1,259 @@
+﻿{
+    "RunId":  "20261010T094655220Z",
+    "TargetService":  "workshopmanagementapi",
+    "ContainerId":  "39e2de9525651b5f78229d7df57c82e23ca9fa8fcc1821cef34a7de73c584fb7",
+    "FailureType":  "NetworkDelay",
+    "DelayMilliseconds":  500,
+    "MaxImpactedModules":  2,
+    "RequestedDurationSeconds":  20,
+    "RollbackReason":  "Maximum fault duration reached",
+    "FaultStartedUtc":  "\/Date(1791625619754)\/",
+    "RestoreCommandCompletedUtc":  "\/Date(1791625643371)\/",
+    "RecoveredUtc":  "\/Date(1791625643433)\/",
+    "Restored":  true,
+    "Recovered":  true,
+    "Error":  null,
+    "RecoverySeconds":  0.06,
+    "Samples":  [
+                    {
+                        "TimestampUtc":  "2026-10-10T09:46:56.3650083Z",
+                        "Phase":  "baseline",
+                        "Module":  "CustomerManagement",
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "Healthy":  true,
+                        "LatencyMs":  26,
+                        "Error":  null
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:46:56.3910102Z",
+                        "Phase":  "baseline",
+                        "Module":  "VehicleManagement",
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "Healthy":  true,
+                        "LatencyMs":  23.8,
+                        "Error":  null
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:46:56.4173799Z",
+                        "Phase":  "baseline",
+                        "Module":  "WorkshopManagement",
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "Healthy":  true,
+                        "LatencyMs":  25.1,
+                        "Error":  null
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:46:57.4676841Z",
+                        "Phase":  "baseline",
+                        "Module":  "CustomerManagement",
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "Healthy":  true,
+                        "LatencyMs":  47.9,
+                        "Error":  null
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:46:57.4995403Z",
+                        "Phase":  "baseline",
+                        "Module":  "VehicleManagement",
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "Healthy":  true,
+                        "LatencyMs":  30,
+                        "Error":  null
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:46:57.5395064Z",
+                        "Phase":  "baseline",
+                        "Module":  "WorkshopManagement",
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "Healthy":  true,
+                        "LatencyMs":  37.9,
+                        "Error":  null
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:46:58.5617755Z",
+                        "Phase":  "baseline",
+                        "Module":  "CustomerManagement",
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "Healthy":  true,
+                        "LatencyMs":  15.5,
+                        "Error":  null
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:46:58.5802521Z",
+                        "Phase":  "baseline",
+                        "Module":  "VehicleManagement",
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "Healthy":  true,
+                        "LatencyMs":  17.5,
+                        "Error":  null
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:46:58.6104137Z",
+                        "Phase":  "baseline",
+                        "Module":  "WorkshopManagement",
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "Healthy":  true,
+                        "LatencyMs":  28.2,
+                        "Error":  null
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:47:00.2241074Z",
+                        "Phase":  "fault",
+                        "Module":  "CustomerManagement",
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "Healthy":  true,
+                        "LatencyMs":  19.9,
+                        "Error":  null
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:47:00.2447151Z",
+                        "Phase":  "fault",
+                        "Module":  "VehicleManagement",
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "Healthy":  true,
+                        "LatencyMs":  19,
+                        "Error":  null
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:47:04.7959952Z",
+                        "Phase":  "fault",
+                        "Module":  "WorkshopManagement",
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "Healthy":  true,
+                        "LatencyMs":  4549.2,
+                        "Error":  null
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:47:05.8162650Z",
+                        "Phase":  "fault",
+                        "Module":  "CustomerManagement",
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "Healthy":  true,
+                        "LatencyMs":  23.7,
+                        "Error":  null
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:47:05.8436221Z",
+                        "Phase":  "fault",
+                        "Module":  "VehicleManagement",
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "Healthy":  true,
+                        "LatencyMs":  16.4,
+                        "Error":  null
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:47:10.8459255Z",
+                        "Phase":  "fault",
+                        "Module":  "WorkshopManagement",
+                        "StatusCode":  null,
+                        "OfflinePage":  false,
+                        "Healthy":  false,
+                        "LatencyMs":  5001,
+                        "Error":  "The operation has timed out."
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:47:11.8891933Z",
+                        "Phase":  "fault",
+                        "Module":  "CustomerManagement",
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "Healthy":  true,
+                        "LatencyMs":  22.4,
+                        "Error":  null
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:47:11.9067685Z",
+                        "Phase":  "fault",
+                        "Module":  "VehicleManagement",
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "Healthy":  true,
+                        "LatencyMs":  16.2,
+                        "Error":  null
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:47:16.9222099Z",
+                        "Phase":  "fault",
+                        "Module":  "WorkshopManagement",
+                        "StatusCode":  null,
+                        "OfflinePage":  false,
+                        "Healthy":  false,
+                        "LatencyMs":  5014.5,
+                        "Error":  "The operation has timed out."
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:47:17.9658031Z",
+                        "Phase":  "fault",
+                        "Module":  "CustomerManagement",
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "Healthy":  true,
+                        "LatencyMs":  24.2,
+                        "Error":  null
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:47:17.9868538Z",
+                        "Phase":  "fault",
+                        "Module":  "VehicleManagement",
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "Healthy":  true,
+                        "LatencyMs":  19,
+                        "Error":  null
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:47:21.8258071Z",
+                        "Phase":  "fault",
+                        "Module":  "WorkshopManagement",
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "Healthy":  true,
+                        "LatencyMs":  3838.5,
+                        "Error":  null
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:47:23.3874872Z",
+                        "Phase":  "recovery",
+                        "Module":  "CustomerManagement",
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "Healthy":  true,
+                        "LatencyMs":  15.7,
+                        "Error":  null
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:47:23.4053107Z",
+                        "Phase":  "recovery",
+                        "Module":  "VehicleManagement",
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "Healthy":  true,
+                        "LatencyMs":  16.7,
+                        "Error":  null
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:47:23.4331829Z",
+                        "Phase":  "recovery",
+                        "Module":  "WorkshopManagement",
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "Healthy":  true,
+                        "LatencyMs":  26.5,
+                        "Error":  null
+                    }
+                ]
+}

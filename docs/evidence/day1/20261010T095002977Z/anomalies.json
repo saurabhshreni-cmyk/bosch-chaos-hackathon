@@ -1,0 +1,41 @@
+﻿{
+    "RunId":  "20261010T095002977Z",
+    "TargetService":  "rabbitmq",
+    "Method":  "Deterministic availability checks and baseline median/MAD latency thresholds; not a trained AI model",
+    "Limitations":  "Small baseline; sequential read probes only; timeouts are censored latencies; no proof of data loss or write correctness.",
+    "Recovered":  true,
+    "RecoverySeconds":  14.68,
+    "ModuleStats":  [
+                        {
+                            "Module":  "CustomerManagement",
+                            "BaselineSamples":  3,
+                            "BaselineMedianMs":  18.6,
+                            "LatencyThresholdMs":  268.6,
+                            "ObservedSamples":  15,
+                            "FailedSamples":  0
+                        },
+                        {
+                            "Module":  "VehicleManagement",
+                            "BaselineSamples":  3,
+                            "BaselineMedianMs":  18.6,
+                            "LatencyThresholdMs":  268.6,
+                            "ObservedSamples":  15,
+                            "FailedSamples":  0
+                        },
+                        {
+                            "Module":  "WorkshopManagement",
+                            "BaselineSamples":  3,
+                            "BaselineMedianMs":  31.2,
+                            "LatencyThresholdMs":  281.2,
+                            "ObservedSamples":  15,
+                            "FailedSamples":  0
+                        }
+                    ],
+    "Anomalies":  [
+
+                  ],
+    "AiStatus":  "Not configured",
+    "AiModel":  null,
+    "AiFindings":  null,
+    "AiError":  null
+}

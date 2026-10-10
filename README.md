@@ -18,9 +18,13 @@ Group repository: https://github.com/saurabhshreni-cmyk/bosch-chaos-hackathon
 - Duration watchdog, early rollback on unrelated module failure or excessive
   latency, and a manual kill switch.
 - JSON/CSV evidence and documented results from verified experiments.
+- SQL Server crash experiment with shared-dependency rollback and anomaly reports.
+- Baseline-based statistical anomaly detection and optional local Ollama analysis.
 
-AI planning and analysis, additional failure types, and a dashboard are planned
-work, not implemented features in this checkout.
+The controller supports AI-selected plans through local Ollama, strict plan
+validation, bounded execution, recovery checks, and findings reports. A model
+must be installed before AI mode can run. An explicit rule-based mode is available
+for testing without AI. A dashboard and automated fixes remain future work.
 
 ## Team
 
@@ -137,6 +141,51 @@ If PowerShell is forcibly terminated, restore manually from the repository root:
 docker compose -f src/docker-compose.yml start workshopmanagementapi
 ```
 
+## Database Failure and AI Observability
+
+From the repository root:
+
+```powershell
+./chaos-scripts/kill-database.ps1
+```
+
+This kills SQL Server temporarily, retains its volume, rolls back when two modules
+fail or the duration limit is reached, and verifies page recovery. It saves
+`anomalies.json` alongside the request evidence. Anomalies are measured using
+availability checks and baseline latency statistics, not a trained AI model.
+An optional `-Model` argument enables AI interpretation through local Ollama.
+See [database experiment and AI setup](docs/kill-database.md) for details.
+
+## Chaos Agent
+
+From the repository root, set up the optional local model and network helper:
+
+```powershell
+docker pull nicolaka/netshoot:v0.13
+./agent/setup-ai.ps1
+```
+
+Preview AI plans without injecting faults, then run the bounded experiment loop:
+
+```powershell
+./agent/run-agent.ps1
+./agent/run-agent.ps1 -Execute -MaxExperiments 3
+```
+
+The agent collects a three-minute baseline, selects from Workshop crash, database
+crash, RabbitMQ crash, and Workshop network delay, validates each plan, and records
+recovery and findings. Outputs are in `agent/runs/` and `chaos-scripts/results/`.
+Use `-RuleBased` explicitly for fixed catalog orchestration without an AI model.
+See [agent setup, safety, and evidence](docs/chaos-agent.md).
+Verified local AI findings and the longer baseline are retained in
+[`docs/evidence/`](docs/evidence/) for team review.
+
+For steady measurements without faults:
+
+```powershell
+./agent/baseline.ps1 -DurationSeconds 180
+```
+
 ## Stop and Restart
 
 From `src`:
@@ -174,10 +223,16 @@ SQL Server uses the Compose-managed `sqlserverdata` volume. Adding `-v` to
 chaos-scripts/
   .gitkeep
   kill-service.ps1          Workshop API crash experiment
+  kill-database.ps1         SQL Server crash experiment
+  analyze-anomalies.ps1     Measured anomalies and optional AI interpretation
+  kill-rabbitmq.ps1         Broker outage
+  network-delay.ps1         Workshop egress delay via tc
   results/                 Generated local evidence (ignored by Git)
 docs/
   .gitkeep
   kill-service.md          Experiment instructions and findings
+  kill-database.md         Database experiment and AI setup
+  chaos-agent.md            Agent setup, safety, and findings
   arc42/                   Original architecture documentation
   ADRs/                    Original architecture decision records
 src/
@@ -189,6 +244,12 @@ src/
   ...                      Background services, tests, and deployment tooling
 LICENSE
 README.md
+agent/
+  run-agent.ps1             AI planning and bounded orchestration
+  baseline.ps1              Steady-state measurements
+  dependencies.json         Service and data-flow map
+  experiments.json          Experiment catalog
+  compose.ai.yml            Optional local AI server
 ```
 
 ## Hackathon Roadmap

@@ -1,0 +1,25 @@
+"TimestampUtc","Phase","Module","StatusCode","OfflinePage","Healthy","LatencyMs","Error"
+"2026-10-10T09:45:50.2316475Z","baseline","CustomerManagement","200","False","True","90.8",
+"2026-10-10T09:45:50.3627381Z","baseline","VehicleManagement","200","False","True","101.6",
+"2026-10-10T09:45:50.4691373Z","baseline","WorkshopManagement","200","False","True","102.7",
+"2026-10-10T09:45:52.7543602Z","baseline","CustomerManagement","200","False","True","1260.1",
+"2026-10-10T09:45:53.8843399Z","baseline","VehicleManagement","200","False","True","1058.7",
+"2026-10-10T09:45:54.8698944Z","baseline","WorkshopManagement","200","False","True","970.1",
+"2026-10-10T09:45:55.9902579Z","baseline","CustomerManagement","200","False","True","100.4",
+"2026-10-10T09:45:56.0814773Z","baseline","VehicleManagement","200","False","True","87.3",
+"2026-10-10T09:45:56.1783183Z","baseline","WorkshopManagement","200","False","True","86.6",
+"2026-10-10T09:45:58.7373914Z","fault","CustomerManagement","200","False","True","71.8",
+"2026-10-10T09:45:58.9369541Z","fault","VehicleManagement","200","False","True","175.8",
+"2026-10-10T09:46:03.9928884Z","fault","WorkshopManagement",,"False","False","5049.6","The operation has timed out."
+"2026-10-10T09:46:05.0801527Z","fault","CustomerManagement","200","False","True","63.7",
+"2026-10-10T09:46:05.1586401Z","fault","VehicleManagement","200","False","True","71.3",
+"2026-10-10T09:46:10.1716517Z","fault","WorkshopManagement",,"False","False","5007","The operation has timed out."
+"2026-10-10T09:46:11.2558604Z","fault","CustomerManagement","200","False","True","67.6",
+"2026-10-10T09:46:11.3258082Z","fault","VehicleManagement","200","False","True","63.7",
+"2026-10-10T09:46:16.3558980Z","fault","WorkshopManagement",,"False","False","5023.1","The operation has timed out."
+"2026-10-10T09:46:17.4240166Z","fault","CustomerManagement","200","False","True","59",
+"2026-10-10T09:46:17.4817880Z","fault","VehicleManagement","200","False","True","46.9",
+"2026-10-10T09:46:20.1455301Z","fault","WorkshopManagement","200","True","False","2656.6",
+"2026-10-10T09:46:21.3860344Z","recovery","CustomerManagement","200","False","True","66",
+"2026-10-10T09:46:21.4462096Z","recovery","VehicleManagement","200","False","True","57.1",
+"2026-10-10T09:46:22.5276383Z","recovery","WorkshopManagement","200","False","True","1068.8",

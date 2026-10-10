@@ -1,0 +1,26 @@
+{
+  "source": "src/docker-compose.yml, docs/arc42, API and background-service configuration",
+  "services": ["webapp", "customermanagementapi", "vehiclemanagementapi", "workshopmanagementapi", "sqlserver", "rabbitmq", "workshopmanagementeventhandler", "notificationservice", "invoiceservice", "timeservice", "auditlogservice", "mailserver", "logserver"],
+  "edges": [
+    {"from":"webapp","to":"customermanagementapi","type":"HTTP"},
+    {"from":"webapp","to":"vehiclemanagementapi","type":"HTTP"},
+    {"from":"webapp","to":"workshopmanagementapi","type":"HTTP"},
+    {"from":"customermanagementapi","to":"sqlserver","type":"SQL"},
+    {"from":"vehiclemanagementapi","to":"sqlserver","type":"SQL"},
+    {"from":"workshopmanagementapi","to":"sqlserver","type":"SQL"},
+    {"from":"workshopmanagementeventhandler","to":"sqlserver","type":"SQL"},
+    {"from":"notificationservice","to":"sqlserver","type":"SQL"},
+    {"from":"invoiceservice","to":"sqlserver","type":"SQL"},
+    {"from":"customermanagementapi","to":"rabbitmq","type":"publish CustomerRegistered"},
+    {"from":"vehiclemanagementapi","to":"rabbitmq","type":"publish VehicleRegistered"},
+    {"from":"workshopmanagementapi","to":"rabbitmq","type":"publish planning/job events"},
+    {"from":"timeservice","to":"rabbitmq","type":"publish DayHasPassed"},
+    {"from":"rabbitmq","to":"workshopmanagementeventhandler","type":"consume events"},
+    {"from":"rabbitmq","to":"notificationservice","type":"consume events"},
+    {"from":"rabbitmq","to":"invoiceservice","type":"consume events"},
+    {"from":"rabbitmq","to":"auditlogservice","type":"consume events"},
+    {"from":"notificationservice","to":"mailserver","type":"SMTP"},
+    {"from":"invoiceservice","to":"mailserver","type":"SMTP"}
+  ],
+  "limitations": "Read-page probes do not validate event delivery or writes. Startup depends_on entries alone do not prove runtime data flow. Seq is logging infrastructure; logging routes must be verified in service configuration."
+}

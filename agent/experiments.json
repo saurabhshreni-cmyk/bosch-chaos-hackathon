@@ -1,0 +1,6 @@
+[
+  {"id":"workshop-crash","target":"workshopmanagementapi","failureType":"Crash","category":"service crash","maxDurationSeconds":30,"defaultDurationSeconds":20,"reason":"Measure whether Workshop failure is isolated from Customer and Vehicle."},
+  {"id":"database-crash","target":"sqlserver","failureType":"Crash","category":"shared dependency outage","maxDurationSeconds":30,"defaultDurationSeconds":20,"reason":"Measure the blast radius and recovery of the shared SQL Server dependency."},
+  {"id":"rabbitmq-crash","target":"rabbitmq","failureType":"Crash","category":"broker outage","maxDurationSeconds":60,"defaultDurationSeconds":30,"reason":"Observe read availability during broker downtime; event loss needs separate tracked write tests."},
+  {"id":"workshop-delay","target":"workshopmanagementapi","failureType":"NetworkDelay","category":"network latency","delayMilliseconds":500,"maxDurationSeconds":30,"defaultDurationSeconds":20,"reason":"Measure response latency under 500 ms egress delay on Workshop API."}
+]

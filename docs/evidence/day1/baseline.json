@@ -1,0 +1,2355 @@
+﻿{
+    "DurationSeconds":  182.3705973,
+    "Healthy":  true,
+    "ModuleStats":  [
+                        {
+                            "Module":  "CustomerManagement",
+                            "Samples":  86,
+                            "Failures":  0,
+                            "ErrorRate":  0,
+                            "MedianMs":  27.01,
+                            "P95Ms":  96.1
+                        },
+                        {
+                            "Module":  "VehicleManagement",
+                            "Samples":  86,
+                            "Failures":  0,
+                            "ErrorRate":  0,
+                            "MedianMs":  22.25,
+                            "P95Ms":  77.66
+                        },
+                        {
+                            "Module":  "WorkshopManagement",
+                            "Samples":  86,
+                            "Failures":  0,
+                            "ErrorRate":  0,
+                            "MedianMs":  26.3,
+                            "P95Ms":  73.09
+                        }
+                    ],
+    "Samples":  [
+                    {
+                        "TimestampUtc":  "2026-10-10T09:41:55.9395460Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  157.17
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:41:55.9717101Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  17.53
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:41:55.9960423Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  24.66
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:41:58.0356110Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  35.12
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:41:58.0597531Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  24.14
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:41:58.0948254Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  34.68
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:00.1213262Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  25.49
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:00.1447738Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  22.71
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:00.1740423Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  29.45
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:02.2019785Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  22.9
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:02.2163962Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  14.73
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:02.2394628Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  22.38
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:04.2754277Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  25.53
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:04.2944513Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  18.78
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:04.3211622Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  26.3
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:06.3540992Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  23.72
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:06.3704795Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  15.76
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:06.3954644Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  25.01
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:08.4361471Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  25.83
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:08.4553848Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  18.71
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:08.4817985Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  26.64
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:10.5214079Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  28.79
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:10.5393629Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  17.49
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:10.5614766Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  22.51
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:12.5989208Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  21.22
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:12.6156512Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  16.88
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:12.6440638Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  27.99
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:14.6610257Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  15.25
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:14.6764627Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  14.62
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:14.6960763Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  20.04
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:16.7269297Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  20.14
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:16.7432332Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  15.16
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:16.7648711Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  22.18
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:18.7954314Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  18.29
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:18.8093190Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  13.8
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:18.8357421Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  25.92
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:20.8686754Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  17.61
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:20.8837104Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  14.95
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:20.9061851Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  22.3
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:22.9282277Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  19.71
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:22.9427487Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  13.64
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:22.9650778Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  22.82
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:24.9932514Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  17.88
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:25.0083020Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  14.7
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:25.0291726Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  21.49
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:27.0677465Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  30.64
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:27.0830443Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  15.82
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:27.1039783Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  20.96
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:29.1310652Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  20.04
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:29.1463788Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  15.06
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:29.1682676Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  21.93
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:31.1888057Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  16.59
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:31.2036145Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  14.47
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:31.2239000Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  20.35
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:33.2582081Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  19.25
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:33.2734167Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  15.24
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:33.2949707Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  21.56
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:35.3186084Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  20.3
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:35.3348847Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  16.15
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:35.3569147Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  21.93
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:37.3869329Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  17.98
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:37.4023509Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  15.16
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:37.4243000Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  22
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:39.4482040Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  17.48
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:39.4655323Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  17.2
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:39.4878846Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  21.87
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:41.5374189Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  43.21
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:41.5576241Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  20.09
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:41.5814741Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  22.78
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:43.6080931Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  16.86
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:43.6251307Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  16.59
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:43.6476143Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  22.06
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:45.6780846Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  19.5
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:45.6917806Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  13.78
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:45.7143958Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  22.28
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:47.7444364Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  18.93
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:47.7578731Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  13.72
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:47.7796345Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  21.61
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:49.8090291Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  19.28
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:49.8229149Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  13.8
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:49.8447732Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  21.14
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:51.8821430Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  22.28
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:51.8995956Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  16.49
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:51.9239941Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  24.75
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:53.9459419Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  19.52
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:53.9649162Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  18.53
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:53.9850703Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  20.5
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:56.0240028Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  26.78
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:56.0461266Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  22.4
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:56.0686652Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  22.64
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:58.1153310Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  37.94
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:58.1428508Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  27.49
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:42:58.1659523Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  22.55
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:00.1968952Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  21.97
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:00.2175567Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  19.95
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:00.2462140Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  28.61
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:02.2773750Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  21.36
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:02.2949039Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  15.5
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:02.3155078Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  21.17
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:04.3518344Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  31.78
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:04.3720298Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  19.99
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:04.4034298Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  31.76
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:06.4287906Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  22.12
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:06.4443648Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  16.42
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:06.4690383Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  23.68
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:08.5181293Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  39.34
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:08.5537100Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  35.96
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:08.5805639Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  26.46
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:10.6333905Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  37.47
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:10.6494663Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  15.93
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:10.6706963Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  21.45
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:12.7163310Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  41.55
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:12.7380352Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  21.33
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:12.7638461Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  25.65
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:14.8035227Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  37.91
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:14.8368928Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  33.18
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:14.8713926Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  34.91
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:16.9169630Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  40.78
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:16.9485119Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  31.06
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:16.9739581Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  26.15
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:18.9954107Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  18.01
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:19.0124890Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  16.72
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:19.0342124Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  22.25
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:21.0672309Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  27.48
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:21.0791141Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  22.24
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:21.1209807Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  31.39
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:23.1680085Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  40.86
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:23.1901219Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  22.25
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:23.2145175Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  24.04
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:25.2581616Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  32.94
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:25.2906198Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  32.36
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:25.3337809Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  42.95
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:27.3695811Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  23.97
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:27.3956985Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  25.86
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:27.4220516Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  26.02
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:29.4540006Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  27.71
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:29.5031189Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  49.12
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:29.5465436Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  43.67
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:31.5886553Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  30.69
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:31.6198834Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  31.41
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:31.6496759Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  29.77
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:33.6756135Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  14.41
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:33.6949576Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  19.35
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:33.7225870Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  26.58
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:35.7519153Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  15.15
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:35.7720547Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  19.53
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:35.7918970Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  19.74
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:37.8235347Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  28.92
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:37.8466821Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  22.59
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:37.8725163Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  26.67
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:39.8966746Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  19.82
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:39.9225138Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  25.84
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:39.9545307Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  31.98
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:41.9774052Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  18.61
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:41.9988310Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  21.46
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:42.0227615Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  23.71
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:44.0680323Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  25.11
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:44.0984439Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  30.64
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:44.1260456Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  26.94
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:46.1570258Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  16.35
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:46.1764086Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  19.34
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:46.1980360Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  21.51
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:48.2279940Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  20.63
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:48.2493672Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  21.19
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:48.2727240Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  23.34
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:50.3347622Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  60.68
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:50.3670542Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  31.94
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:50.4218829Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  54.87
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:52.4424090Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  17.34
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:52.4610337Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  18.89
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:52.4854880Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  24.4
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:54.5088520Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  19.21
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:54.5320140Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  23.37
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:54.5553394Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  22.92
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:56.5951319Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  27.01
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:56.6372753Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  41.17
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:56.6683262Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  31.98
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:58.7322875Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  38.53
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:58.7644361Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  31.47
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:43:58.7954229Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  31.42
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:00.8386707Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  33.74
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:00.8697361Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  30.74
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:00.8989269Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  28.42
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:02.9251708Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  17.29
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:02.9519448Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  26.78
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:02.9835707Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  31.18
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:05.0310614Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  38.44
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:05.0571331Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  26.38
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:05.0911088Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  33.13
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:07.1506697Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  44.82
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:07.1773109Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  27.1
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:07.2055227Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  28.2
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:09.2292383Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  19.02
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:09.2508524Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  22.05
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:09.2793563Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  27.96
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:11.3255162Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  30.46
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:11.3554662Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  29.52
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:11.3829973Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  27.65
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:13.4355751Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  40.02
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:13.4618876Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  26.09
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:13.4853550Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  23.59
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:15.5069340Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  20.25
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:15.5311544Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  23.37
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:15.5589272Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  28.58
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:17.5943547Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  28.47
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:17.6238987Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  29.58
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:17.6670440Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  43.58
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:19.6990879Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  27.38
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:19.7284649Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  29.13
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:19.7538087Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  25.2
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:21.8465060Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  76.18
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:21.8996269Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  53.36
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:21.9640118Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  64
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:24.0438184Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  60.47
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:24.1097513Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  66.48
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:24.2750099Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  165.17
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:26.7014531Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  403.54
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:26.8327303Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  129.99
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:26.9399467Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  107.48
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:29.0866517Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  126.57
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:29.1583949Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  72.38
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:29.2269415Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  67.52
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:31.3123087Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  69.33
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:31.3818562Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  70.34
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:31.4495389Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  66.78
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:33.5135124Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  60.29
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:33.5746090Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  61.18
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:33.6443891Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  69.45
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:35.7847379Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  131.23
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:35.8616201Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  78.2
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:35.9259504Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  62.91
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:38.0329053Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  96.1
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:38.1273048Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  94.98
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:38.2076429Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  79.34
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:40.2836382Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  67.3
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:40.3619605Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  78.59
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:40.4593718Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  97.29
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:42.5323417Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  63.62
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:42.6041764Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  71.64
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:42.6677775Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  63.41
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:44.7512439Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  70.74
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:44.8289770Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  77.66
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:44.9024389Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  73.09
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:46.9710099Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  65.14
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:47.0329341Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  61
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:47.1026347Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  69.75
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:49.1738718Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  65.22
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:49.2383009Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  63.88
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:49.2989208Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  60.52
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:51.3722844Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  69.68
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:51.4469817Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  74.09
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:51.5028848Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  56.19
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:53.5904133Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  71.56
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:53.6493763Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  58.28
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:53.7203554Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  70.89
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:55.7776872Z",
+                        "Module":  "CustomerManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  53.32
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:55.8513081Z",
+                        "Module":  "VehicleManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  73.45
+                    },
+                    {
+                        "TimestampUtc":  "2026-10-10T09:44:55.9176066Z",
+                        "Module":  "WorkshopManagement",
+                        "Phase":  "baseline",
+                        "Healthy":  true,
+                        "StatusCode":  200,
+                        "OfflinePage":  false,
+                        "LatencyMs":  65.49
+                    }
+                ],
+    "Limitations":  "Sequential fixed-interval read probes; not a production load test."
+}

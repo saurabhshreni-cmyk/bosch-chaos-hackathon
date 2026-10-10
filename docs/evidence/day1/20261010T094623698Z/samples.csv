@@ -1,0 +1,18 @@
+"TimestampUtc","Phase","Module","StatusCode","OfflinePage","Healthy","LatencyMs","Error"
+"2026-10-10T09:46:24.4625584Z","baseline","CustomerManagement","200","False","True","51.5",
+"2026-10-10T09:46:24.5412414Z","baseline","VehicleManagement","200","False","True","70.2",
+"2026-10-10T09:46:24.6024614Z","baseline","WorkshopManagement","200","False","True","58.3",
+"2026-10-10T09:46:25.7109604Z","baseline","CustomerManagement","200","False","True","104.2",
+"2026-10-10T09:46:25.7877158Z","baseline","VehicleManagement","200","False","True","71.9",
+"2026-10-10T09:46:25.8597730Z","baseline","WorkshopManagement","200","False","True","69.5",
+"2026-10-10T09:46:26.9296822Z","baseline","CustomerManagement","200","False","True","61.9",
+"2026-10-10T09:46:26.9816338Z","baseline","VehicleManagement","200","False","True","48.2",
+"2026-10-10T09:46:27.0652783Z","baseline","WorkshopManagement","200","False","True","75.8",
+"2026-10-10T09:46:33.9903504Z","fault","CustomerManagement",,"False","False","5019.1","The operation has timed out."
+"2026-10-10T09:46:39.0127691Z","fault","VehicleManagement",,"False","False","5014.8","The operation has timed out."
+"2026-10-10T09:46:43.5998844Z","recovery","CustomerManagement","200","True","False","3952.6",
+"2026-10-10T09:46:48.6045414Z","recovery","VehicleManagement",,"False","False","5002.1","The operation has timed out."
+"2026-10-10T09:46:52.7548296Z","recovery","WorkshopManagement","200","False","True","4146.9",
+"2026-10-10T09:46:54.9161078Z","recovery","CustomerManagement","200","False","True","148.8",
+"2026-10-10T09:46:55.0285954Z","recovery","VehicleManagement","200","False","True","110.4",
+"2026-10-10T09:46:55.0624061Z","recovery","WorkshopManagement","200","False","True","32.9",

@@ -1,0 +1,12 @@
+name: pitstop-chaos-ai
+services:
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "127.0.0.1:11434:11434"
+    volumes:
+      - models:/root/.ollama
+    mem_limit: 3g
+    cpus: 2
+volumes:
+  models:
