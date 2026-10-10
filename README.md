@@ -24,7 +24,19 @@ Group repository: https://github.com/saurabhshreni-cmyk/bosch-chaos-hackathon
 The controller supports AI-selected plans through local Ollama, strict plan
 validation, bounded execution, recovery checks, and findings reports. A model
 must be installed before AI mode can run. An explicit rule-based mode is available
-for testing without AI. A dashboard and automated fixes remain future work.
+for testing without AI. A local dashboard displays agent progress and evidence;
+automated fixes remain future work.
+
+## Day-2 Submission
+
+See [submission package](submission/README.md) for the captioned demo, one-page
+architecture, real ranked findings, team form and verification evidence.
+[Day-2 reproduction](docs/day2.md) covers ranked AI planning, the bounded
+combined crash-plus-traffic tool, and the applied fix with matched retest.
+The local dashboard shows the entire agent lifecycle and retained evidence.
+AI reasons and findings require human review; the read-probe score is a
+transparent heuristic, not an AI-certified SLA. Submission to the instructor's
+portal remains a separate human step.
 
 ## Team
 
@@ -46,7 +58,36 @@ for testing without AI. A dashboard and automated fixes remain future work.
 - Free host ports: 7005, 1434, 5672, 15672, 4000, 25, and 5341.
 
 The Docker builds install application toolchains inside the images. A local
-.NET SDK or Node.js installation is not required for this workflow.
+.NET SDK or Node.js installation is not required for the Docker application.
+The optional dashboard requires Node.js 22 or newer and npm.
+
+## Agent Dashboard
+
+From the repository root:
+
+```powershell
+cd dashboard
+npm install
+npm start
+```
+
+Open the address printed in the terminal, normally
+[Chaos Dashboard](http://127.0.0.1:7010). It shows real session history, agent
+stages, plans, baseline and fault latency, dependency connections, recovery,
+anomalies, and ranked AI findings. New agent runs also publish live snapshots.
+
+Use **Preview plan** to observe baseline collection and planning without faults.
+**Run experiments** requires explicit sandbox confirmation. **Emergency stop**
+activates the runner's existing kill switch; it does not forcibly terminate the
+process. See [dashboard documentation](docs/dashboard.md) for setup, safety, and
+demo steps.
+
+On Windows with script execution blocked, use `npm.cmd install` and
+`npm.cmd start`. Run PowerShell files with a process-local bypass, for example:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File agent/run-agent.ps1
+```
 
 ## Run the Application
 
@@ -55,6 +96,7 @@ Clone the group repository. If you already have it, use your existing directory.
 ```powershell
 git clone https://github.com/saurabhshreni-cmyk/bosch-chaos-hackathon.git
 cd bosch-chaos-hackathon
+git switch day2-submission
 cd src
 ```
 

@@ -4,6 +4,10 @@ $scripts = Join-Path $temporary 'chaos-scripts'
 $testState = @{ MutationAttempted = $false; ForeignContainer = $false }
 New-Item -ItemType Directory -Path $scripts -Force | Out-Null
 Copy-Item -LiteralPath (Join-Path (Split-Path $PSScriptRoot -Parent) 'kill-service.ps1') -Destination $scripts
+$telemetryDirectory = Join-Path $temporary 'agent'
+New-Item -ItemType Directory -Path $telemetryDirectory -Force | Out-Null
+Copy-Item -LiteralPath (Join-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) 'agent/Telemetry.psm1') -Destination $telemetryDirectory
+$progressPath = Join-Path $temporary 'live-experiment.json'
 
 function docker {
     $global:LASTEXITCODE = 0
@@ -33,12 +37,15 @@ function Start-Sleep {
 
 try {
     $failure = $null
-    try { & (Join-Path $scripts 'kill-service.ps1') -BaselineRounds 1 | Out-Null }
+    try { & (Join-Path $scripts 'kill-service.ps1') -BaselineRounds 1 -ProgressPath $progressPath | Out-Null }
     catch { $failure = $_.Exception.Message }
     if ($failure -notlike '*activated during baseline*' -or $testState.MutationAttempted) {
         throw "STOP guard failed: $failure"
     }
     Write-Host 'STOP during baseline prevents injection (Docker and HTTP mocked).'
+    $snapshot = Get-Content -LiteralPath $progressPath -Raw | ConvertFrom-Json
+    if ($snapshot.Stage -ne 'Preflight baseline' -or @($snapshot.Samples).Count -ne 3 -or $snapshot.Restored) { throw 'Incorrect live preflight snapshot.' }
+    Write-Host 'Live snapshots retain measured samples without bypassing STOP.'
     Remove-Item -LiteralPath (Join-Path $scripts 'STOP')
     $testState.ForeignContainer = $true
     $failure = $null

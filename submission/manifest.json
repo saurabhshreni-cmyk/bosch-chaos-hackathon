@@ -1,0 +1,14 @@
+{
+  "GeneratedUtc": "2026-10-10T17:48:30.991Z",
+  "AiSuite": "20261010T172616441Z",
+  "CombinedSuite": "20261010T174030496Z",
+  "CleanValidation": "20261010T172435409Z",
+  "Deliverables": [
+    "../README.md",
+    "demo.webm",
+    "architecture.pdf",
+    "findings.md",
+    "team-form.json"
+  ],
+  "PortalSubmitted": false
+}

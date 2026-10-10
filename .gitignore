@@ -269,3 +269,8 @@ dotnet-install.sh
 .containerdata
 # Nested local clone used for scratch comparison - not part of the repo
 /pitstop/
+
+# Temporary clean-start configuration includes resolved sandbox credentials.
+/submission/validation/
+/submission/video-work/
+/submission/*.zip

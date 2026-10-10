@@ -1,0 +1,73 @@
+{
+  "AiSession": "20261010T172616441Z",
+  "CombinedSession": "20261010T174030496Z",
+  "ElapsedSeconds": 88.986,
+  "Captions": [
+    {
+      "start": 4.737,
+      "end": 9.737,
+      "text": "Team 28: Pitstop is healthy. We test resilience only in our own local Docker sandbox."
+    },
+    {
+      "start": 10.121,
+      "end": 15.121,
+      "text": "Dependency map: three APIs share SQL Server; RabbitMQ connects the background services."
+    },
+    {
+      "start": 15.254,
+      "end": 22.253999999999998,
+      "text": "Recorded real Qwen run: the AI ranked experiments from this map and the healthy baseline. All three ran and recovered."
+    },
+    {
+      "start": 22.612,
+      "end": 27.612,
+      "text": "Live safety demonstration: fixed-order Workshop crash plus bounded GET traffic. Two connections, 10 requests/sec, no writes."
+    },
+    {
+      "start": 28.17,
+      "end": 32.17,
+      "text": "The live agent collects a healthy baseline, validates the allowlisted tool, then begins one bounded experiment."
+    },
+    {
+      "start": 41.548,
+      "end": 44.548,
+      "text": "Failure is real: Workshop shows the offline fallback. HTTP 200 alone is not a healthy result."
+    },
+    {
+      "start": 44.63,
+      "end": 47.63,
+      "text": "Customer remains available: this single-service failure is isolated. The runner measures content and response times."
+    },
+    {
+      "start": 48.68,
+      "end": 51.68,
+      "text": "Emergency STOP requests early rollback. The independent watchdog and threshold limits remain armed."
+    },
+    {
+      "start": 55.674,
+      "end": 60.674,
+      "text": "Workshop is healthy again. Verified recovery and the traffic measurements are retained as JSON and CSV."
+    },
+    {
+      "start": 61.452,
+      "end": 67.452,
+      "text": "The completed AI suite covers service crash, shared database outage and network delay. Threshold rollback and recovery are recorded."
+    },
+    {
+      "start": 67.636,
+      "end": 74.636,
+      "text": "Real model findings rank weaknesses and recommend fixes, linked to measured anomaly IDs. AI explanations need human review."
+    },
+    {
+      "start": 74.651,
+      "end": 80.651,
+      "text": "Fix and retest: a two-second request budget gives faster fallback without replaying writes. Faster failure is not restored availability."
+    },
+    {
+      "start": 80.67,
+      "end": 85.67,
+      "text": "Submission includes source, this captioned demo, one-page architecture, ranked findings and Team 28 details."
+    }
+  ],
+  "Note": "Real live combined fault and STOP recovery; AI ranking/findings shown from a previous completed real model run."
+}

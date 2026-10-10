@@ -1,0 +1,57 @@
+﻿{
+    "Passed":  true,
+    "VerifiedUtc":  "2026-10-10T17:49:47.2285066Z",
+    "Checks":  [
+                   {
+                       "Check":  "plan-validation.tests.ps1",
+                       "Passed":  true,
+                       "Kind":  "Mocked/unit"
+                   },
+                   {
+                       "Check":  "planner-response.tests.ps1",
+                       "Passed":  true,
+                       "Kind":  "Mocked/unit"
+                   },
+                   {
+                       "Check":  "ranking-evidence.tests.ps1",
+                       "Passed":  true,
+                       "Kind":  "Mocked/unit"
+                   },
+                   {
+                       "Check":  "analyze-anomalies.tests.ps1",
+                       "Passed":  true,
+                       "Kind":  "Mocked/unit"
+                   },
+                   {
+                       "Check":  "stop-before-injection.tests.ps1",
+                       "Passed":  true,
+                       "Kind":  "Mocked/unit"
+                   },
+                   {
+                       "Check":  "Dashboard API and retained evidence: 5 tests",
+                       "Passed":  true,
+                       "Kind":  "Unit/API"
+                   },
+                   {
+                       "Check":  "Desktop/mobile and empty-history browser tests",
+                       "Passed":  true,
+                       "Kind":  "Browser; optional real preview test skipped"
+                   },
+                   {
+                       "Check":  "Dashboard npm audit",
+                       "Passed":  true,
+                       "Kind":  "Dependency audit"
+                   },
+                   {
+                       "Check":  "Healthy result, one write attempt and timeout fallback",
+                       "Passed":  true,
+                       "Kind":  ".NET console regression; reuse binaries compiled earlier this session"
+                   },
+                   {
+                       "Check":  "Five deliverables, video playback and one-page PDF",
+                       "Passed":  true,
+                       "Kind":  "Real artifact verification"
+                   }
+               ],
+    "Limitations":  "Legacy transitive NuGet vulnerability warnings remain. No production safety, write-fault durability, model-quality or portal submission certification."
+}

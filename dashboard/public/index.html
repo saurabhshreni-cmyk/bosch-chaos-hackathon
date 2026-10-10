@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Pitstop | Chaos Console</title>
+  <link rel="icon" type="image/png" href="/garage.png">
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/lucide.js" defer></script>
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <header class="header">
+    <a class="brand" href="/" aria-label="Pitstop Chaos Console"><img src="/garage.png" alt="Pitstop garage"><span><strong>Pitstop</strong><small>CHAOS CONSOLE / TEAM 28</small></span></a>
+    <div class="header-actions"><span class="sandbox"><i data-lucide="shield-check"></i> Local sandbox</span><a class="app-link" href="http://localhost:7005" target="_blank" rel="noreferrer">Open garage <i data-lucide="arrow-up-right"></i></a><button id="stop" class="danger"><i data-lucide="octagon-x"></i> Emergency stop</button></div>
+  </header>
+  <div id="connection" class="connection" role="status" hidden></div>
+  <div id="stop-banner" class="stop-banner" hidden><span><strong>STOP is active.</strong> Restoration is requested; new runs are blocked.</span><button id="reset-stop">Clear STOP</button></div>
+  <div class="layout">
+    <aside class="history"><div class="aside-heading"><h2>Sessions</h2><span id="session-count"></span></div><select id="mobile-session" aria-label="Session history"></select><div id="session-list"></div><div class="aside-footer"><i data-lucide="git-branch"></i> Sandbox evidence<br><span>Recorded runs, not simulations</span></div></aside>
+    <main>
+      <div class="page-title"><div><div class="eyebrow">EXPERIMENT OPERATIONS</div><h1>Agent overview</h1><div id="session-label" class="muted">Connecting to the local agent...</div></div><div class="title-actions"><label class="live-toggle"><input id="live" type="checkbox" checked><span class="live-dot"></span> Live updates</label><button id="refresh" class="icon-button" title="Refresh evidence" aria-label="Refresh evidence"><i data-lucide="refresh-cw"></i></button><button id="download" class="icon-button" title="Download session evidence" aria-label="Download session evidence"><i data-lucide="download"></i></button></div></div>
+      <div id="status-line" class="status-line"></div>
+      <nav class="tabs" aria-label="Dashboard views"><button data-tab="overview" class="selected"><i data-lucide="activity"></i> Overview</button><button data-tab="dependencies"><i data-lucide="network"></i> Dependencies</button><button data-tab="evidence"><i data-lucide="file-chart-column"></i> Evidence & findings</button></nav>
+      <div class="workspace">
+        <div class="observations"><section id="metrics" class="metric-band"></section><div id="view"></div></div>
+        <aside class="controls">
+          <div class="section-heading"><h2>Run configuration</h2><i data-lucide="sliders-horizontal"></i></div>
+          <form id="run-form">
+            <fieldset><legend>Planner</legend><div class="segmented"><label><input type="radio" name="engine" value="ai" checked><span><i data-lucide="brain-circuit"></i> Local AI</span></label><label><input type="radio" name="engine" value="rules"><span><i data-lucide="list-ordered"></i> Fixed order</span></label></div></fieldset>
+            <label class="field">Model<select id="model"><option>qwen2.5:1.5b</option></select></label><div id="model-status" class="model-status">Checking model server...</div>
+            <div class="number-fields"><label class="field">Baseline <span class="input-unit"><input id="baseline" type="number" min="3" max="600" value="180" required><span>sec</span></span></label><label class="field">Experiment budget<input id="budget" type="number" min="1" max="4" value="3" required></label></div>
+            <fieldset class="targets"><legend>Allowed experiments</legend><label><input type="checkbox" name="experiment" value="workshop-crash" checked><i data-lucide="server-crash"></i><span>Workshop crash<small>API / up to 30 sec</small></span></label><label><input type="checkbox" name="experiment" value="database-crash" checked><i data-lucide="database"></i><span>Database crash<small>Shared dependency / up to 30 sec</small></span></label><label><input type="checkbox" name="experiment" value="workshop-delay" checked><i data-lucide="timer"></i><span>Network delay<small>Workshop / 500 ms</small></span></label><label><input type="checkbox" name="experiment" value="rabbitmq-crash"><i data-lucide="workflow"></i><span>RabbitMQ crash<small>Broker / up to 60 sec</small></span></label><label><input type="checkbox" name="experiment" value="workshop-crash-with-load"><i data-lucide="activity"></i><span>Crash + traffic<small>Two connections / 10 GETs per sec</small></span></label></fieldset>
+            <div class="run-actions"><button id="preview" type="submit"><i data-lucide="scan-eye"></i> Preview plan</button><button id="execute" type="button" class="primary"><i data-lucide="play"></i> Run experiments</button></div><div id="action-message" role="status" class="action-message"></div>
+          </form>
+          <section class="safety"><h3><i data-lucide="shield-check"></i> Safety guardrails</h3><dl><div><dt>Scope</dt><dd>This checkout only</dd></div><div><dt>Concurrency</dt><dd>One experiment</dd></div><div><dt>Rollback</dt><dd>Watchdog + thresholds</dd></div><div><dt>Recovery gate</dt><dd>All three module pages</dd></div><div><dt>Kill switch</dt><dd id="switch-status">Checking...</dd></div></dl></section>
+          <section class="runtime"><h3>Infrastructure</h3><div id="infrastructure"></div></section>
+        </aside>
+      </div>
+    </main>
+  </div>
+  <dialog id="confirm"><form method="dialog"><div class="modal-title"><i data-lucide="triangle-alert"></i><h2>Execute controlled failures?</h2></div><p id="confirm-summary"></p><p>Container crashes or network delay will temporarily affect the local garage. Existing rollback controls remain active.</p><label class="confirm-check"><input id="sandbox-confirm" type="checkbox"> I confirm this is my own local sandbox.</label><div class="modal-actions"><button value="cancel">Cancel</button><button id="confirm-run" value="execute" class="primary" disabled><i data-lucide="play"></i> Execute</button></div></form></dialog>
+  <div id="toast" class="toast" role="status" hidden></div>
+</body>
+</html>

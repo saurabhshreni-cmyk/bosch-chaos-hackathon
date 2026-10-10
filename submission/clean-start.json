@@ -1,0 +1,121 @@
+{
+  "validation": {
+    "RunId": "20261010T172435409Z",
+    "Project": "pitstopday2-20261010t172435409z",
+    "Url": "http://127.0.0.1:7015",
+    "FreshVolumes": true,
+    "OriginalDataUntouched": true,
+    "StartedUtc": "2026-10-10T17:24:36.2668397Z",
+    "Passed": true,
+    "Services": [
+      {
+        "Service": "auditlogservice",
+        "State": "running",
+        "Health": "",
+        "Image": "pitstop/auditlogservice:1.0"
+      },
+      {
+        "Service": "customermanagementapi",
+        "State": "running",
+        "Health": "healthy",
+        "Image": "pitstop/customermanagementapi:1.0"
+      },
+      {
+        "Service": "invoiceservice",
+        "State": "running",
+        "Health": "",
+        "Image": "pitstop/invoiceservice:1.0"
+      },
+      {
+        "Service": "logserver",
+        "State": "running",
+        "Health": "",
+        "Image": "datalust/seq:latest"
+      },
+      {
+        "Service": "mailserver",
+        "State": "running",
+        "Health": "",
+        "Image": "maildev/maildev:1.1.0"
+      },
+      {
+        "Service": "notificationservice",
+        "State": "running",
+        "Health": "",
+        "Image": "pitstop/notificationservice:1.0"
+      },
+      {
+        "Service": "rabbitmq",
+        "State": "running",
+        "Health": "healthy",
+        "Image": "rabbitmq:3-management-alpine"
+      },
+      {
+        "Service": "sqlserver",
+        "State": "running",
+        "Health": "healthy",
+        "Image": "mcr.microsoft.com/mssql/server:2022-latest"
+      },
+      {
+        "Service": "timeservice",
+        "State": "running",
+        "Health": "",
+        "Image": "pitstop/timeservice:1.0"
+      },
+      {
+        "Service": "vehiclemanagementapi",
+        "State": "running",
+        "Health": "healthy",
+        "Image": "pitstop/vehiclemanagementapi:1.0"
+      },
+      {
+        "Service": "webapp",
+        "State": "running",
+        "Health": "healthy",
+        "Image": "pitstop/webapp:1.0"
+      },
+      {
+        "Service": "workshopmanagementapi",
+        "State": "running",
+        "Health": "healthy",
+        "Image": "pitstop/workshopmanagementapi:1.0"
+      },
+      {
+        "Service": "workshopmanagementeventhandler",
+        "State": "running",
+        "Health": "",
+        "Image": "pitstop/workshopmanagementeventhandler:1.0"
+      }
+    ],
+    "Pages": [
+      {
+        "Module": "CustomerManagement",
+        "Healthy": true
+      },
+      {
+        "Module": "VehicleManagement",
+        "Healthy": true
+      },
+      {
+        "Module": "WorkshopManagement",
+        "Healthy": true
+      }
+    ],
+    "Error": null,
+    "FinishedUtc": "2026-10-10T17:25:38.5451345Z"
+  },
+  "workflow": {
+    "StartedUtc": "2026-10-10T17:25:32.371Z",
+    "Url": "http://127.0.0.1:7015",
+    "Customer": "Team28 Demo 131703",
+    "License": "HAC-131-703",
+    "Passed": true,
+    "Steps": [
+      "Customer registered",
+      "Vehicle registered",
+      "Maintenance planned",
+      "Job completed"
+    ],
+    "FinishedUtc": "2026-10-10T17:25:37.002Z"
+  }
+}

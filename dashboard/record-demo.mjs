@@ -1,0 +1,79 @@
+import { chromium } from '@playwright/test';
+import { mkdir,writeFile } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
+const root=path.dirname(path.dirname(fileURLToPath(import.meta.url))),out=path.join(root,'submission');
+const aiSession=process.argv[2];
+if(!/^\d{8}T\d{9}Z$/.test(aiSession||''))throw new Error('Select a completed AI evidence session.');
+await mkdir(path.join(out,'video-work'),{recursive:true});
+const browser=await chromium.launch({channel:'msedge',headless:true});
+const context=await browser.newContext({viewport:{width:1280,height:720},recordVideo:{dir:path.join(out,'video-work'),size:{width:1280,height:720}}});
+const page=await context.newPage(),video=page.video(),captions=[],started=Date.now();
+let combinedId;
+page.setDefaultTimeout(15000);
+const caption=async(text,seconds=5)=>{
+  const at=(Date.now()-started)/1000;captions.push({start:at,end:at+seconds,text});
+  await page.evaluate(text=>{
+    let box=document.getElementById('demo-caption');
+    if(!box){box=document.createElement('div');box.id='demo-caption';document.body.append(box);}
+    Object.assign(box.style,{position:'fixed',bottom:'14px',left:'3%',width:'94%',padding:'14px 20px',background:'#202528',color:'white',font:'18px Arial',lineHeight:'1.4',borderLeft:'4px solid #007f79',zIndex:'2147483647',pointerEvents:'none'});box.textContent=text;
+  },text);await page.waitForTimeout(seconds*1000);
+};
+const state=()=>context.request.get('http://127.0.0.1:7010/api/state').then(r=>r.json());
+const waitUntil=async(test,seconds=40)=>{const limit=Date.now()+seconds*1000;while(Date.now()<limit){const s=await state();if(test(s))return s;await page.waitForTimeout(500);}throw new Error('Demo stage did not arrive within its bound.');};
+try{
+  const initial=await waitUntil(s=>s.locks.checked&&!s.locks.error&&!s.job?.running&&!s.locks.Agent&&!s.locks.Experiment,12);
+  if(initial.stop)throw new Error('Wait for idle recovered sandbox with STOP cleared.');
+  const history=await context.request.get(`http://127.0.0.1:7010/api/state?session=${aiSession}`).then(r=>r.json());
+  if(history.selected?.Stage!=='Completed'||!history.selected.Model||history.selected.experiments.length<3)throw new Error('Need completed three-experiment AI evidence.');
+  await page.goto('http://127.0.0.1:7005/WorkshopManagement');
+  await caption('Team 28: Pitstop is healthy. We test resilience only in our own local Docker sandbox.');
+  await page.goto('http://127.0.0.1:7010');await page.locator(`[data-session="${aiSession}"]`).click();
+  await page.locator('[data-tab="dependencies"]').click();
+  await caption('Dependency map: three APIs share SQL Server; RabbitMQ connects the background services.');
+  await page.locator('[data-tab="overview"]').click();
+  await page.getByRole('heading',{name:'AI experiment ranking',exact:true}).scrollIntoViewIfNeeded();
+  await caption('Recorded real Qwen run: the AI ranked experiments from this map and the healthy baseline. All three ran and recovered.',7);
+  await page.getByText('Fixed order',{exact:true}).click();
+  await page.locator('#baseline').fill('3');await page.locator('#budget').fill('1');
+  for(const id of ['workshop-crash','database-crash','workshop-delay','rabbitmq-crash'])await page.locator(`input[name="experiment"][value="${id}"]`).uncheck();
+  await page.locator('input[name="experiment"][value="workshop-crash-with-load"]').check();
+  await page.locator('#execute').click();await page.locator('#sandbox-confirm').check();
+  await caption('Live safety demonstration: fixed-order Workshop crash plus bounded GET traffic. Two connections, 10 requests/sec, no writes.');
+  const response=page.waitForResponse(r=>r.url().endsWith('/api/run')&&r.request().method()==='POST');
+  await page.locator('#confirm-run').click();
+  const launched=await response;if(launched.status()!==202)throw new Error('Live execution rejected.');combinedId=(await launched.json()).id;
+  await page.evaluate(()=>window.scrollTo(0,0));
+  await caption('The live agent collects a healthy baseline, validates the allowlisted tool, then begins one bounded experiment.',4);
+  await waitUntil(s=>s.selected?.RunId===combinedId&&s.selected.liveExperiment?.Stage==='Fault active',45);
+  await page.goto('http://127.0.0.1:7005/WorkshopManagement');
+  if(!/module is offline|management\s*-\s*offline/i.test(await page.content()))throw new Error('Live Workshop outage was not visible.');
+  await caption('Failure is real: Workshop shows the offline fallback. HTTP 200 alone is not a healthy result.',3);
+  await page.goto('http://127.0.0.1:7005/CustomerManagement');
+  if(/module is offline|management\s*-\s*offline/i.test(await page.content()))throw new Error('Unexpected Customer outage.');
+  await caption('Customer remains available: this single-service failure is isolated. The runner measures content and response times.',3);
+  await page.goto('http://127.0.0.1:7010');await page.locator(`[data-session="${combinedId}"]`).click();
+  await page.locator('#stop').click();
+  await caption('Emergency STOP requests early rollback. The independent watchdog and threshold limits remain armed.',3);
+  const finished=await waitUntil(s=>!s.job?.running&&s.selected?.RunId===combinedId&&s.selected.Stage==='Completed',40);
+  if(!finished.selected.experiments[0]?.Recovered||finished.selected.experiments[0]?.report?.Load?.Error)throw new Error('Combined demonstration did not recover cleanly.');
+  await page.goto('http://127.0.0.1:7005/WorkshopManagement');
+  if(/module is offline|management\s*-\s*offline/i.test(await page.content()))throw new Error('Recovery page is still offline.');
+  await caption('Workshop is healthy again. Verified recovery and the traffic measurements are retained as JSON and CSV.',5);
+  await page.goto('http://127.0.0.1:7010');await page.locator(`[data-session="${aiSession}"]`).click();
+  await page.getByRole('heading',{name:'Experiment results',exact:true}).scrollIntoViewIfNeeded();
+  await caption('The completed AI suite covers service crash, shared database outage and network delay. Threshold rollback and recovery are recorded.',6);
+  await page.locator('[data-tab="evidence"]').click();
+  await page.getByRole('heading',{name:'Ranked AI findings',exact:true}).scrollIntoViewIfNeeded();
+  await caption('Real model findings rank weaknesses and recommend fixes, linked to measured anomaly IDs. AI explanations need human review.',7);
+  await caption('Fix and retest: a two-second request budget gives faster fallback without replaying writes. Faster failure is not restored availability.',6);
+  await caption('Submission includes source, this captioned demo, one-page architecture, ranked findings and Team 28 details.',5);
+  await page.locator('#reset-stop').click();
+}catch(error){
+  if(combinedId){const s=await state();await context.request.post('http://127.0.0.1:7010/api/stop',{headers:{Origin:'http://127.0.0.1:7010','X-Dashboard-Token':s.token},data:{}}).catch(()=>{});}
+  throw error;
+}finally{await context.close();await video.saveAs(path.join(out,'demo.webm'));await browser.close();}
+const stamp=n=>{const m=Math.floor(n/60),s=Math.floor(n%60),ms=Math.floor((n%1)*1000);return `00:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${String(ms).padStart(3,'0')}`;};
+await writeFile(path.join(out,'demo.vtt'),'WEBVTT\n\n'+captions.map((c,i)=>`${i+1}\n${stamp(c.start)} --> ${stamp(c.end)}\n${c.text}\n`).join('\n'));
+await writeFile(path.join(out,'demo.json'),JSON.stringify({AiSession:aiSession,CombinedSession:combinedId,ElapsedSeconds:(Date.now()-started)/1000,Captions:captions,Note:'Real live combined fault and STOP recovery; AI ranking/findings shown from a previous completed real model run.'},null,2));
+console.log(`Captioned recording saved. Combined session: ${combinedId}`);

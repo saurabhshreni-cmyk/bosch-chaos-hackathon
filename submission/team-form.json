@@ -1,0 +1,32 @@
+{
+  "Team": "Team No. 28",
+  "Members": [
+    "Saurabh Dwadesh Shreni",
+    "Arpit Pal",
+    "Tigisha P. Pradhan",
+    "Vansh Makhija",
+    "Omkar Singh"
+  ],
+  "Repository": "https://github.com/saurabhshreni-cmyk/bosch-chaos-hackathon",
+  "Application": "Pitstop (Apache-2.0)",
+  "Tools": [
+    "Docker Desktop / Docker Compose",
+    "PowerShell",
+    "Node.js",
+    "Ollama",
+    "Microsoft Edge"
+  ],
+  "Models": [
+    "qwen2.5:1.5b"
+  ],
+  "Libraries": [
+    "Polly / existing .NET libraries",
+    "autocannon 8 (MIT)",
+    "lucide 1.55 (ISC)",
+    "Playwright 1.64 (Apache-2.0)"
+  ],
+  "Data": "Synthetic local garage workflow plus local read-probe measurements; no external dataset.",
+  "SubmissionPortal": null,
+  "SubmissionDeadline": "2026-10-11; exact time not supplied",
+  "Submitted": false
+}

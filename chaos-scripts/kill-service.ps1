@@ -9,11 +9,14 @@ param(
     [ValidateRange(1, 10)][int]$BaselineRounds = 3,
     [ValidateRange(1, 30000)][int]$MaxUnaffectedLatencyMs = 3000,
     [ValidateRange(10, 180)][int]$RecoveryTimeoutSeconds = 90,
-    [ref]$ResultReportPath
+    [ref]$ResultReportPath,
+    [string]$ProgressPath,
+    [switch]$ConcurrentLoad
 )
 
 $ErrorActionPreference = 'Stop'
 $repo = Split-Path $PSScriptRoot -Parent
+if ($ProgressPath) { Import-Module (Join-Path $repo 'agent/Telemetry.psm1') -Force }
 $composeFile = Join-Path $repo 'src/docker-compose.yml'
 $stopFile = Join-Path $PSScriptRoot 'STOP'
 $runId = [DateTime]::UtcNow.ToString('yyyyMMddTHHmmssfffZ')
@@ -36,6 +39,22 @@ $lock = $null
 $netImage = 'nicolaka/netshoot:v0.13'
 $brokerBefore = $null
 $brokerAfter = $null
+$liveStage = 'Preflight baseline'
+$loadJob = $null
+$loadResult = $null
+
+function Write-LiveProgress {
+    if ($ProgressPath) {
+        Write-AgentSnapshot -Path $ProgressPath -Value ([ordered]@{
+            RunId = $runId; TargetService = $TargetService; FailureType = $FailureType
+            Stage = $liveStage; UpdatedUtc = [DateTime]::UtcNow.ToString('o')
+            RequestedDurationSeconds = $DurationSeconds; FaultStartedUtc = $faultAt
+            RollbackReason = $reason; Restored = $restored; Recovered = $recovered
+            Samples = @($samples.ToArray())
+            ConcurrentLoad = [bool]$ConcurrentLoad
+        })
+    }
+}
 
 function Invoke-Docker {
     param([string[]]$DockerArgs)
@@ -66,6 +85,7 @@ function Measure-Module {
         Error = $errorText
     }
     $samples.Add($sample)
+    Write-LiveProgress
     Write-Host "$Phase $Module healthy=$healthy status=$status latency=$($sample.LatencyMs)ms"
     return $sample
 }
@@ -91,6 +111,11 @@ try {
 try {
     if (Test-Path $stopFile) { throw "Remove $stopFile before starting a new experiment." }
     if ($FailureType -eq 'NetworkDelay' -and $TargetService -ne 'workshopmanagementapi') { throw 'Network delay is allowed only on Workshop API.' }
+    if ($ConcurrentLoad -and ($TargetService -ne 'workshopmanagementapi' -or $FailureType -ne 'Crash' -or $DurationSeconds -lt 5 -or $DurationSeconds -gt 30)) { throw 'Combined load is allowed only with a 5-30 second Workshop crash.' }
+    if ($ConcurrentLoad) {
+        $node = (Get-Command node.exe -ErrorAction Stop).Source
+        if (-not (Test-Path (Join-Path $repo 'dashboard/node_modules/autocannon'))) { throw 'Install dashboard dependencies before combined load.' }
+    }
     $context = (Invoke-Docker -DockerArgs @('context', 'show') | Out-String).Trim()
     $endpoint = (Invoke-Docker -DockerArgs @('context', 'inspect', $context, '--format', '{{.Endpoints.docker.Host}}') | Out-String).Trim()
     if ($env:DOCKER_HOST -or $endpoint -notmatch '^npipe://') { throw 'This experiment requires a local Windows Docker named-pipe context.' }
@@ -131,6 +156,20 @@ try {
     }
 
     if (Test-Path $stopFile) { throw 'Manual kill switch activated during baseline. No fault was injected.' }
+    if ($ConcurrentLoad) {
+        $loadJob = Start-Job -ArgumentList $node, (Join-Path $repo 'dashboard/read-load.mjs'), $DurationSeconds, (Join-Path $outputDir 'load.json') -ScriptBlock {
+            param($executable,$script,$duration,$output)
+            & $executable $script $duration $output
+            if ($LASTEXITCODE -ne 0) { throw 'Bounded load worker failed.' }
+        }
+        $readyDeadline = [DateTime]::UtcNow.AddSeconds(30)
+        while (-not (Test-Path (Join-Path $outputDir 'load-ready.json'))) {
+            if (Test-Path $stopFile) { throw 'STOP while waiting for traffic readiness; no fault injected.' }
+            if ($loadJob.State -in @('Failed','Completed','Stopped') -or [DateTime]::UtcNow-ge $readyDeadline) { throw 'Load worker failed to become ready; no fault injected.' }
+            Start-Sleep -Milliseconds 100
+        }
+        if (Test-Path $stopFile) { throw 'STOP before combined fault; no fault injected.' }
+    }
 
     # The independent watchdog restores the service even if a request stalls.
     $watchdog = Start-Job -ArgumentList $container, $DurationSeconds, $FailureType, $netImage -ScriptBlock {
@@ -148,9 +187,13 @@ try {
     }
     $injected = $true
     $faultAt = [DateTime]::UtcNow
+    $liveStage = 'Injecting fault'
+    Write-LiveProgress
     if ($FailureType -eq 'Crash') { Invoke-Docker -DockerArgs @('kill', $container) | Out-Null }
     else { Invoke-TrafficControl -TcArgs @('qdisc', 'add', 'dev', 'eth0', 'root', 'handle', '28:', 'netem', 'delay', "${DelayMilliseconds}ms") | Out-Null }
     $reason = 'Maximum fault duration reached'
+    $liveStage = 'Fault active'
+    Write-LiveProgress
     $faultTimer = [Diagnostics.Stopwatch]::StartNew()
     :FaultLoop while ($faultTimer.Elapsed.TotalSeconds -lt $DurationSeconds) {
         foreach ($module in $modules) {
@@ -172,7 +215,10 @@ try {
 }
 catch { $failure = $_.Exception.Message; $reason = "Experiment error: $failure" }
 finally {
+    if ($loadJob) { New-Item -ItemType File -Path (Join-Path $outputDir 'STOP-LOAD') -Force | Out-Null }
     if ($injected) {
+        $liveStage = 'Restoring target'
+        Write-LiveProgress
         try {
             Restore-Target
             $restored = $true
@@ -188,9 +234,19 @@ finally {
         Wait-Job $watchdog -Timeout ($DurationSeconds + 10) | Out-Null
         Receive-Job $watchdog -ErrorAction Continue | Out-Host
     }
+    if ($loadJob) {
+        Wait-Job $loadJob -Timeout ($DurationSeconds + 5) | Out-Null
+        if ($loadJob.State -ne 'Completed') { $failure = 'Combined load worker did not finish successfully.' }
+        Receive-Job $loadJob -ErrorAction Continue | Out-Host
+        if (Test-Path (Join-Path $outputDir 'load.json')) { $loadResult = Get-Content (Join-Path $outputDir 'load.json') -Raw | ConvertFrom-Json }
+        if (-not $loadResult) { $failure = 'Combined load evidence missing.' }
+        Remove-Job $loadJob -Force
+    }
 }
 
 if ($restored) {
+    $liveStage = 'Verifying recovery'
+    Write-LiveProgress
     $recoveryTimer = [Diagnostics.Stopwatch]::StartNew()
     while ($recoveryTimer.Elapsed.TotalSeconds -lt $RecoveryTimeoutSeconds) {
         $roundHealthy = $true
@@ -217,6 +273,7 @@ if (Test-Path $outputDir) {
         RunId = $runId; TargetService = $TargetService; ContainerId = $container
         FailureType = $FailureType; DelayMilliseconds = $(if ($FailureType -eq 'NetworkDelay') { $DelayMilliseconds } else { $null })
         MaxImpactedModules = $MaxImpactedModules
+        ConcurrentLoad = [bool]$ConcurrentLoad; Load = $loadResult
         BrokerQueuesBefore = @($brokerBefore); BrokerQueuesAfter = @($brokerAfter)
         RequestedDurationSeconds = $DurationSeconds; RollbackReason = $reason
         FaultStartedUtc = $faultAt; RestoreCommandCompletedUtc = $restoreAt; RecoveredUtc = $recoveredAt
@@ -228,6 +285,8 @@ if (Test-Path $outputDir) {
     Write-Host "Results: $outputDir"
 }
 if ($failure -or -not $recovered) { throw "Experiment did not complete successfully. $failure Rollback: $reason" }
+$liveStage = 'Recovered'
+Write-LiveProgress
 Write-Host "Service recovered. Rollback: $reason"
 Write-Output $reportPath
 }

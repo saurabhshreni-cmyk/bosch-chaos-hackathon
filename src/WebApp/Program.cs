@@ -19,9 +19,10 @@ builder.Services
 builder.Services.AddHealthChecks();
 
 // add custom services
-builder.Services.AddHttpClient<ICustomerManagementAPI, CustomerManagementAPI>();
-builder.Services.AddHttpClient<IVehicleManagementAPI, VehicleManagementAPI>();
-builder.Services.AddHttpClient<IWorkshopManagementAPI, WorkshopManagementAPI>();
+// Bound dependency waits; the UI falls back without replaying write commands.
+builder.Services.AddHttpClient<ICustomerManagementAPI, CustomerManagementAPI>(client => client.Timeout = TimeSpan.FromSeconds(2));
+builder.Services.AddHttpClient<IVehicleManagementAPI, VehicleManagementAPI>(client => client.Timeout = TimeSpan.FromSeconds(2));
+builder.Services.AddHttpClient<IWorkshopManagementAPI, WorkshopManagementAPI>(client => client.Timeout = TimeSpan.FromSeconds(2));
 
 var app = builder.Build();
 

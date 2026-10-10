@@ -5,6 +5,7 @@ param(
     [string]$OutputDirectory = (Join-Path $PSScriptRoot 'runs/baseline')
 )
 $ErrorActionPreference = 'Stop'
+Import-Module (Join-Path $PSScriptRoot 'Telemetry.psm1') -Force
 $lock = [IO.File]::Open((Join-Path (Split-Path $PSScriptRoot -Parent) 'chaos-scripts/experiment.lock'), 'OpenOrCreate', 'ReadWrite', 'None')
 try {
 $samples = [System.Collections.Generic.List[object]]::new()
@@ -23,6 +24,7 @@ while ($timer.Elapsed.TotalSeconds -lt $DurationSeconds) {
         catch { Write-Warning "Baseline request failed: $module" }
         $clock.Stop()
         $samples.Add([pscustomobject]@{ TimestampUtc = [DateTime]::UtcNow.ToString('o'); Module = $module; Phase = 'baseline'; Healthy = $healthy; StatusCode = $status; OfflinePage = $offline; LatencyMs = [math]::Round($clock.Elapsed.TotalMilliseconds, 2) })
+        Write-AgentSnapshot -Path (Join-Path $OutputDirectory 'live-baseline.json') -Value ([ordered]@{ Stage = 'Collecting baseline'; UpdatedUtc = [DateTime]::UtcNow.ToString('o'); ElapsedSeconds = $timer.Elapsed.TotalSeconds; DurationSeconds = $DurationSeconds; Samples = @($samples.ToArray()) })
     }
     Start-Sleep -Seconds $IntervalSeconds
 }
