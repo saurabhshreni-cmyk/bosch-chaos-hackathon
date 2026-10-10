@@ -26,11 +26,15 @@ public sealed class OllamaClient(HttpClient http, AiOptions options) : IAiProvid
 
     public async Task<ProviderStatus> GetStatusAsync(CancellationToken ct)
     {
+        ct.ThrowIfCancellationRequested();
+        var configurationError = ProviderConfiguration.Validate(options.Ollama.BaseUrl, options.Ollama.Model, options.Ollama.TimeoutSeconds);
+        if (configurationError is not null)
+            return new ProviderStatus(Name, false, options.Ollama.Model, $"Ollama configuration error. {configurationError}");
         var installed = await ListModelsAsync(ct);
         if (installed is null)
         {
             return new ProviderStatus(Name, false, options.Ollama.Model,
-                $"Ollama is not reachable at {options.Ollama.BaseUrl}.");
+                "Ollama is not reachable. Check its base URL.");
         }
 
         // Ollama reports "qwen3.5:4b"; accept a bare "qwen3.5" as a match for it.
