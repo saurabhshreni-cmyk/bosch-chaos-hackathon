@@ -30,7 +30,7 @@ work, not implemented features in this checkout.
 | --- | --- | --- |
 | 1 | Saurabh Dwadesh Shreni | Folder structure, README, setup and architecture documentation |
 | 2 | Arpit Pal | Workshop API failure experiment and recovery evidence |
-| 3 | Tigisha P. Pradhan | RabbitMQ failure experiment and message-delivery observations |
+| 3 | Jigisha P. Pradhan | RabbitMQ failure experiment and message-delivery observations |
 | 4 | Vansh Makhija | Network-delay experiment and latency observations |
 | 5 | Omkar Singh | Database failure experiment and AI observability integration |
 
