@@ -1,5 +1,6 @@
 """Operator UI. Approval is always revalidated by the backend."""
 import httpx
+import json
 import streamlit as st
 
 
@@ -21,7 +22,13 @@ def render(base, page):
     if not status:
         return
     st.caption("Real recorded events only. AI explanations are hypotheses; execution and verification are deterministic.")
-    st.json({key: value for key, value in status.items() if key != "timeline"}, expanded=False)
+    a, b, c = st.columns(3)
+    a.metric("Analysis agent", status.get("analysis", "Unknown"))
+    b.metric("Execution worker", "Connected" if status.get("worker_alive") else "Offline / unknown")
+    c.metric("Kill switch", "Active" if status.get("kill_switch") else "Clear")
+    st.info("Chaos execution: " + status.get("chaos", "Unknown"))
+    with st.expander("Agent status and safety details"):
+        st.json({key: value for key, value in status.items() if key != "timeline"}, expanded=False)
     st.button("Refresh recorded state")
     if page == "Chaos Engineering":
         recommendations = call("/api/chaos/recommendations") or []
@@ -66,6 +73,14 @@ def render(base, page):
         st.json(call("/api/llm-usage") or {})
     else:
         st.subheader("Experiment history")
-        st.json(call("/api/chaos/experiments") or [])
+        experiments = call("/api/chaos/experiments") or []
+        states = st.multiselect("Filter experiment states", sorted({e["state"] for e in experiments}))
+        visible = [e for e in experiments if not states or e["state"] in states]
+        st.dataframe([{"experiment": e["id"], "state": e["state"], "fault": e["proposal"]["fault_type"], "targets": ", ".join(e["proposal"]["targets"]), "duration_seconds": e["proposal"]["duration_seconds"]} for e in visible], width="stretch")
+        for experiment in visible:
+            with st.expander(experiment["id"]):
+                st.json(experiment)
         st.subheader("Final reports")
-        st.json(call("/api/chaos/reports") or [])
+        reports = call("/api/chaos/reports") or []
+        st.json(reports)
+        st.download_button("Download recorded reports", json.dumps(reports, indent=2), file_name="pfia-experiment-reports.json", mime="application/json")

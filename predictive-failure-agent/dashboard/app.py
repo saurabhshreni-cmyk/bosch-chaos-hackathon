@@ -1,13 +1,16 @@
 """Local Streamlit UI; all analysis lives in the single backend agent."""
 import os
+import json
 from datetime import datetime, timezone
 import httpx
 import networkx as nx
 import plotly.graph_objects as go
 import streamlit as st
 
-st.set_page_config(page_title="PFIA | Failure Intelligence", page_icon="ðŸ”Ž", layout="wide")
-st.markdown("<style>.stApp{background:#0b1220}h1,h2,h3{letter-spacing:-.03em}[data-testid=stMetric]{background:#142138;padding:20px;border-radius:12px}</style>", unsafe_allow_html=True)
+st.set_page_config(page_title="PFIA | Failure Intelligence", page_icon="P", layout="wide")
+from dashboard.theme import apply_theme
+apply_theme()
+
 base = os.getenv("PFIA_BACKEND_URL", "http://127.0.0.1:8091").rstrip("/")
 page = st.sidebar.radio("Platform page", ["PFIA Analysis", "Chaos Engineering", "Self-Healing", "Agent Collaboration", "Experiment History"])
 if page != "PFIA Analysis":
@@ -62,18 +65,22 @@ architecture, weakest, scenarios, findings, future, insights = st.tabs(["Archite
 with architecture:
     st.subheader("Application architecture")
     st.caption("Arrows point from consumer to dependency. Startup and logging links appear here but do not imply business outage.")
+    graph_focus = st.selectbox("Focus dependency graph", ["All services", *[s["name"] for s in services]])
+    graph_layout = st.radio("Graph layout", ["Spring", "Circular"], horizontal=True)
     graph = nx.DiGraph()
     graph.add_nodes_from(s["name"] for s in services)
     graph.add_edges_from((e["source"], e["target"]) for e in data["dependencies"])
-    positions = nx.spring_layout(graph, seed=42)
+    if graph_focus != "All services":
+        graph = graph.subgraph({graph_focus, *graph.predecessors(graph_focus), *graph.successors(graph_focus)}).copy()
+    positions = nx.spring_layout(graph, seed=42) if graph_layout == "Spring" else nx.circular_layout(graph)
     figure = go.Figure()
     for source, target in graph.edges:
         x0, y0 = positions[source]
         x1, y1 = positions[target]
         figure.add_annotation(x=float(x1), y=float(y1), ax=float(x0), ay=float(y0), xref="x", yref="y", axref="x", ayref="y", showarrow=True, arrowhead=2, arrowwidth=1, arrowcolor="#405b7d", opacity=.6)
     scores = {r["component"]: r["score"] for r in risks}
-    figure.add_trace(go.Scatter(x=[positions[n][0] for n in graph], y=[positions[n][1] for n in graph], mode="markers+text", text=list(graph), textposition="top center", hovertext=[f"{n}: relative risk {scores[n]}" for n in graph], hoverinfo="text", marker={"size": 20, "color": [scores[n] for n in graph], "colorscale": "YlOrRd", "cmin": 0, "cmax": 100, "showscale": True}))
-    figure.update_layout(height=550, template="plotly_dark", paper_bgcolor="#0b1220", plot_bgcolor="#0b1220", xaxis={"visible": False}, yaxis={"visible": False}, margin={"l": 10, "r": 10, "t": 20, "b": 10})
+    figure.add_trace(go.Scatter(x=[positions[n][0] for n in graph], y=[positions[n][1] for n in graph], mode="markers+text", text=list(graph), textposition="top center", hovertext=[f"{n}: relative risk {scores[n]}" for n in graph], hoverinfo="text", marker={"size": 20, "color": [scores[n] for n in graph], "colorscale": [[0, "#dbe8f6"], [.5, "#547faf"], [1, "#10294c"]], "cmin": 0, "cmax": 100, "showscale": True}))
+    figure.update_layout(height=550, template="plotly_white", paper_bgcolor="#ffffff", plot_bgcolor="#ffffff", xaxis={"visible": False}, yaxis={"visible": False}, margin={"l": 10, "r": 10, "t": 20, "b": 10})
     st.plotly_chart(figure, width="stretch")
     st.dataframe([{k: s[k] for k in ("name", "role", "runtime", "ports", "replicas", "restart", "healthcheck")} for s in services], width="stretch")
     selected = st.selectbox("Service evidence", [s["name"] for s in services])
@@ -91,7 +98,7 @@ with architecture:
         points = sorted([row for row in history if row["component"] == observed], key=lambda row: row["timestamp"])
         if len(points) >= 2:
             trend = go.Figure(go.Scatter(x=[datetime.fromtimestamp(row["timestamp"], timezone.utc) for row in points], y=[row["memory_bytes"] / 1048576 for row in points], mode="lines+markers", name="Observed memory MiB"))
-            trend.update_layout(template="plotly_dark", yaxis_title="Memory MiB", xaxis_title="Observed time (UTC)", height=260)
+            trend.update_layout(template="plotly_white", yaxis_title="Memory MiB", xaxis_title="Observed time (UTC)", height=260)
             st.plotly_chart(trend, width="stretch")
             st.caption("Retained observations only. Sparse samples do not establish a trend or future failure threshold.")
         else:
@@ -100,8 +107,12 @@ with architecture:
         st.dataframe(data["dependencies"], width="stretch")
 with weakest:
     st.subheader("Weakest components")
-    st.dataframe([{"rank": i+1, "component": r["component"], "relative_risk": r["score"], "scored_evidence_coverage": f"{r['evidence_coverage']:.0%}", "primary_concern": r["primary_concerns"][0] if r["primary_concerns"] else "See recorded factors", "potentially_affected_dependents": len(r["affected_dependents"])} for i, r in enumerate(risks)], width="stretch")
-    for risk in risks:
+    min_risk = st.slider("Minimum relative risk", 0, 100, 0)
+    visible_risks = [risk for risk in risks if risk["score"] >= min_risk]
+    st.caption(f"Showing {len(visible_risks)} of {len(risks)} components")
+    st.download_button("Download risk evidence (JSON)", data=json.dumps(visible_risks, indent=2), file_name="pfia-risk-evidence.json", mime="application/json")
+    st.dataframe([{"rank": i+1, "component": r["component"], "relative_risk": r["score"], "scored_evidence_coverage": f"{r['evidence_coverage']:.0%}", "primary_concern": r["primary_concerns"][0] if r["primary_concerns"] else "See recorded factors", "potentially_affected_dependents": len(r["affected_dependents"])} for i, r in enumerate(visible_risks)], width="stretch")
+    for risk in visible_risks:
         with st.expander(f"{risk['component']} | {risk['score']}/100"):
             st.write("Factors", risk["factors"])
             st.write("Missing evidence", risk["missing_evidence"])
@@ -129,7 +140,11 @@ with scenarios:
         st.dataframe(result["impacts"], width="stretch")
 with findings:
     st.subheader("Configuration and source evidence")
-    for finding in data["findings"]:
+    search = st.text_input("Search findings", placeholder="Service, issue or source path")
+    severity = st.multiselect("Severity", ["high", "medium", "low"], default=["high", "medium", "low"])
+    filtered_findings = [f for f in data["findings"] if f["severity"] in severity and search.casefold() in json.dumps(f).casefold()]
+    st.caption(f"Showing {len(filtered_findings)} of {len(data['findings'])} findings")
+    for finding in filtered_findings:
         with st.expander(f"{finding['severity'].upper()} | {finding['component']} | {finding['title']}"):
             st.caption(finding["status"])
             for evidence in finding["evidence"]:
@@ -145,7 +160,7 @@ with future:
             st.write(scenario["assumptions"])
             st.dataframe(scenario["impacts"], width="stretch")
     st.subheader("Proposed controlled verification")
-    st.caption("Recommendations are records only. PFIA has no execution interface.")
+    st.caption("Recommendations do not grant approval. Use Chaos Engineering to review a separate proposal.")
     st.dataframe(data["recommendations"], width="stretch")
 with insights:
     st.subheader("Groq explanations")
