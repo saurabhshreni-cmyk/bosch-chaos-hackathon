@@ -1,0 +1,13 @@
+{
+  "enabled": false,
+  "project": "pfia-disposable-example",
+  "compose_file": "",
+  "allowed_services": [],
+  "max_duration_seconds": 30,
+  "max_targets": 1,
+  "approval_ttl_seconds": 90,
+  "stability_seconds": 5,
+  "watchdog_image": "docker:cli",
+  "watchdog_verified": false,
+  "probes": []
+}

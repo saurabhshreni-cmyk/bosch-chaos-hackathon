@@ -34,6 +34,14 @@ def test_success_strict_schema_cache_and_tokens(store):
     assert totals["input_tokens"] == 23 and totals["output_tokens"] == 17
 
 
+def test_usage_attribution_for_new_agents(store):
+    reasoner = GroqReasoner(store, FakeProvider())
+    reasoner.explain(EVIDENCE, agent="healing", experiment_id="synthetic-exp")
+    row = reasoner.tracker.totals()["records"][0]
+    assert row["agent"] == "healing" and row["experiment_id"] == "synthetic-exp"
+    assert row["verification"] == "mocked provider"
+
+
 @pytest.mark.parametrize("content", ["", "not-json", "{}", '{"hypotheses": [], "missing_evidence": [], "score": 99}', json.dumps({"hypotheses": [{**VALID["hypotheses"][0], "component": "unknown"}], "missing_evidence": []}), json.dumps({"hypotheses": [{**VALID["hypotheses"][0], "evidence_ids": ["invented"]}], "missing_evidence": []})])
 def test_invalid_or_unfounded_output_rejected(store, content):
     reasoner = GroqReasoner(store, FakeProvider(content))

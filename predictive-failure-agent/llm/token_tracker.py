@@ -2,8 +2,8 @@ class TokenTracker:
     def __init__(self, storage):
         self.storage = storage
 
-    def record(self, model, usage, status, verification="live provider"):
-        record = {"model": model, "input_tokens": getattr(usage, "prompt_tokens", 0) or 0, "output_tokens": getattr(usage, "completion_tokens", 0) or 0, "status": status, "verification": verification}
+    def record(self, model, usage, status, verification="live provider", agent="analysis", experiment_id=None):
+        record = {"model": model, "input_tokens": getattr(usage, "prompt_tokens", 0) or 0, "output_tokens": getattr(usage, "completion_tokens", 0) or 0, "status": status, "verification": verification, "agent": agent, "experiment_id": experiment_id}
         self.storage.save("llm_usage", record)
         return record
 

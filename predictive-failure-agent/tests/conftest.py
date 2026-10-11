@@ -30,6 +30,9 @@ def no_network(monkeypatch):
     monkeypatch.setenv("PFIA_COLLECT_RUNTIME", "false")
     monkeypatch.setenv("PFIA_ENABLE_GROQ", "false")
     monkeypatch.delenv("GROQ_API_KEY", raising=False)
+    monkeypatch.delenv("PFIA_POLICY_FILE", raising=False)
+    monkeypatch.delenv("PFIA_OPERATOR_TOKEN", raising=False)
+    monkeypatch.setenv("LANGSMITH_TRACING", "false")
 
 
 @pytest.fixture

@@ -77,7 +77,58 @@ directory; existing C#, PowerShell, watchdog and business code were unchanged.
   The C# suite was not rerun for this Python-only addition. No chaos integration
   or live Groq verification was performed.
 
-## Remaining evidence gaps
+## Three-agent extension, 11 October 2026
+
+- Integration contract documented before implementation. Work is isolated on
+  `feat/three-agent-platform`, starting from PFIA `c16a830`, with current main
+  `d6a3eb5` merged into the feature branch as `259b6965` without editing main.
+- Added strict proposal/policy/approval schemas, immutable content hashes, short
+  approval expiry and authenticated operation routes. Read-only routes remain separate.
+- Added durable SQLite experiment, approval, lease and event tables outside metric
+  retention. LangGraph connects analysis/recommendation/planning and dispatches resumable
+  execution stages. Awaiting approval returns immediately; it holds no worker/request open.
+- Added restricted exact-ID stop/start adapters, target and Compose ownership checks,
+  disposable labels, mount/privilege restrictions, functional preflight, independent
+  watchdog acknowledgement and atomic per-project watchdog exclusion.
+- Added Docker-owned watchdog deadline/heartbeat/ABORT/STOP recovery, bounded Docker
+  calls and retention on uncertain rollback. This is implemented but not live-verified.
+- Added independent execution worker, observations, bounded healing passes, multilayer
+  functional/stability verification, reports and configuration-scoped analysis feedback.
+- Added optional Groq hypotheses using existing client validation/cache/retries with
+  agent/experiment token attribution. AI never grants operation authority.
+- Extended existing Streamlit UI with Chaos Engineering, Self-Healing, Agent Collaboration
+  and Experiment History pages. Added setup/policy/operation documentation and dependency lock.
+- Localhost read-only smoke: API v2.0.0, worker alive, execution disabled, watchdog verification
+  false. Chaos experiment list, healing incidents/actions/history and reports all HTTP 200.
+  Streamlit `/_stcore/health` returned HTTP 200 `ok` on port 8502.
+- Live-system **read-only** verification: 13 services, 55 dependency records, 79 findings,
+  13 container metrics; four `/hc` requests returned 200 (webapp 20.88 ms, workshop 7.77 ms,
+  vehicle 7.61 ms, customer 8.51 ms). Container IDs, StartedAt and restart counts were
+  unchanged during observation. No fault injected; zero live Groq calls.
+- Dependency check: `python -m pip check` reported no broken requirements. Python
+  `compileall` passed. Original working-tree scripts, dashboard changes and STOP file
+  remain separate. No C#, application, Compose or PowerShell file is changed by the extension.
+- Automated regression: `.\.venv\Scripts\python.exe -m pytest -q` passed **148 tests**
+  in **31.47 seconds** after the main update. Tests are unit, mocked infrastructure/provider,
+  in-process API and Streamlit AppTest. They include all 77 original PFIA cases and
+  71 additional cases. No live provider or disposable-container fault test is included.
+- Final SDK inspection found `containers.run()` can implicitly pull on ImageNotFound.
+  Watchdog creation uses an inspected immutable image ID with `create()`/`start()` instead,
+  and its ID is persisted before startup. Network isolation checks reject foreign peers,
+  non-internal bridges, host aliases and public port bindings. Docker constructor failures
+  retain rollback visibility and are bounded to three failed connection passes.
+- Authenticated localhost planning consumed a real Workshop API recommendation and
+  persisted an `AWAIT_USER_APPROVAL` proposal. Approval remained absent and execution
+  evidence empty. Backend still reported execution disabled and worker alive. The local
+  operator credential is gitignored and was not displayed in test output.
+
+Live fault execution remains disabled. Required follow-up is a separately approved disposable
+watchdog/process-death verification, actual adapter execution and real dependency/functionality
+probes. Database, network, CPU and memory adapters are unsupported. Unexpected failures are
+read-only diagnoses with proposed remediation. No business-data repair or message-loss guarantee
+is claimed. The existing RabbitMQ/customer event-integrity defect remains open.
+
+## Earlier analysis evidence gaps
 
 No fault injection, disposable chaos integration, recovery demonstration, load
 generation, statistical failure prediction, live Groq, broker-management query,

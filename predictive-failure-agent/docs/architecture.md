@@ -1,8 +1,11 @@
 # PFIA architecture
 
-One `PredictiveAgent` coordinates deterministic tools. FastAPI and Streamlit
-are interfaces to that agent, not autonomous agents. No module imports the
-existing experiment runner, invokes a shell, or writes through Docker.
+One `PredictiveAgent` coordinates deterministic analysis tools. The optional
+`ChaosInjectionAgent` and `SelfHealingAgent` share its API, storage and dashboard.
+The analysis path remains read-only; the restricted executor is a separate worker
+with mandatory approval and an independent Docker watchdog. See
+[three-agent integration](THREE_AGENT_INTEGRATION.md) and [setup](THREE_AGENT_SETUP.md).
+The diagram below describes the original analysis path.
 
 ```mermaid
 flowchart LR
@@ -75,7 +78,8 @@ schema has no score, execution field, command, target selection or recovery
 decision. It can only explain hypotheses linked to supplied finding IDs.
 All model output remains unverified narrative. Pydantic rejects unsupported
 fields; cross-validation rejects invented services and evidence references.
-There is no path from recommendations or narrative to fault execution.
+Recommendations require a separate immutable proposal and authenticated human approval
+before restricted execution. Narrative itself grants no execution authority.
 
 The two default models support strict JSON Schema according to
 [Groq's structured-output documentation](https://console.groq.com/docs/structured-outputs).
@@ -92,4 +96,6 @@ and the complete snapshot `/api/analysis`.
 Write only PFIA's local observations: `POST /api/analyze`,
 `POST /api/analysis/refresh`, `POST /api/scenarios/evaluate`.
 Scenario kinds are a validated enum; target names must be discovered services.
-No arbitrary URLs, paths, commands or experiment execution are accepted.
+These analysis endpoints accept no arbitrary URLs, paths, commands or experiments.
+Additional `/api/chaos/*`, `/api/healing/*` and `/api/agents/status` endpoints are
+documented in the three-agent setup guide and generated OpenAPI documentation.

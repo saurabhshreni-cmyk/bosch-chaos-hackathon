@@ -8,9 +8,14 @@ import streamlit as st
 
 st.set_page_config(page_title="PFIA | Failure Intelligence", page_icon="ðŸ”Ž", layout="wide")
 st.markdown("<style>.stApp{background:#0b1220}h1,h2,h3{letter-spacing:-.03em}[data-testid=stMetric]{background:#142138;padding:20px;border-radius:12px}</style>", unsafe_allow_html=True)
-st.title("Predictive Failure Intelligence")
-st.caption("Read-only engineering evidence Â· Hypothetical scenarios Â· No fault injection")
 base = os.getenv("PFIA_BACKEND_URL", "http://127.0.0.1:8091").rstrip("/")
+page = st.sidebar.radio("Platform page", ["PFIA Analysis", "Chaos Engineering", "Self-Healing", "Agent Collaboration", "Experiment History"])
+if page != "PFIA Analysis":
+    from dashboard.platform_ui import render
+    render(base, page)
+    st.stop()
+st.title("Predictive Failure Intelligence")
+st.caption("Read-only engineering evidence | Hypothetical scenarios | Analysis does not inject faults")
 
 
 def api(path, payload=None):

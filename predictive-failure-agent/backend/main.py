@@ -32,7 +32,9 @@ def create_app(agent=None):
             except asyncio.CancelledError:
                 pass
 
-    app = FastAPI(title="Predictive Failure Intelligence Agent", version="1.0.0", lifespan=lifespan, description="Read-only inspection and hypothetical analysis. No experiment execution routes.")
+    app = FastAPI(title="PFIA Three-Agent Platform", version="2.0.0", lifespan=lifespan, description="Read-only analysis plus explicitly approved disposable-environment experiments. Execution disabled by default.")
+    from platform_agents.api import router
+    app.include_router(router)
 
     def instance(request: Request):
         return request.app.state.agent

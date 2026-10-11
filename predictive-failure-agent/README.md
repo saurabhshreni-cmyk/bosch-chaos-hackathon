@@ -1,14 +1,18 @@
 # Predictive Failure Intelligence Agent (PFIA)
 
+The optional three-agent extension adds restricted chaos planning, expiring operator approval,
+independent watchdog rollback and self-healing evidence. Execution is disabled by default.
+See [three-agent setup](docs/THREE_AGENT_SETUP.md) and [integration contract](docs/THREE_AGENT_INTEGRATION.md).
+
 PFIA inspects the existing Pitstop checkout, builds an evidence-linked dependency
 graph, ranks relative engineering risks and evaluates hypothetical failures.
-One Python agent serves a FastAPI API and a Streamlit dashboard. The existing
+Three specialized agents share a FastAPI API and a Streamlit dashboard. The existing
 C# dashboard and chaos scripts remain separate and unchanged.
 
-**PFIA does not inject faults, execute experiments, run commands, modify business
-data, or start/stop containers.** Its Docker adapter uses list, inspect and stats.
-Recommendations are non-executable records. An optional Groq narrative cannot
-set scores, change graph edges or establish recovery.
+**The analysis agent remains read-only.** Its metrics adapter uses list, inspect and stats.
+Recommendations are non-executable records. The separate chaos executor requires an
+authenticated, expiring approval, validated disposable policy and independent watchdog.
+Groq narrative cannot set scores, issue commands, change graph edges or establish recovery.
 
 ## Windows PowerShell setup
 
@@ -149,6 +153,8 @@ are cumulative byte counters, not rates. Current samples are not a trend model.
 SQLite retains records for `PFIA_RETENTION_DAYS` (default 7) and at most
 `PFIA_MAX_SAMPLES` records across all kinds (default 10000). Cache entries expire
 with the same retention window. Storage and environment files are gitignored.
+Experiment leases, approvals and workflow events use separate durable tables and are
+not removed by metric retention. See the setup guide for bounded experiment feedback scoring.
 
 ## Scope and limitations
 

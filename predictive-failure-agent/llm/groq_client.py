@@ -26,7 +26,7 @@ class GroqReasoner:
     def reset_budget(self):
         self.attempts = 0
 
-    def explain(self, evidence, complex_analysis=False):
+    def explain(self, evidence, complex_analysis=False, agent="analysis", experiment_id=None):
         model = self.reasoning if complex_analysis else self.fast
         key = cache_key(model, evidence, [self.temperature, self.max_tokens])
         cached = self.storage.cache_get(key)
@@ -64,7 +64,7 @@ class GroqReasoner:
             try:
                 response = self.client.chat.completions.create(model=model, messages=[{"role": "system", "content": SYSTEM}, {"role": "user", "content": payload + "\nSchema: " + json.dumps(schema)}], response_format=response_format, max_completion_tokens=self.max_tokens, temperature=self.temperature)
                 # Record actual returned usage even if the model output fails validation.
-                self.tracker.record(model, response.usage, "response received; validation pending", self.verification)
+                self.tracker.record(model, response.usage, "response received; validation pending", self.verification, agent, experiment_id)
                 if response.choices[0].finish_reason != "stop":
                     return {"status": "Incomplete model response rejected", "narrative": None}
                 narrative = Narrative.model_validate_json(response.choices[0].message.content, strict=True)

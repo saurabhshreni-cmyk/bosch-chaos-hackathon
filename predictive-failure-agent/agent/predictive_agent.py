@@ -75,6 +75,20 @@ class PredictiveAgent:
             elif use_groq:
                 warnings.append("Groq disabled by PFIA_ENABLE_GROQ; deterministic results retained.")
             result = {"timestamp": time.time(), "configuration_hash": fingerprint.hexdigest(), "services": [s.model_dump() for s in services], "dependencies": [d.model_dump() for d in deps], "graph_metrics": graph_metrics(graph), "metrics": [m.model_dump() for m in metrics], "health": health, "weak_nodes": [r.model_dump() for r in risks], "findings": [f.model_dump() for f in findings], "scenarios": scenarios, "recommendations": recommendations(findings, risks), "bottlenecks": detect(metrics), "ai_insights": ai, "warnings": warnings, "limitations": ["Scores are relative engineering indicators, not failure probabilities.", "Static analysis is conservative C# lexical inspection, not whole-program verification.", "Queue depth, database query/pool telemetry, worker capacity and request error rates are not collected without dedicated instrumentation.", "Project references establish configured build inputs, not running image provenance or runtime call reachability.", "No fault was injected; no recovery was verified by this agent."]}
+            # Recorded recovery evidence supplements, rather than erases, static weaknesses.
+            result["experiment_feedback"] = self.storage.read("experiment_feedback", 100)
+            for risk in result["weak_nodes"]:
+                relevant = [row for row in result["experiment_feedback"] if row.get("configuration_hash") == result["configuration_hash"] and risk["component"] in row.get("components", [])]
+                adjustment = max((row.get("risk_score_adjustment", 0) for row in relevant), default=0)
+                # At most five evidence-derived points, never an LLM score or cumulative inflation.
+                adjustment = max(0, min(5, adjustment))
+                risk["score"] = min(100, risk["score"] + adjustment)
+                risk["experiment_evidence"] = {"matching_runs": len(relevant), "verified_functional_recoveries": sum(row.get("functional_recovery_verified", False) for row in relevant), "score_adjustment": adjustment, "confidence": "Recorded disposable-environment observations only" if relevant else "No matching experiment evidence"}
+            result["weak_nodes"].sort(key=lambda row: (-row["score"], row["component"]))
+            scores = {row["component"]: row["score"] for row in result["weak_nodes"]}
+            for recommendation in result["recommendations"]:
+                recommendation["risk_score"] = scores[recommendation["component"]]
+            result["limitations"][-1] = "Analysis itself injects no faults. Recovery evidence, when present, is recorded separately in experiment_feedback."
             self.storage.save("analysis", result)
             self.services, self.graph, self.metrics, self.latest = services, graph, metrics, result
             return result
