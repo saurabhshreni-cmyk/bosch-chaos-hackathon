@@ -1,53 +1,53 @@
 WEBVTT
 
 1
-00:00:04.737 --> 00:00:09.737
+00:00:00.386 --> 00:00:05.386
 Team 28: Pitstop is healthy. We test resilience only in our own local Docker sandbox.
 
 2
-00:00:10.121 --> 00:00:15.121
+00:00:05.894 --> 00:00:10.894
 Dependency map: three APIs share SQL Server; RabbitMQ connects the background services.
 
 3
-00:00:15.253 --> 00:00:22.253
+00:00:11.035 --> 00:00:18.035
 Recorded real Qwen run: the AI ranked experiments from this map and the healthy baseline. All three ran and recovered.
 
 4
-00:00:22.611 --> 00:00:27.611
+00:00:18.388 --> 00:00:23.388
 Live safety demonstration: fixed-order Workshop crash plus bounded GET traffic. Two connections, 10 requests/sec, no writes.
 
 5
-00:00:28.170 --> 00:00:32.170
-The live agent collects a healthy baseline, validates the allowlisted tool, then begins one bounded experiment.
+00:00:24.013 --> 00:00:28.013
+Automatic discovery reviews baseline measurements, incident history and dependency risks. Only registered tools can execute.
 
 6
-00:00:41.548 --> 00:00:44.548
+00:00:40.485 --> 00:00:43.485
 Failure is real: Workshop shows the offline fallback. HTTP 200 alone is not a healthy result.
 
 7
-00:00:44.630 --> 00:00:47.630
+00:00:43.551 --> 00:00:46.551
 Customer remains available: this single-service failure is isolated. The runner measures content and response times.
 
 8
-00:00:48.679 --> 00:00:51.679
+00:00:46.838 --> 00:00:49.838
 Emergency STOP requests early rollback. The independent watchdog and threshold limits remain armed.
 
 9
-00:00:55.673 --> 00:01:00.673
+00:00:55.774 --> 00:01:00.774
 Workshop is healthy again. Verified recovery and the traffic measurements are retained as JSON and CSV.
 
 10
-00:01:01.451 --> 00:01:07.451
+00:01:01.079 --> 00:01:07.079
 The completed AI suite covers service crash, shared database outage and network delay. Threshold rollback and recovery are recorded.
 
 11
-00:01:07.635 --> 00:01:14.635
+00:01:07.164 --> 00:01:14.164
 Real model findings rank weaknesses and recommend fixes, linked to measured anomaly IDs. AI explanations need human review.
 
 12
-00:01:14.650 --> 00:01:20.650
+00:01:14.170 --> 00:01:20.170
 Fix and retest: a two-second request budget gives faster fallback without replaying writes. Faster failure is not restored availability.
 
 13
-00:01:20.670 --> 00:01:25.670
+00:01:20.174 --> 00:01:25.174
 Submission includes source, this captioned demo, one-page architecture, ranked findings and Team 28 details.

@@ -1,0 +1,7 @@
+"TimestampUtc","Module","Phase","Healthy","StatusCode","OfflinePage","LatencyMs"
+"2026-10-10T22:23:03.0938130Z","CustomerManagement","baseline","True","200","False","58.37"
+"2026-10-10T22:23:03.1243852Z","VehicleManagement","baseline","True","200","False","20.79"
+"2026-10-10T22:23:03.1864308Z","WorkshopManagement","baseline","True","200","False","24.46"
+"2026-10-10T22:23:05.2460373Z","CustomerManagement","baseline","True","200","False","19.97"
+"2026-10-10T22:23:05.3036223Z","VehicleManagement","baseline","True","200","False","20.56"
+"2026-10-10T22:23:05.3638783Z","WorkshopManagement","baseline","True","200","False","26.07"

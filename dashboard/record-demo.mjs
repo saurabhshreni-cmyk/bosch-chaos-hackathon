@@ -10,6 +10,7 @@ const browser=await chromium.launch({channel:'msedge',headless:true});
 const context=await browser.newContext({viewport:{width:1280,height:720},recordVideo:{dir:path.join(out,'video-work'),size:{width:1280,height:720}}});
 const page=await context.newPage(),video=page.video(),captions=[],started=Date.now();
 let combinedId;
+let completed = false;
 page.setDefaultTimeout(15000);
 const caption=async(text,seconds=5)=>{
   const at=(Date.now()-started)/1000;captions.push({start:at,end:at+seconds,text});
@@ -44,7 +45,7 @@ try{
   await page.locator('#confirm-run').click();
   const launched=await response;if(launched.status()!==202)throw new Error('Live execution rejected.');combinedId=(await launched.json()).id;
   await page.evaluate(()=>window.scrollTo(0,0));
-  await caption('The live agent collects a healthy baseline, validates the allowlisted tool, then begins one bounded experiment.',4);
+  await caption('Automatic discovery reviews baseline measurements, incident history and dependency risks. Only registered tools can execute.',4);
   await waitUntil(s=>s.selected?.RunId===combinedId&&s.selected.liveExperiment?.Stage==='Fault active',45);
   await page.goto('http://127.0.0.1:7005/WorkshopManagement');
   if(!/module is offline|management\s*-\s*offline/i.test(await page.content()))throw new Error('Live Workshop outage was not visible.');
@@ -69,10 +70,11 @@ try{
   await caption('Fix and retest: a two-second request budget gives faster fallback without replaying writes. Faster failure is not restored availability.',6);
   await caption('Submission includes source, this captioned demo, one-page architecture, ranked findings and Team 28 details.',5);
   await page.locator('#reset-stop').click();
+  completed = true;
 }catch(error){
   if(combinedId){const s=await state();await context.request.post('http://127.0.0.1:7010/api/stop',{headers:{Origin:'http://127.0.0.1:7010','X-Dashboard-Token':s.token},data:{}}).catch(()=>{});}
   throw error;
-}finally{await context.close();await video.saveAs(path.join(out,'demo.webm'));await browser.close();}
+}finally{await context.close();if(completed)await video.saveAs(path.join(out,'demo.webm'));await browser.close();}
 const stamp=n=>{const m=Math.floor(n/60),s=Math.floor(n%60),ms=Math.floor((n%1)*1000);return `00:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${String(ms).padStart(3,'0')}`;};
 await writeFile(path.join(out,'demo.vtt'),'WEBVTT\n\n'+captions.map((c,i)=>`${i+1}\n${stamp(c.start)} --> ${stamp(c.end)}\n${c.text}\n`).join('\n'));
 await writeFile(path.join(out,'demo.json'),JSON.stringify({AiSession:aiSession,CombinedSession:combinedId,ElapsedSeconds:(Date.now()-started)/1000,Captions:captions,Note:'Real live combined fault and STOP recovery; AI ranking/findings shown from a previous completed real model run.'},null,2));

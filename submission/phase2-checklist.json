@@ -1,0 +1,31 @@
+{
+  "Scope": "Phase 2 slides supplied by the team; local implementation and retained live evidence",
+  "Overall": "Core functional workflow implemented; model explanation quality requires review; publishing and portal submission pending",
+  "RegressionResults": "verification.json (timestamped current automated checks)",
+  "LiveHealth": "Checked during this review: 13 running services, three healthy module pages, local model available, no agent or experiment lock, STOP inactive",
+  "Requirements": [
+    {"Item": "AI ranks allowed experiments using dependency map and baseline, with reasons", "Status": "Implemented; explanation quality caveat", "Evidence": "../agent/AgentTools.psm1; manifest.json AiSuite; findings.md", "Caveat": "Retained small-model reasons confuse SQL crash and network delay. Tool IDs are validated, but schema validation does not validate prose correctness."},
+    {"Item": "Three or more failure scenarios with errors, latency and recovery", "Status": "Verified retained live evidence", "Evidence": "20261010T215606032Z: Workshop crash, SQL dependency outage, Workshop delay; all recovered and AI-analyzed", "Caveat": "These are three scenarios/categories, using two underlying injection mechanisms: Crash and NetworkDelay. SQL outage is not database overload."},
+    {"Item": "Severity-ranked findings and recommended fixes", "Status": "Implemented", "Evidence": "findings.md; dashboard Evidence & findings and failure-monitor recommendations", "Caveat": "Model explanations are hypotheses; read probes cannot prove root cause, write correctness or event durability."},
+    {"Item": "Resilience score", "Status": "Implemented optional heuristic", "Evidence": "Experiment ProbeScore and findings.md", "Caveat": "Measured read-probe heuristic, not an AI-certified SLA."},
+    {"Item": "Safety thresholds, automatic restoration and manual STOP", "Status": "Verified", "Evidence": "SQL safety rollback in AiSuite; manual STOP recovery in CombinedSuite 20261010T222301763Z; regression tests"},
+    {"Item": "Feature polish, README and clean startup", "Status": "Implemented with retained clean-start validation", "Evidence": "../README.md; clean-start.json; verification.json", "Caveat": "Clean deployment used cached rebuilt images and isolated volumes, not an uncached build. Legacy NuGet vulnerability warnings remain."},
+    {"Item": "Demo at most three minutes, architecture and findings", "Status": "Prepared and locally verified", "Evidence": "demo.webm (88.4 seconds); architecture.pdf (one page); findings.md; media-verification.json"},
+    {"Item": "Five deliverables submitted", "Status": "Not complete externally", "Evidence": "manifest.json lists all five local artifacts; PortalSubmitted false; latest local source still needs publishing"}
+  ],
+  "StretchGoals": [
+    {"Item": "Apply a fix and repeat experiments", "Status": "Implemented with measured tradeoff", "Evidence": "comparison.json; faster Workshop fallback but worse availability under delay"},
+    {"Item": "Live dashboard", "Status": "Implemented and browser-tested", "Evidence": "http://127.0.0.1:7010; verification.json"},
+    {"Item": "Combined failures", "Status": "Verified live", "Evidence": "Workshop crash plus bounded read traffic; CombinedSuite in manifest.json; verified overlap in media-verification.json"}
+  ],
+  "SlideFailureExamples": [
+    {"Example": "Service/container crash", "Status": "Executable", "Ids": ["workshop-crash"]},
+    {"Example": "Slow or lossy network", "Status": "Delay executable; packet loss proposal only", "Ids": ["workshop-delay", "workshop-delay-high"], "Details": "500/1000 ms Workshop egress delay with bounded duration and cleanup; no packet-loss injector"},
+    {"Example": "Full disk", "Status": "Non-executable proposal", "Details": "Requires disposable size-limited volume; never fill host or application database volumes"},
+    {"Example": "Overloaded database", "Status": "Non-executable proposal", "Details": "Requires isolated bounded workload and reliable cancellation; database-crash is a different test"},
+    {"Example": "Failed dependency", "Status": "Executable", "Ids": ["database-crash", "rabbitmq-crash"], "Details": "Three-scenario packaged AI evidence includes SQL, not a new broker execution in this review"},
+    {"Example": "Sudden traffic spike", "Status": "Bounded combined read traffic only", "Ids": ["workshop-crash-with-load"], "Details": "Two connections, ten GET requests per second; no standalone spike/ramp injector"}
+  ],
+  "Interpretation": "The slide calls these examples teams may inject, not six mandatory implementations. Existing coverage satisfies three tested scenarios, but do not claim six distinct implemented mechanisms.",
+  "ReviewActions": ["Review AI explanations against actual registered fault mechanisms", "Publish latest source to the team repository", "Submit and verify access to all five deliverables in the official portal"]
+}

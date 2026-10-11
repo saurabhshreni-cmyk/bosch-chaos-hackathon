@@ -6,6 +6,7 @@
   <title>Pitstop | Chaos Console</title>
   <link rel="icon" type="image/png" href="/garage.png">
   <link rel="stylesheet" href="/styles.css">
+  <script type="importmap">{"imports":{"three":"/vendor/three.module.js"}}</script>
   <script src="/lucide.js" defer></script>
   <script src="/app.js" defer></script>
 </head>
@@ -21,17 +22,19 @@
     <main>
       <div class="page-title"><div><div class="eyebrow">EXPERIMENT OPERATIONS</div><h1>Agent overview</h1><div id="session-label" class="muted">Connecting to the local agent...</div></div><div class="title-actions"><label class="live-toggle"><input id="live" type="checkbox" checked><span class="live-dot"></span> Live updates</label><button id="refresh" class="icon-button" title="Refresh evidence" aria-label="Refresh evidence"><i data-lucide="refresh-cw"></i></button><button id="download" class="icon-button" title="Download session evidence" aria-label="Download session evidence"><i data-lucide="download"></i></button></div></div>
       <div id="status-line" class="status-line"></div>
-      <nav class="tabs" aria-label="Dashboard views"><button data-tab="overview" class="selected"><i data-lucide="activity"></i> Overview</button><button data-tab="dependencies"><i data-lucide="network"></i> Dependencies</button><button data-tab="evidence"><i data-lucide="file-chart-column"></i> Evidence & findings</button></nav>
+      <nav class="tabs" aria-label="Dashboard views"><button data-tab="overview" class="selected"><i data-lucide="activity"></i> Overview</button><button data-tab="monitor"><i data-lucide="radar"></i> Failure monitor</button><button data-tab="topology"><i data-lucide="box"></i> 3D topology</button><button data-tab="dependencies"><i data-lucide="network"></i> Dependencies</button><button data-tab="evidence"><i data-lucide="file-chart-column"></i> Evidence & findings</button></nav>
       <div class="workspace">
         <div class="observations"><section id="metrics" class="metric-band"></section><div id="view"></div></div>
         <aside class="controls">
           <div class="section-heading"><h2>Run configuration</h2><i data-lucide="sliders-horizontal"></i></div>
           <form id="run-form">
+            <label class="live-toggle"><input id="auto-discover" type="checkbox" checked> Detection-informed planning</label>
             <fieldset><legend>Planner</legend><div class="segmented"><label><input type="radio" name="engine" value="ai" checked><span><i data-lucide="brain-circuit"></i> Local AI</span></label><label><input type="radio" name="engine" value="rules"><span><i data-lucide="list-ordered"></i> Fixed order</span></label></div></fieldset>
             <label class="field">Model<select id="model"><option>qwen2.5:1.5b</option></select></label><div id="model-status" class="model-status">Checking model server...</div>
             <div class="number-fields"><label class="field">Baseline <span class="input-unit"><input id="baseline" type="number" min="3" max="600" value="180" required><span>sec</span></span></label><label class="field">Experiment budget<input id="budget" type="number" min="1" max="4" value="3" required></label></div>
             <fieldset class="targets"><legend>Allowed experiments</legend><label><input type="checkbox" name="experiment" value="workshop-crash" checked><i data-lucide="server-crash"></i><span>Workshop crash<small>API / up to 30 sec</small></span></label><label><input type="checkbox" name="experiment" value="database-crash" checked><i data-lucide="database"></i><span>Database crash<small>Shared dependency / up to 30 sec</small></span></label><label><input type="checkbox" name="experiment" value="workshop-delay" checked><i data-lucide="timer"></i><span>Network delay<small>Workshop / 500 ms</small></span></label><label><input type="checkbox" name="experiment" value="rabbitmq-crash"><i data-lucide="workflow"></i><span>RabbitMQ crash<small>Broker / up to 60 sec</small></span></label><label><input type="checkbox" name="experiment" value="workshop-crash-with-load"><i data-lucide="activity"></i><span>Crash + traffic<small>Two connections / 10 GETs per sec</small></span></label></fieldset>
-            <div class="run-actions"><button id="preview" type="submit"><i data-lucide="scan-eye"></i> Preview plan</button><button id="execute" type="button" class="primary"><i data-lucide="play"></i> Run experiments</button></div><div id="action-message" role="status" class="action-message"></div>
+            <fieldset class="additional-targets"><legend>Additional scenario</legend><label class="field"><span><input type="checkbox" name="experiment" value="workshop-delay-high"> Stronger network delay / 1000 ms</span></label></fieldset>
+            <div class="run-actions"><button id="detect" type="button"><i data-lucide="radar"></i> Detect failures</button><button id="preview" type="submit"><i data-lucide="scan-eye"></i> Preview plan</button><button id="execute" type="button" class="primary"><i data-lucide="play"></i> Run experiments</button></div><div id="action-message" role="status" class="action-message"></div>
           </form>
           <section class="safety"><h3><i data-lucide="shield-check"></i> Safety guardrails</h3><dl><div><dt>Scope</dt><dd>This checkout only</dd></div><div><dt>Concurrency</dt><dd>One experiment</dd></div><div><dt>Rollback</dt><dd>Watchdog + thresholds</dd></div><div><dt>Recovery gate</dt><dd>All three module pages</dd></div><div><dt>Kill switch</dt><dd id="switch-status">Checking...</dd></div></dl></section>
           <section class="runtime"><h3>Infrastructure</h3><div id="infrastructure"></div></section>

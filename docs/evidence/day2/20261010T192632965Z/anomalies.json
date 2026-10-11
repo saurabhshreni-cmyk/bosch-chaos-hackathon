@@ -1,0 +1,199 @@
+﻿{
+    "RunId":  "20261010T192632965Z",
+    "TargetService":  "sqlserver",
+    "Method":  "Deterministic availability checks and baseline median/MAD latency thresholds; not a trained AI model",
+    "Limitations":  "Small baseline; sequential read probes only; timeouts are censored latencies; no proof of data loss or write correctness.",
+    "Recovered":  true,
+    "RecoverySeconds":  20.79,
+    "ModuleStats":  [
+                        {
+                            "Module":  "CustomerManagement",
+                            "BaselineSamples":  3,
+                            "BaselineMedianMs":  58.2,
+                            "LatencyThresholdMs":  308.2,
+                            "ObservedSamples":  5,
+                            "FailedSamples":  3
+                        },
+                        {
+                            "Module":  "VehicleManagement",
+                            "BaselineSamples":  3,
+                            "BaselineMedianMs":  69.8,
+                            "LatencyThresholdMs":  319.8,
+                            "ObservedSamples":  5,
+                            "FailedSamples":  4
+                        },
+                        {
+                            "Module":  "WorkshopManagement",
+                            "BaselineSamples":  3,
+                            "BaselineMedianMs":  64.5,
+                            "LatencyThresholdMs":  314.5,
+                            "ObservedSamples":  4,
+                            "FailedSamples":  3
+                        }
+                    ],
+    "Anomalies":  [
+                      {
+                          "EvidenceId":  "E1",
+                          "Module":  "CustomerManagement",
+                          "TimestampUtc":  "2026-10-10T19:26:41.2505132Z",
+                          "Phase":  "fault",
+                          "Kind":  "Availability failure",
+                          "Severity":  "high",
+                          "LatencyMs":  2065,
+                          "BaselineMedianMs":  58.2,
+                          "ThresholdMs":  308.2,
+                          "StatusCode":  200,
+                          "OfflinePage":  true
+                      },
+                      {
+                          "EvidenceId":  "E2",
+                          "Module":  "CustomerManagement",
+                          "TimestampUtc":  "2026-10-10T19:26:46.8398617Z",
+                          "Phase":  "recovery",
+                          "Kind":  "Availability failure",
+                          "Severity":  "high",
+                          "LatencyMs":  2044.9,
+                          "BaselineMedianMs":  58.2,
+                          "ThresholdMs":  308.2,
+                          "StatusCode":  200,
+                          "OfflinePage":  true
+                      },
+                      {
+                          "EvidenceId":  "E3",
+                          "Module":  "CustomerManagement",
+                          "TimestampUtc":  "2026-10-10T19:26:56.7690886Z",
+                          "Phase":  "recovery",
+                          "Kind":  "Availability failure",
+                          "Severity":  "high",
+                          "LatencyMs":  38.7,
+                          "BaselineMedianMs":  58.2,
+                          "ThresholdMs":  308.2,
+                          "StatusCode":  200,
+                          "OfflinePage":  true
+                      },
+                      {
+                          "EvidenceId":  "E4",
+                          "Module":  "VehicleManagement",
+                          "TimestampUtc":  "2026-10-10T19:26:43.3844949Z",
+                          "Phase":  "fault",
+                          "Kind":  "Availability failure",
+                          "Severity":  "high",
+                          "LatencyMs":  2069.5,
+                          "BaselineMedianMs":  69.8,
+                          "ThresholdMs":  319.8,
+                          "StatusCode":  200,
+                          "OfflinePage":  true
+                      },
+                      {
+                          "EvidenceId":  "E5",
+                          "Module":  "VehicleManagement",
+                          "TimestampUtc":  "2026-10-10T19:26:48.9717307Z",
+                          "Phase":  "recovery",
+                          "Kind":  "Availability failure",
+                          "Severity":  "high",
+                          "LatencyMs":  2047.8,
+                          "BaselineMedianMs":  69.8,
+                          "ThresholdMs":  319.8,
+                          "StatusCode":  200,
+                          "OfflinePage":  true
+                      },
+                      {
+                          "EvidenceId":  "E6",
+                          "Module":  "VehicleManagement",
+                          "TimestampUtc":  "2026-10-10T19:26:56.8482715Z",
+                          "Phase":  "recovery",
+                          "Kind":  "Availability failure",
+                          "Severity":  "high",
+                          "LatencyMs":  43.6,
+                          "BaselineMedianMs":  69.8,
+                          "ThresholdMs":  319.8,
+                          "StatusCode":  200,
+                          "OfflinePage":  true
+                      },
+                      {
+                          "EvidenceId":  "E7",
+                          "Module":  "VehicleManagement",
+                          "TimestampUtc":  "2026-10-10T19:27:00.9982221Z",
+                          "Phase":  "recovery",
+                          "Kind":  "Availability failure",
+                          "Severity":  "high",
+                          "LatencyMs":  20.9,
+                          "BaselineMedianMs":  69.8,
+                          "ThresholdMs":  319.8,
+                          "StatusCode":  200,
+                          "OfflinePage":  true
+                      },
+                      {
+                          "EvidenceId":  "E8",
+                          "Module":  "WorkshopManagement",
+                          "TimestampUtc":  "2026-10-10T19:26:54.5832065Z",
+                          "Phase":  "recovery",
+                          "Kind":  "Availability failure",
+                          "Severity":  "high",
+                          "LatencyMs":  5551.6,
+                          "BaselineMedianMs":  64.5,
+                          "ThresholdMs":  314.5,
+                          "StatusCode":  200,
+                          "OfflinePage":  true
+                      },
+                      {
+                          "EvidenceId":  "E9",
+                          "Module":  "WorkshopManagement",
+                          "TimestampUtc":  "2026-10-10T19:26:58.9016130Z",
+                          "Phase":  "recovery",
+                          "Kind":  "Availability failure",
+                          "Severity":  "high",
+                          "LatencyMs":  2016.7,
+                          "BaselineMedianMs":  64.5,
+                          "ThresholdMs":  314.5,
+                          "StatusCode":  200,
+                          "OfflinePage":  true
+                      },
+                      {
+                          "EvidenceId":  "E10",
+                          "Module":  "WorkshopManagement",
+                          "TimestampUtc":  "2026-10-10T19:27:03.0543731Z",
+                          "Phase":  "recovery",
+                          "Kind":  "Availability failure",
+                          "Severity":  "high",
+                          "LatencyMs":  2016.3,
+                          "BaselineMedianMs":  64.5,
+                          "ThresholdMs":  314.5,
+                          "StatusCode":  200,
+                          "OfflinePage":  true
+                      }
+                  ],
+    "AiStatus":  "Completed; interpretations require human review",
+    "AiModel":  "qwen2.5:1.5b",
+    "AiFindings":  [
+                       {
+                           "evidenceIds":  [
+                                               "E1",
+                                               "E2",
+                                               "E3"
+                                           ],
+                           "explanation":  "Multiple modules experienced high latency and availability failures, exceeding the baseline thresholds.",
+                           "confidence":  "high",
+                           "severity":  "high",
+                           "title":  "Module Latency and Availability Failures",
+                           "recommendedFix":  "Review and optimize the modules\u0027 performance and reliability."
+                       },
+                       {
+                           "evidenceIds":  [
+                                               "E4",
+                                               "E5",
+                                               "E6",
+                                               "E7",
+                                               "E8",
+                                               "E9",
+                                               "E10"
+                                           ],
+                           "explanation":  "Several modules showed high latency and availability failures during recovery phases, indicating potential issues with their recovery processes.",
+                           "confidence":  "high",
+                           "severity":  "high",
+                           "title":  "Module Recovery Failures",
+                           "recommendedFix":  "Review and optimize the modules\u0027 recovery processes."
+                       }
+                   ],
+    "AiError":  null
+}

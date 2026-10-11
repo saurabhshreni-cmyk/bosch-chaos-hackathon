@@ -6,6 +6,17 @@ import { createServer } from 'node:http';
 const root=path.dirname(path.dirname(fileURLToPath(import.meta.url))),out=path.join(root,'submission');
 const json=async name=>JSON.parse((await readFile(path.join(out,name),'utf8')).replace(/^\uFEFF/,''));
 const manifest=await json('manifest.json'),demo=await json('demo.json');
+const canonicalId = /^\d{8}T\d{9}Z$/;
+if (![manifest.AiSuite, manifest.CombinedSuite].every(id => canonicalId.test(id))) throw new Error('Invalid packaged session IDs.');
+const aiSession=JSON.parse((await readFile(path.join(root,'docs/evidence/day2',manifest.AiSuite,'session.json'),'utf8')).replace(/^\uFEFF/,''));
+if(aiSession.Stage!=='Completed'||aiSession.Error||!aiSession.Model||aiSession.Experiments.length<3||new Set(aiSession.Experiments.map(item=>item.Category)).size<3)throw new Error('Packaged AI suite must complete at least three different failure categories.');
+for(const item of aiSession.Experiments){
+  if(!canonicalId.test(item.RunId)||!item.Recovered||!item.AiStatus?.startsWith('Completed'))throw new Error('Packaged experiment must recover and complete AI analysis.');
+  const folder=path.join(root,'docs/evidence/day2',item.RunId);
+  const report=JSON.parse((await readFile(path.join(folder,'report.json'),'utf8')).replace(/^\uFEFF/,''));
+  const analysis=JSON.parse((await readFile(path.join(folder,'anomalies.json'),'utf8')).replace(/^\uFEFF/,''));
+  if(report.RunId!==item.RunId||!report.Recovered||report.Error||!report.Samples?.some(row=>row.Phase==='fault')||!analysis.AiFindings?.length)throw new Error('Packaged report lacks real fault measurements, recovery or AI findings.');
+}
 const combinedSession=JSON.parse((await readFile(path.join(root,'docs/evidence/day2',manifest.CombinedSuite,'session.json'),'utf8')).replace(/^\uFEFF/,''));
 const combined=JSON.parse((await readFile(path.join(root,'docs/evidence/day2',combinedSession.Experiments[0].RunId,'report.json'),'utf8')).replace(/^\uFEFF/,''));
 const timestamp=value=>{const match=String(value).match(/^\/Date\((\d+)/);return match?Number(match[1]):Date.parse(value);};

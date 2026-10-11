@@ -1,0 +1,315 @@
+﻿{
+    "RunId":  "20261010T222038592Z",
+    "StartedUtc":  "2026-10-10T22:20:38.5994414Z",
+    "UpdatedUtc":  "2026-10-10T22:22:17.8973738Z",
+    "MaxExperiments":  1,
+    "BaselineSeconds":  5,
+    "Events":  [
+                   {
+                       "TimestampUtc":  "2026-10-10T22:20:40.9315992Z",
+                       "Stage":  "Collecting baseline"
+                   },
+                   {
+                       "TimestampUtc":  "2026-10-10T22:20:47.8990304Z",
+                       "Stage":  "Discovery worker running"
+                   },
+                   {
+                       "TimestampUtc":  "2026-10-10T22:20:48.5892406Z",
+                       "Stage":  "Discovery worker completed"
+                   },
+                   {
+                       "TimestampUtc":  "2026-10-10T22:20:48.6184367Z",
+                       "Stage":  "Discovery recorded"
+                   },
+                   {
+                       "TimestampUtc":  "2026-10-10T22:20:48.6381836Z",
+                       "Stage":  "Ranking experiments"
+                   },
+                   {
+                       "TimestampUtc":  "2026-10-10T22:20:48.7181301Z",
+                       "Stage":  "Planner worker running"
+                   },
+                   {
+                       "TimestampUtc":  "2026-10-10T22:22:17.6086474Z",
+                       "Stage":  "Planner worker completed"
+                   },
+                   {
+                       "TimestampUtc":  "2026-10-10T22:22:17.6491310Z",
+                       "Stage":  "Ranked plan validated"
+                   },
+                   {
+                       "TimestampUtc":  "2026-10-10T22:22:17.7185361Z",
+                       "Stage":  "Planning"
+                   },
+                   {
+                       "TimestampUtc":  "2026-10-10T22:22:17.8606389Z",
+                       "Stage":  "Plan validated"
+                   },
+                   {
+                       "TimestampUtc":  "2026-10-10T22:22:17.8973738Z",
+                       "Stage":  "Plans only; no faults injected"
+                   }
+               ],
+    "Stage":  "Plans only; no faults injected",
+    "Mode":  "AI: qwen2.5:1.5b",
+    "Execute":  false,
+    "Model":  "qwen2.5:1.5b",
+    "Rankings":  [
+                     {
+                         "expectedImpact":  "Identify isolated failures and measure recovery times.",
+                         "reason":  "Measure response latency under 500 ms on the Workshop API.",
+                         "durationSeconds":  20,
+                         "id":  "workshop-delay"
+                     },
+                     {
+                         "expectedImpact":  "Isolate failures and measure isolation.",
+                         "reason":  "Measure whether Workshop failure is isolated from Customer and Vehicle.",
+                         "durationSeconds":  20,
+                         "id":  "workshop-crash"
+                     },
+                     {
+                         "expectedImpact":  "Observe broker downtime and read availability.",
+                         "reason":  "Observe read availability during broker downtime; event loss needs separate tracked write tests.",
+                         "durationSeconds":  30,
+                         "id":  "rabbitmq-crash"
+                     },
+                     {
+                         "expectedImpact":  "Measure shared dependency blast radius and recovery.",
+                         "reason":  "Measure the blast radius and recovery of the shared SQL Server dependency.",
+                         "durationSeconds":  30,
+                         "id":  "database-crash"
+                     }
+                 ],
+    "Plans":  [
+                  {
+                      "expectedImpact":  "Identify isolated failures and measure recovery times.",
+                      "reason":  "Measure response latency under 500 ms on the Workshop API.",
+                      "durationSeconds":  20,
+                      "id":  "workshop-delay"
+                  }
+              ],
+    "Experiments":  [
+
+                    ],
+    "Error":  null,
+    "Workers":  [
+                    {
+                        "Role":  "Discovery",
+                        "Status":  "Completed",
+                        "ProcessId":  23136,
+                        "UpdatedUtc":  "2026-10-10T22:20:48.5862465Z",
+                        "Error":  null
+                    },
+                    {
+                        "Role":  "Planner",
+                        "Status":  "Completed",
+                        "ProcessId":  20536,
+                        "UpdatedUtc":  "2026-10-10T22:22:17.6086474Z",
+                        "Error":  null
+                    },
+                    {
+                        "Role":  "Injection",
+                        "Status":  "Idle",
+                        "ProcessId":  null,
+                        "UpdatedUtc":  null,
+                        "Error":  null
+                    },
+                    {
+                        "Role":  "Detection",
+                        "Status":  "Idle",
+                        "ProcessId":  null,
+                        "UpdatedUtc":  null,
+                        "Error":  null
+                    },
+                    {
+                        "Role":  "Recommendation",
+                        "Status":  "Idle",
+                        "ProcessId":  null,
+                        "UpdatedUtc":  null,
+                        "Error":  null
+                    }
+                ],
+    "AutoDiscover":  true,
+    "Discovery":  {
+                      "HealthyBaseline":  true,
+                      "Findings":  [
+                                       {
+                                           "Type":  "Recorded incident",
+                                           "Subject":  "workshopmanagementapi",
+                                           "Summary":  "Page unavailable, last recorded state: Recovered. Historical evidence is not proof of a current failure.",
+                                           "Source":  "Monitor history (last 24 hours)"
+                                       },
+                                       {
+                                           "Type":  "Recorded incident",
+                                           "Subject":  "customermanagementapi",
+                                           "Summary":  "Container health failure, last recorded state: Recovered. Historical evidence is not proof of a current failure.",
+                                           "Source":  "Monitor history (last 24 hours)"
+                                       },
+                                       {
+                                           "Type":  "Recorded incident",
+                                           "Subject":  "vehiclemanagementapi",
+                                           "Summary":  "Container health failure, last recorded state: Recovered. Historical evidence is not proof of a current failure.",
+                                           "Source":  "Monitor history (last 24 hours)"
+                                       },
+                                       {
+                                           "Type":  "Recorded incident",
+                                           "Subject":  "customermanagementapi",
+                                           "Summary":  "Page unavailable, last recorded state: Recovered. Historical evidence is not proof of a current failure.",
+                                           "Source":  "Monitor history (last 24 hours)"
+                                       },
+                                       {
+                                           "Type":  "Recorded incident",
+                                           "Subject":  "workshopmanagementapi",
+                                           "Summary":  "Page unavailable, last recorded state: Recovered. Historical evidence is not proof of a current failure.",
+                                           "Source":  "Monitor history (last 24 hours)"
+                                       },
+                                       {
+                                           "Type":  "Recorded incident",
+                                           "Subject":  "vehiclemanagementapi",
+                                           "Summary":  "Page unavailable, last recorded state: Recovered. Historical evidence is not proof of a current failure.",
+                                           "Source":  "Monitor history (last 24 hours)"
+                                       },
+                                       {
+                                           "Type":  "Recorded incident",
+                                           "Subject":  "workshopmanagementapi",
+                                           "Summary":  "Page unavailable, last recorded state: Recovered. Historical evidence is not proof of a current failure.",
+                                           "Source":  "Monitor history (last 24 hours)"
+                                       },
+                                       {
+                                           "Type":  "Recorded incident",
+                                           "Subject":  "workshopmanagementapi",
+                                           "Summary":  "Container health failure, last recorded state: Recovered. Historical evidence is not proof of a current failure.",
+                                           "Source":  "Monitor history (last 24 hours)"
+                                       },
+                                       {
+                                           "Type":  "Recorded incident",
+                                           "Subject":  "workshopmanagementapi",
+                                           "Summary":  "Page unavailable, last recorded state: Recovered. Historical evidence is not proof of a current failure.",
+                                           "Source":  "Monitor history (last 24 hours)"
+                                       },
+                                       {
+                                           "Type":  "Recorded incident",
+                                           "Subject":  "workshopmanagementapi",
+                                           "Summary":  "Container health failure, last recorded state: Recovered. Historical evidence is not proof of a current failure.",
+                                           "Source":  "Monitor history (last 24 hours)"
+                                       },
+                                       {
+                                           "Type":  "Recorded incident",
+                                           "Subject":  "customermanagementapi",
+                                           "Summary":  "Latency regression, last recorded state: Recovered. Historical evidence is not proof of a current failure.",
+                                           "Source":  "Monitor history (last 24 hours)"
+                                       },
+                                       {
+                                           "Type":  "Recorded incident",
+                                           "Subject":  "vehiclemanagementapi",
+                                           "Summary":  "Latency regression, last recorded state: Recovered. Historical evidence is not proof of a current failure.",
+                                           "Source":  "Monitor history (last 24 hours)"
+                                       },
+                                       {
+                                           "Type":  "Recorded incident",
+                                           "Subject":  "workshopmanagementapi",
+                                           "Summary":  "Latency regression, last recorded state: Recovered. Historical evidence is not proof of a current failure.",
+                                           "Source":  "Monitor history (last 24 hours)"
+                                       },
+                                       {
+                                           "Type":  "Recorded incident",
+                                           "Subject":  "workshopmanagementapi",
+                                           "Summary":  "Page unavailable, last recorded state: Recovered. Historical evidence is not proof of a current failure.",
+                                           "Source":  "Monitor history (last 24 hours)"
+                                       },
+                                       {
+                                           "Type":  "Recorded incident",
+                                           "Subject":  "vehiclemanagementapi",
+                                           "Summary":  "Container health failure, last recorded state: Recovered. Historical evidence is not proof of a current failure.",
+                                           "Source":  "Monitor history (last 24 hours)"
+                                       },
+                                       {
+                                           "Type":  "Recorded incident",
+                                           "Subject":  "customermanagementapi",
+                                           "Summary":  "Container health failure, last recorded state: Recovered. Historical evidence is not proof of a current failure.",
+                                           "Source":  "Monitor history (last 24 hours)"
+                                       },
+                                       {
+                                           "Type":  "Recorded incident",
+                                           "Subject":  "customermanagementapi",
+                                           "Summary":  "Page unavailable, last recorded state: Recovered. Historical evidence is not proof of a current failure.",
+                                           "Source":  "Monitor history (last 24 hours)"
+                                       },
+                                       {
+                                           "Type":  "Recorded incident",
+                                           "Subject":  "vehiclemanagementapi",
+                                           "Summary":  "Page unavailable, last recorded state: Recovered. Historical evidence is not proof of a current failure.",
+                                           "Source":  "Monitor history (last 24 hours)"
+                                       },
+                                       {
+                                           "Type":  "Recorded incident",
+                                           "Subject":  "workshopmanagementapi",
+                                           "Summary":  "Page unavailable, last recorded state: Recovered. Historical evidence is not proof of a current failure.",
+                                           "Source":  "Monitor history (last 24 hours)"
+                                       },
+                                       {
+                                           "Type":  "Recorded incident",
+                                           "Subject":  "workshopmanagementapi",
+                                           "Summary":  "Container health failure, last recorded state: Recovered. Historical evidence is not proof of a current failure.",
+                                           "Source":  "Monitor history (last 24 hours)"
+                                       },
+                                       {
+                                           "Type":  "Potential risk",
+                                           "Subject":  "sqlserver",
+                                           "Summary":  "6 mapped connections share this dependency. An outage could propagate; test evidence is required.",
+                                           "Source":  "Dependency map"
+                                       },
+                                       {
+                                           "Type":  "Potential risk",
+                                           "Subject":  "rabbitmq",
+                                           "Summary":  "8 mapped connections share this dependency. An outage could propagate; test evidence is required.",
+                                           "Source":  "Dependency map"
+                                       }
+                                   ],
+                      "Candidates":  [
+                                         {
+                                             "Id":  "workshop-delay",
+                                             "Priority":  60,
+                                             "Target":  "workshopmanagementapi",
+                                             "Reason":  "Measure response latency under 500 ms egress delay on Workshop API."
+                                         },
+                                         {
+                                             "Id":  "workshop-crash",
+                                             "Priority":  50,
+                                             "Target":  "workshopmanagementapi",
+                                             "Reason":  "Measure whether Workshop failure is isolated from Customer and Vehicle."
+                                         },
+                                         {
+                                             "Id":  "rabbitmq-crash",
+                                             "Priority":  8,
+                                             "Target":  "rabbitmq",
+                                             "Reason":  "Observe read availability during broker downtime; event loss needs separate tracked write tests."
+                                         },
+                                         {
+                                             "Id":  "database-crash",
+                                             "Priority":  6,
+                                             "Target":  "sqlserver",
+                                             "Reason":  "Measure the blast radius and recovery of the shared SQL Server dependency."
+                                         }
+                                     ],
+                      "ProposedTests":  [
+                                            {
+                                                "Name":  "Packet loss",
+                                                "Reason":  "Requires a bounded network-loss tool with verified cleanup.",
+                                                "Executable":  false
+                                            },
+                                            {
+                                                "Name":  "Database contention",
+                                                "Reason":  "Requires a dedicated test database, bounded workload and cancellation.",
+                                                "Executable":  false
+                                            },
+                                            {
+                                                "Name":  "Disk exhaustion",
+                                                "Reason":  "Requires a disposable size-limited volume; never fill the host or database volume.",
+                                                "Executable":  false
+                                            }
+                                        ],
+                      "Limitations":  "Read probes and recorded incidents cannot find every latent fault or establish root cause. Proposed tests are not executable. Only registered tools may be injected."
+                  },
+    "Architecture":  "Coordinator with isolated role workers; one fault at a time; continuous read-only dashboard detector runs independently."
+}

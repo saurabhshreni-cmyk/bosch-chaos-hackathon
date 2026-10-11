@@ -1,12 +1,12 @@
 # Team 28: Ranked Findings
 
-Generated from real local execution 20261010T172616441Z. Model: qwen2.5:1.5b.
+Generated from real local execution 20261010T215606032Z. Model: qwen2.5:1.5b.
 
 ## AI Experiment Ranking
 
-1. **workshop-delay** (20 sec): Identify the most critical module affected by a single failure. Expected impact: Measure the impact of isolated failures on different modules.
-2. **database-crash** (20 sec): Analyze the impact of a network delay on the shared SQL Server dependency. Expected impact: Determine the extent of shared dependency failures.
-3. **workshop-crash** (20 sec): Measure the response latency under 500 ms egress delay on the Workshop API. Expected impact: Understand the response latency of the Workshop API.
+1. **workshop-crash** (20 sec): Identify the root cause of the crash by isolating the failure and observing its effects on other services. Expected impact: Measure the impact of isolated failures on the system.
+2. **database-crash** (20 sec): Understand the response time of the system under varying network conditions to optimize performance. Expected impact: Measure the impact of network latency on the system.
+3. **workshop-delay** (20 sec): Identify the dependencies that cause the outage and assess the impact on the system. Expected impact: Measure the impact of shared dependency outages on the system.
 
 **Rationale review:** the small model confused crash and network-delay descriptions in some reasons above. They are retained verbatim, not corrected to look stronger. The validated ID and code-owned registry determine the actual mechanism. Natural-language correctness is not guaranteed by schema validation.
 
@@ -14,45 +14,43 @@ Generated from real local execution 20261010T172616441Z. Model: qwen2.5:1.5b.
 
 | Experiment | Evidence run | Failed fault probes / total | Verified recovery sec | Probe score /100 | Rollback |
 | --- | --- | --- | --- | --- | --- |
-| workshop-delay | 20261010T172732437Z | 7/21 | 0.37 | 76.6 | Maximum fault duration reached |
-| database-crash | 20261010T172848599Z | 2/2 | 16.98 | 25.8 | Safety threshold breached: 2 modules impacted |
-| workshop-crash | 20261010T173009668Z | 7/21 | 3.09 | 75.9 | Maximum fault duration reached |
-| workshop-crash-with-load | 20261010T174036469Z | 3/9 | 2.5 | 73.8 | Manual kill switch |
+| workshop-crash | 20261010T215952061Z | 7/21 | 0.74 | 76.5 | Maximum fault duration reached |
+| database-crash | 20261010T220113314Z | 2/2 | 30.29 | 22.4 | Safety threshold breached: 2 modules impacted |
+| workshop-delay | 20261010T220315060Z | 5/18 | 1.07 | 79.2 | Maximum fault duration reached |
+| workshop-crash-with-load | 20261010T222309536Z | 3/9 | 4.55 | 75.5 | Manual kill switch |
 
 Failures include HTTP-200 offline pages. Recovery is measured from completed restoration command to all-page health, not total outage time. Raw JSON and CSV retain individual latencies and timestamps.
 
 | Experiment | Module | Baseline p95 ms | Fault p95 observed ms | Failed / sampled |
 | --- | --- | --- | --- | --- |
-| workshop-delay | CustomerManagement | 35.9 | 32.9 | 0/7 |
-| workshop-delay | VehicleManagement | 18.6 | 21.9 | 0/7 |
-| workshop-delay | WorkshopManagement | 28.8 | 2023.1 | 7/7 |
-| database-crash | CustomerManagement | 27.6 | 2049.8 | 1/1 |
-| database-crash | VehicleManagement | 31.5 | 2029.5 | 1/1 |
-| database-crash | WorkshopManagement | 40.3 | not sampled | 0/0 |
-| workshop-crash | CustomerManagement | 45.2 | 27.7 | 0/7 |
-| workshop-crash | VehicleManagement | 25.3 | 23.7 | 0/7 |
-| workshop-crash | WorkshopManagement | 31.2 | 2020.3 | 7/7 |
-| workshop-crash-with-load | CustomerManagement | 21.8 | 1517.8 | 0/3 |
-| workshop-crash-with-load | VehicleManagement | 55.8 | 102.6 | 0/3 |
-| workshop-crash-with-load | WorkshopManagement | 26 | 2146.7 | 3/3 |
+| workshop-crash | CustomerManagement | 73.6 | 86.1 | 0/7 |
+| workshop-crash | VehicleManagement | 19.1 | 22.7 | 0/7 |
+| workshop-crash | WorkshopManagement | 32 | 2030.7 | 7/7 |
+| database-crash | CustomerManagement | 114.9 | 2247.6 | 1/1 |
+| database-crash | VehicleManagement | 349.1 | 2162.1 | 1/1 |
+| database-crash | WorkshopManagement | 243.5 | not sampled | 0/0 |
+| workshop-delay | CustomerManagement | 165.5 | 445.1 | 0/6 |
+| workshop-delay | VehicleManagement | 77.1 | 112.4 | 0/6 |
+| workshop-delay | WorkshopManagement | 120.7 | 2432.4 | 5/6 |
+| workshop-crash-with-load | CustomerManagement | 63.4 | 24.2 | 0/3 |
+| workshop-crash-with-load | VehicleManagement | 21.2 | 23.1 | 0/3 |
+| workshop-crash-with-load | WorkshopManagement | 26.2 | 2022.3 | 3/3 |
 
 Early safety rollback can stop sampling before every module is measured. Missing fault samples are not proof of availability.
 
 ## Ranked AI Interpretations
 
-1. **[high] Multiple Availability Failures in 'WorkshopManagement' Module** (workshop-delay): Multiple instances of high latency (2022.5 ms) in the 'WorkshopManagement' module, exceeding the baseline median of 28.8 ms, indicating an availability failure. Recommended fix: Review and optimize the module's performance to reduce latency.. Evidence: 20261010T172732437Z/E1, E2, E3, E4, E5, E6, E7. Model confidence: high.
+1. **[high] High Latency and Availability Failures in 'WorkshopManagement' Module** (workshop-crash): Multiple anomalies in the 'WorkshopManagement' module indicate high latency and availability failures. The latency consistently exceeds the baseline threshold, suggesting potential issues with the module's performance or infrastructure. Recommended fix: Review and optimize the module's performance, possibly addressing infrastructure or code issues.. Evidence: 20261010T215952061Z/E1, E2, E3, E4, E5, E6, E7. Model confidence: high.
 
-2. **[high] High Latency and Frequent Availability Failures in 'WorkshopManagement' Module** (workshop-delay): The module is experiencing frequent availability failures, with high latency (2022.5 ms) consistently exceeding the baseline median of 28.8 ms. Recommended fix: Identify and address the root cause of the high latency and frequent failures.. Evidence: 20261010T172732437Z/E1, E2, E3, E4, E5, E6, E7. Model confidence: high.
+2. **[high] System instability across modules** (database-crash): Multiple modules experienced high latency and availability failures, indicating potential system instability. Recommended fix: Perform a thorough system health check and investigate potential bottlenecks.. Evidence: 20261010T220113314Z/E1, E2, E3. Model confidence: high.
 
-3. **[high] System instability across modules** (database-crash): Multiple modules experienced high latency and availability failures, indicating potential system instability. Recommended fix: Perform a thorough system health check and investigate potential bottlenecks or configuration issues.. Evidence: 20261010T172848599Z/E1, E2, E3. Model confidence: high.
+3. **[high] Multiple anomalies in 'WorkshopManagement' module** (workshop-delay): Multiple anomalies in the 'WorkshopManagement' module indicate prolonged latency and availability failures, with some reaching high severity levels. Recommended fix: Review and optimize the module's performance and availability mechanisms.. Evidence: 20261010T220315060Z/E1, E2, E3, E4, E5, E6, E7. Model confidence: high.
 
-4. **[high] Recovery process instability** (database-crash): Several modules showed high latency and availability failures during recovery phases, suggesting potential issues with the recovery process. Recommended fix: Review and optimize the recovery process to ensure it does not introduce additional latency or failures.. Evidence: 20261010T172848599Z/E4, E5, E6, E7, E8, E9, E10, E11. Model confidence: high.
+4. **[high] Anomalies in 'WorkshopManagement' module** (workshop-delay): Anomalies in the 'WorkshopManagement' module suggest prolonged latency and availability failures, with some reaching high severity levels. Recommended fix: Review and optimize the module's performance and availability mechanisms.. Evidence: 20261010T220315060Z/E1, E2, E3, E4, E5, E6, E7. Model confidence: high.
 
-5. **[high] Prolonged Availability Failures in 'WorkshopManagement' Module** (workshop-crash): Multiple anomalies in the 'WorkshopManagement' module indicate prolonged availability failures, with latency consistently exceeding the baseline threshold. Recommended fix: Review and optimize the module's performance to reduce latency and improve availability.. Evidence: 20261010T173009668Z/E1, E2, E3, E4, E5, E6, E7. Model confidence: high.
+5. **[medium] Latency Increase in 'WorkshopManagement' Module** (workshop-crash): A recovery event in the 'WorkshopManagement' module indicates that the latency has increased but the module is now available again. This suggests that the issue was likely resolved, but it's still important to monitor the module's performance to prevent future failures. Recommended fix: Monitor the module's performance closely to ensure it remains stable and efficient.. Evidence: 20261010T215952061Z/E8. Model confidence: medium.
 
-6. **[high] Recovery Event in 'WorkshopManagement' Module** (workshop-crash): A recovery event in the 'WorkshopManagement' module suggests that the system has successfully recovered from an availability failure. Recommended fix: Monitor the module's performance to ensure it can handle failures and recover quickly.. Evidence: 20261010T173009668Z/E8. Model confidence: high.
-
-7. **[medium] Latency Increase During Recovery in 'WorkshopManagement' Module** (workshop-crash): A latency increase in the 'WorkshopManagement' module during recovery indicates that the system is still processing the failure event, which is expected. Recommended fix: Ensure that the module's recovery process is optimized to reduce latency.. Evidence: 20261010T173009668Z/E9. Model confidence: medium.
+6. **[medium] Latency increase in modules** (database-crash): Several modules showed latency increases, which could indicate performance degradation or resource contention. Recommended fix: Monitor the affected modules for further latency spikes and optimize resource usage.. Evidence: 20261010T220113314Z/E4, E5, E6, E7, E8, E9, E10. Model confidence: medium.
 
 AI statements above are interpretations, not established root causes. A crash is deliberately injected; the finding is the observed propagation, fallback or recovery behavior. Read probes cannot establish data loss, writes or durable event delivery.
 
@@ -72,7 +70,7 @@ Workshop deliberately fails fast under delay. This is a responsiveness improveme
 
 ## Combined Failure
 
-20261010T174030496Z: Workshop crash plus bounded read traffic. See its report and load.json. Autocannon's HTTP-200 counts are not healthy-page counts; page-content probes are authoritative.
+20261010T222301763Z: Workshop crash plus bounded read traffic. See its report and load.json. Autocannon's HTTP-200 counts are not healthy-page counts; page-content probes are authoritative.
 
 ## Score Method
 

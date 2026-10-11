@@ -1,7 +1,168 @@
 body {
-    padding-top: 50px;
-    padding-bottom: 20px;
+    padding-top: 74px;
+    padding-bottom: 24px;
+    background: #f3f5f6;
+    color: #252c32;
+    font-family: "Segoe UI", Arial, sans-serif;
+    line-height: 1.6;
+    letter-spacing: 0;
 }
+
+.navbar-inverse {
+    background: #202428;
+    border: 0;
+    border-bottom: 3px solid #d4ac52;
+    box-shadow: 0 3px 12px #2024281a;
+}
+
+.navbar-inverse .navbar-brand {
+    color: #f0ce7b;
+    font-size: 23px;
+    font-weight: 700;
+}
+
+.navbar-inverse .navbar-nav > li > a {
+    color: #e0e5e8;
+    font-weight: 600;
+}
+
+.navbar-inverse .navbar-nav > li > a:hover,
+.navbar-inverse .navbar-nav > li > a:focus,
+.navbar-inverse .navbar-nav > .active > a {
+    color: #f5d688;
+    background: #343a40;
+}
+
+.navbar-inverse .navbar-toggle {
+    border-color: #72797e;
+}
+
+.navbar-inverse .navbar-toggle:hover,
+.navbar-inverse .navbar-toggle:focus {
+    background: #343a40;
+}
+
+a, .text-primary {
+    color: #116b7c;
+}
+
+a:hover, a:focus {
+    color: #084653;
+}
+
+#PageTitle {
+    margin: 16px 0 24px;
+    padding-bottom: 14px;
+    border-bottom: 2px solid #d4ac52;
+    color: #202428;
+    font-size: 25px;
+    font-weight: 650;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+}
+
+.garage-banner {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 6px;
+}
+
+.btn {
+    border-radius: 5px;
+    padding: 8px 16px;
+    font-weight: 600;
+    white-space: normal;
+    margin-bottom: 4px;
+}
+
+.btn-default {
+    background: #ffffff;
+    border-color: #a8b2b9;
+    color: #343d44;
+}
+
+.btn-default:hover, .btn-default:focus {
+    background: #e8edef;
+    border-color: #687680;
+    color: #202428;
+}
+
+#RegisterCustomerButton, #RegisterVehicleButton,
+#RegisterMaintenanceJobButton, #SubmitButton, #CompleteButton,
+.btn-primary {
+    background: #e6bf65;
+    border-color: #b48a31;
+    color: #262117;
+}
+
+#RegisterCustomerButton:hover, #RegisterCustomerButton:focus,
+#RegisterVehicleButton:hover, #RegisterVehicleButton:focus,
+#RegisterMaintenanceJobButton:hover, #RegisterMaintenanceJobButton:focus,
+#SubmitButton:hover, #SubmitButton:focus,
+#CompleteButton:hover, #CompleteButton:focus,
+.btn-primary:hover, .btn-primary:focus {
+    background: #f1d18b;
+    border-color: #89681e;
+    color: #262117;
+}
+
+.form-control {
+    height: 40px;
+    background: #ffffff;
+    color: #252c32;
+    border-color: #a8b2b9;
+    border-radius: 5px;
+    box-shadow: none;
+}
+
+textarea.form-control { height: auto; }
+
+.form-control:focus {
+    border-color: #116b7c;
+    box-shadow: 0 0 0 3px #116b7c24;
+}
+
+label { color: #343d44; }
+.text-danger, .field-validation-error { color: #a62d42; }
+.text-success { color: #20734e; }
+.text-warning { color: #85600f; }
+.input-validation-error { border-color: #a62d42; }
+
+a:focus-visible, button:focus-visible {
+    outline: 3px solid #116b7c;
+    outline-offset: 3px;
+}
+
+.table {
+    background: #ffffff;
+    border-bottom: 1px solid #d7dfe3;
+}
+
+.table > thead > tr > th {
+    border-bottom: 2px solid #d4ac52;
+    padding: 12px;
+    font-weight: 600;
+}
+
+.table > tbody > tr > td {
+    border-top-color: #e1e6e9;
+    padding: 12px;
+    vertical-align: middle;
+    overflow-wrap: anywhere;
+}
+
+.table > tbody > tr:nth-child(even):not(.completedjob) {
+    background: #f7f9fa;
+}
+
+footer {
+    color: #58656f;
+    font-size: 13px;
+    padding-top: 8px;
+}
+
+hr { border-top-color: #d7dfe3; }
 
 /* Wrapping element */
 /* Set some basic padding to keep content from hitting the edges */
@@ -14,7 +175,7 @@ body {
 input,
 select,
 textarea {
-    max-width: 280px;
+    max-width: 420px;
 }
 
 /* Carousel */
@@ -38,17 +199,27 @@ textarea {
 
 /* colored table-header */
 thead > tr {
-    background-color: steelblue;
-    color: white;
+    background-color: #343d44;
+    color: #ffffff;
 }
 
 /* highlight table-row hover */
-tbody > tr.clickable:hover {
-    background-color: #c1e2fa;
+.table > tbody > tr.clickable:hover {
+    background-color: #e4f1f2;
     opacity: 1;
     cursor: pointer;
 }
 
 .completedjob {
-    background-color: lightgray;
+    background-color: #e8f3ed;
+    color: #265b40;
+}
+
+@media screen and (max-width: 767px) {
+    #PageTitle { font-size: 22px; }
+    .table { table-layout: fixed; font-size: 12px; }
+    .table > thead > tr > th,
+    .table > tbody > tr > td { padding: 8px 5px; overflow-wrap: anywhere; }
+    .table > tbody > tr > td[width] { width: 32%; }
+    .navbar-inverse .navbar-collapse { border-color: #4b5359; }
 }

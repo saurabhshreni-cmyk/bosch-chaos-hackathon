@@ -2,7 +2,7 @@ import { readFile, readdir, stat } from 'node:fs/promises';
 import path from 'node:path';
 
 export const validId = id => typeof id === 'string' && /^\d{8}T\d{9}Z$/.test(id);
-export const experimentIds = ['workshop-crash', 'database-crash', 'workshop-delay', 'rabbitmq-crash', 'workshop-crash-with-load'];
+export const experimentIds = ['workshop-crash', 'database-crash', 'workshop-delay', 'workshop-delay-high', 'rabbitmq-crash', 'workshop-crash-with-load'];
 const array = value => value == null ? [] : Array.isArray(value) ? value : [value];
 
 export async function readJson(file) {
@@ -14,13 +14,15 @@ export async function readJson(file) {
 
 export function validateRun(body) {
   if (!body || Array.isArray(body) || typeof body !== 'object') throw new Error('Invalid request.');
-  const keys = ['mode', 'engine', 'budget', 'baseline', 'model', 'experiments', 'confirmed'];
+  const keys = ['mode', 'engine', 'budget', 'baseline', 'model', 'experiments', 'confirmed', 'autoDiscover'];
   if (Object.keys(body).some(key => !keys.includes(key))) throw new Error('Unsupported fields.');
-  if (!['preview', 'execute'].includes(body.mode) || !['ai', 'rules'].includes(body.engine)) throw new Error('Invalid mode.');
+  if (!['detect', 'preview', 'execute'].includes(body.mode) || !['ai', 'rules'].includes(body.engine)) throw new Error('Invalid mode.');
   if (!Number.isInteger(body.budget) || body.budget < 1 || body.budget > 4) throw new Error('Budget must be 1 to 4.');
   if (!Number.isInteger(body.baseline) || body.baseline < 3 || body.baseline > 600) throw new Error('Baseline must be 3 to 600 seconds.');
   if (typeof body.model !== 'string' || !/^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,99}$/.test(body.model)) throw new Error('Invalid model name.');
-  if (!Array.isArray(body.experiments) || !body.experiments.length || body.experiments.length > 5 || new Set(body.experiments).size !== body.experiments.length || body.experiments.some(id => !experimentIds.includes(id))) throw new Error('Choose registered experiments.');
+  if (body.autoDiscover !== undefined && typeof body.autoDiscover !== 'boolean') throw new Error('Invalid automatic discovery setting.');
+  if (!Array.isArray(body.experiments) || (body.mode !== 'detect' && !body.experiments.length) || body.experiments.length > experimentIds.length || new Set(body.experiments).size !== body.experiments.length || body.experiments.some(id => !experimentIds.includes(id))) throw new Error('Choose registered experiments.');
+  if (body.mode === 'detect' && (body.experiments.length || body.confirmed === true)) throw new Error('Detection cannot request injection.');
   if (body.mode === 'execute' && body.confirmed !== true) throw new Error('Confirm sandbox fault execution first.');
   return body;
 }
@@ -36,13 +38,15 @@ export class EvidenceStore {
       const session = await readJson(this.file('agent', 'runs', dir.name, 'session.json'));
       if (session?.RunId === dir.name) rows.push(session);
     }
-    const retained = await readJson(this.file('docs', 'evidence', 'ai-live', 'session.json'));
-    if (retained && validId(retained.RunId) && !rows.some(row => row.RunId === retained.RunId)) rows.push({ ...retained, Retained: true });
-    let saved = [];
-    try { saved = await readdir(this.file('docs', 'evidence', 'day2'), { withFileTypes: true }); } catch {}
-    for (const dir of saved.filter(dir => dir.isDirectory() && validId(dir.name))) {
-      const session = await readJson(this.file('docs', 'evidence', 'day2', dir.name, 'session.json'));
-      if (session?.RunId === dir.name && !rows.some(row => row.RunId === dir.name)) rows.push({ ...session, Retained: true, RetainedDay2: true });
+    if (process.env.DASHBOARD_SHOW_RETAINED === '1') {
+      const retained = await readJson(this.file('docs', 'evidence', 'ai-live', 'session.json'));
+      if (retained && validId(retained.RunId) && !rows.some(row => row.RunId === retained.RunId)) rows.push({ ...retained, Retained: true });
+      let saved = [];
+      try { saved = await readdir(this.file('docs', 'evidence', 'day2'), { withFileTypes: true }); } catch {}
+      for (const dir of saved.filter(dir => dir.isDirectory() && validId(dir.name))) {
+        const session = await readJson(this.file('docs', 'evidence', 'day2', dir.name, 'session.json'));
+        if (session?.RunId === dir.name && !rows.some(row => row.RunId === dir.name)) rows.push({ ...session, Retained: true, RetainedDay2: true });
+      }
     }
     return rows.sort((a, b) => b.RunId.localeCompare(a.RunId));
   }

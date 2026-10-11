@@ -12,8 +12,8 @@ const sessions=[];
 for(const id of [sessionId,combinedId]){
   const s=await json(path.join(root,'agent/runs',id,'session.json'));
   if(s.Stage!=='Completed'||s.Error||!s.Experiments.every(e=>e.Recovered))throw new Error('Cannot package incomplete or unrecovered execution.');
-  await retain(path.join(root,'agent/runs'),id,['session.json','baseline.json','baseline.csv','findings.md']);
-  for(const e of s.Experiments)await retain(path.join(root,'chaos-scripts/results'),e.RunId,['report.json','samples.csv','anomalies.json','load.json']);
+  await retain(path.join(root,'agent/runs'),id,['session.json','baseline.json','baseline.csv','discovery.json','findings.md']);
+  for(const e of s.Experiments)await retain(path.join(root,'chaos-scripts/results'),e.RunId,['report.json','samples.csv','detection.json','anomalies.json','load.json']);
   sessions.push(s);
 }
 const suite=sessions[0];
@@ -46,6 +46,7 @@ for(const r of comparison.ModuleComparison)md+=`| ${r.Module} | ${r.BeforeP95Obs
 md+=`\n${comparison.Limitations}\n\nWorkshop deliberately fails fast under delay. This is a responsiveness improvement with an availability tradeoff, not proof that all resilience dimensions improved. Early rollback and unequal probe counts are reported, not hidden. Matched run IDs: ${comparison.BeforeRunId} → ${comparison.AfterRunId}.\n\n## Combined Failure\n\n${sessions[1].RunId}: Workshop crash plus bounded read traffic. See its report and load.json. Autocannon's HTTP-200 counts are not healthy-page counts; page-content probes are authoritative.\n\n## Score Method\n\n${comparison.AfterScore.Method}\n\n${comparison.AfterScore.Limitations}\n\n## Validation And Residual Risks\n\nFresh Compose project with separate volumes: ${validationId}. All 13 services running; configured health checks pass; all three pages healthy; customer, vehicle, scheduling and completion workflow passed. Existing garage data was not cleared. Cached rebuilt images were used, not an uncached rebuild.\n\nLegacy application transitive NuGet dependencies emit high-severity vulnerability warnings. Sandbox demonstration only, not production readiness. Remaining work: durability/write-fault tests, repeated controlled trials, targeted legacy dependency upgrades and model-evaluation coverage. Dashboard npm audit is clean after a scoped UUID override.\n`;
 await writeFile(path.join(out,'findings.md'),md);
 const team={Team:'Team No. 28',Members:['Saurabh Dwadesh Shreni','Arpit Pal','Tigisha P. Pradhan','Vansh Makhija','Omkar Singh'],Repository:'https://github.com/saurabhshreni-cmyk/bosch-chaos-hackathon',Application:'Pitstop (Apache-2.0)',Tools:['Docker Desktop / Docker Compose','PowerShell','Node.js','Ollama','Microsoft Edge'],Models:[suite.Model],Libraries:['Polly / existing .NET libraries','autocannon 8 (MIT)','lucide 1.55 (ISC)','Playwright 1.64 (Apache-2.0)'],Data:'Synthetic local garage workflow plus local read-probe measurements; no external dataset.',SubmissionPortal:null,SubmissionDeadline:'2026-10-11; exact time not supplied',Submitted:false};
+team.Libraries.push('Three.js 0.186.1 (MIT)');
 await writeFile(path.join(out,'team-form.json'),JSON.stringify(team,null,2));
 const browser=await chromium.launch({channel:'msedge',headless:true});
 try{

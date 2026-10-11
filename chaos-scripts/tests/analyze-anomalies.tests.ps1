@@ -4,6 +4,7 @@ $testDir = Join-Path ([System.IO.Path]::GetTempPath()) ("pitstop-anomaly-test-" 
 New-Item -ItemType Directory -Path $testDir | Out-Null
 $reportPath = Join-Path $testDir 'report.json'
 $analysisPath = Join-Path $testDir 'anomalies.json'
+$detectionPath = Join-Path $testDir 'detection.json'
 
 function Assert-True {
     param([bool]$Condition, [string]$Message)
@@ -38,9 +39,12 @@ try {
         Assert-True (-not $request.stream -and $request.format.type -eq 'object') 'Expected structured non-streaming request.'
         return @{ model = 'mock'; message = @{ content = '{"findings":[{"severity":"high","title":"Unavailable","evidenceIds":["E2"],"explanation":"Probe failed","recommendedFix":"Investigate retries","confidence":"medium"}]}' } }
     }
-    & $analyzer -ReportPath $reportPath -Model mock | Out-Null
+    & $analyzer -ReportPath $reportPath -OutputName detection.json | Out-Null
+    & $analyzer -ReportPath $reportPath -DetectionPath $detectionPath -Model mock | Out-Null
     $analysis = Get-Content -LiteralPath $analysisPath -Raw | ConvertFrom-Json
-    Assert-True ($analysis.AiStatus -like 'Completed*') 'Valid AI findings should be retained.'
+    Assert-True ($analysis.AiStatus -like 'Completed*' -and $analysis.Anomalies.Count -eq 3) 'Valid AI findings should consume detector evidence.'
+    $detector = Get-Content -LiteralPath $detectionPath -Raw | ConvertFrom-Json
+    Assert-True ($detector.AiStatus -eq 'Not configured') 'Recommendation must not overwrite measured detector evidence.'
 
     function Invoke-RestMethod {
         return @{ model = 'mock'; message = @{ content = '{"findings":[{"severity":"high","title":"Unsupported","evidenceIds":["E999"],"explanation":"Unknown evidence","recommendedFix":"Investigate","confidence":"low"}]}' } }
@@ -51,6 +55,6 @@ try {
     Write-Host 'Anomaly analysis tests passed (model responses mocked; no real inference).'
 }
 finally {
-    Remove-Item -LiteralPath $reportPath, $analysisPath -Force -ErrorAction SilentlyContinue
+    Remove-Item -LiteralPath $reportPath, $analysisPath, $detectionPath -Force -ErrorAction SilentlyContinue
     Remove-Item -LiteralPath $testDir -Force
 }

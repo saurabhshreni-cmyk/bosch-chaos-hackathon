@@ -1,0 +1,30 @@
+{
+  "VerifiedUtc": "2026-10-10T21:29:25Z",
+  "TechnicalStatus": "Passed functional checks; limitations below remain",
+  "LiveAiSession": "20261010T192120230Z",
+  "Checks": [
+    {"Requirement": "Running local cloud-native application", "Status": "Passed", "Evidence": "13 running Compose services; three healthy module pages; current-workflow.json"},
+    {"Requirement": "Dependency map and data flows", "Status": "Passed", "Evidence": "../agent/dependencies.json; dashboard 2D and 3D browser checks"},
+    {"Requirement": "Steady baseline", "Status": "Passed", "Evidence": "180.42 seconds; 82 probes per module; zero failures in the live AI session"},
+    {"Requirement": "AI ranks experiments with reasons", "Status": "Passed with quality caveat", "Evidence": "Live session Rankings; schema and allowlist validation passed; natural-language reasons still require human review"},
+    {"Requirement": "Three failure categories, latency, errors and recovery", "Status": "Passed", "Evidence": "runtime-audit.json: Workshop crash, SQL outage and Workshop network delay; all recovered and AI-analyzed"},
+    {"Requirement": "Automatic threshold rollback", "Status": "Passed live", "Evidence": "SQL outage rolled back when two modules failed; all pages recovered"},
+    {"Requirement": "Manual kill switch", "Status": "Passed retained evidence and regression tests", "Evidence": "media-verification.json; packaged combined run includes STOP recovery; stop-before-injection.tests.ps1"},
+    {"Requirement": "Ranked findings, fixes and score", "Status": "Passed with quality caveat", "Evidence": "Live findings.md; submission findings.md; score is explicitly a read-probe heuristic, not an AI-certified SLA"},
+    {"Requirement": "Live dashboard and automatic detection", "Status": "Passed live", "Evidence": "runtime-audit.json; live-failure-dashboard.png; diagnosis/fixes displayed and concurrent execution blocked"},
+    {"Requirement": "Combined failures", "Status": "Passed retained evidence", "Evidence": "Packaged combined session 20261010T174030496Z; 11.022 seconds of measured traffic/fault overlap"},
+    {"Requirement": "Apply a fix and repeat experiments", "Status": "Passed retained evidence with tradeoff", "Evidence": "comparison.json; faster timeout fallback, but worse availability under delay; .NET regression tests passed"},
+    {"Requirement": "Clean deployment", "Status": "Passed prior isolated validation", "Evidence": "clean-start.json; separate fresh volumes and full workflow; current workflow independently passed again"},
+    {"Requirement": "Dashboard and agent tests", "Status": "Passed", "Evidence": "Five PowerShell test scripts; 15 Node unit/API tests; eight browser tests including actual preview; three .NET regression scenarios; npm audit found zero vulnerabilities"},
+    {"Requirement": "Five deliverables", "Status": "Prepared and locally verified", "Evidence": "manifest.json; source branch reachable; 87.96-second video plays; one-page PDF; findings and team form present"},
+    {"Requirement": "Latest source available to instructor", "Status": "Pending", "Evidence": "Existing remote day2-submission branch verified at 9c0d8ca; recent dashboard/monitor/audit changes remain uncommitted and unpushed"},
+    {"Requirement": "Official portal submission", "Status": "Not verified / not submitted", "Evidence": "Portal details deferred by the team; PortalSubmitted remains false"}
+  ],
+  "FinalHealth": {"RunningServices": 13, "HealthyModulePages": 3, "ActiveIncidents": 0, "AgentLock": false, "ExperimentLock": false, "Stop": false},
+  "Limitations": [
+    "Small local model can produce generic or incorrect explanations. Its prose is a hypothesis, not a verified cause; only validated tool IDs control execution.",
+    "Legacy application NuGet dependencies still emit high-severity vulnerability warnings. This is a sandbox demonstration, not production readiness.",
+    "Read probes do not establish write correctness under faults or durable event delivery.",
+    "Demo retains original execution provenance and predates the newer monitoring, 3D and dark/gold UI; show these newer features live."
+  ]
+}

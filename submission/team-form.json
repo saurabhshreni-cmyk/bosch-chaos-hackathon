@@ -23,7 +23,8 @@
     "Polly / existing .NET libraries",
     "autocannon 8 (MIT)",
     "lucide 1.55 (ISC)",
-    "Playwright 1.64 (Apache-2.0)"
+    "Playwright 1.64 (Apache-2.0)",
+    "Three.js 0.186.1 (MIT)"
   ],
   "Data": "Synthetic local garage workflow plus local read-probe measurements; no external dataset.",
   "SubmissionPortal": null,

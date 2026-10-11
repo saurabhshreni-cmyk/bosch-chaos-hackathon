@@ -27,6 +27,17 @@ must be installed before AI mode can run. An explicit rule-based mode is availab
 for testing without AI. A local dashboard displays agent progress and evidence;
 automated fixes remain future work.
 
+The coordinator now delegates planning, injection, measured anomaly detection
+and recommendations to isolated role workers. Their status and process IDs are
+visible in the dashboard. The live detector runs independently; faults and local
+model inference remain sequential for safety and CPU limits. See
+[multi-agent execution](docs/multi-agent.md) for responsibilities and commands.
+
+[Automatic discovery](docs/automatic-discovery.md) links current measurements,
+recent incidents and dependency risks to permitted experiments. Enable it in
+the dashboard or use `-AutoDiscover`. Unhealthy baselines block injection;
+unimplemented failure ideas remain proposals, never generated shell commands.
+
 ## Day-2 Submission
 
 See [submission package](submission/README.md) for the captioned demo, one-page
@@ -75,6 +86,16 @@ Open the address printed in the terminal, normally
 [Chaos Dashboard](http://127.0.0.1:7010). It shows real session history, agent
 stages, plans, baseline and fault latency, dependency connections, recovery,
 anomalies, and ranked AI findings. New agent runs also publish live snapshots.
+
+**3D topology** adds an interactive service map with live health indicators,
+service inspection, camera rotation, zoom and reset. The original 2D dependency
+map remains available. Three.js is served locally without a CDN.
+
+The **Failure monitor** continuously detects page outages, unhealthy containers
+and latency regressions, including failures outside agent experiments. It records
+changes and recovery, evidence-based likely causes and suggested solutions, with
+optional local-AI explanations. Monitoring is read-only; causes are hypotheses
+until verified against logs. See [automatic monitoring](docs/automatic-monitoring.md).
 
 Use **Preview plan** to observe baseline collection and planning without faults.
 **Run experiments** requires explicit sandbox confirmation. **Emergency stop**

@@ -13,6 +13,7 @@ $timer = [Diagnostics.Stopwatch]::StartNew()
 while ($timer.Elapsed.TotalSeconds -lt $DurationSeconds) {
     if (Test-Path (Join-Path (Split-Path $PSScriptRoot -Parent) 'chaos-scripts/STOP')) { throw 'Baseline cancelled by STOP file.' }
     foreach ($module in @('CustomerManagement', 'VehicleManagement', 'WorkshopManagement')) {
+        if (Test-Path (Join-Path (Split-Path $PSScriptRoot -Parent) 'chaos-scripts/STOP')) { throw 'Baseline cancelled by STOP file.' }
         $clock = [Diagnostics.Stopwatch]::StartNew()
         $healthy = $false; $status = $null; $offline = $false
         try {

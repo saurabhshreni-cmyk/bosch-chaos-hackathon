@@ -2,11 +2,13 @@ const $ = selector => document.querySelector(selector);
 const escape = value => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
 const list = value => value == null ? [] : Array.isArray(value) ? value : [value];
 const icons = () => window.lucide?.createIcons();
-const labels = { 'workshop-crash': 'Workshop crash', 'database-crash': 'Database crash', 'rabbitmq-crash': 'RabbitMQ crash', 'workshop-delay': 'Network delay', 'workshop-crash-with-load': 'Workshop crash + traffic' };
+const labels = { 'workshop-crash': 'Workshop crash', 'database-crash': 'Database crash', 'rabbitmq-crash': 'RabbitMQ crash', 'workshop-delay': 'Network delay', 'workshop-delay-high': 'Stronger network delay', 'workshop-crash-with-load': 'Workshop crash + traffic' };
 const moduleLabels = { CustomerManagement: 'Customer', VehicleManagement: 'Vehicle', WorkshopManagement: 'Workshop' };
-const colors = { CustomerManagement: '#007f79', VehicleManagement: '#3976b6', WorkshopManagement: '#cf2858' };
+const colors = { CustomerManagement: '#e2be69', VehicleManagement: '#78b7f0', WorkshopManagement: '#f17895' };
 let state, selectedId = null, tab = 'overview', chartScope = null, pending = false, polling = false;
 let formConfig = null;
+let stopPending = false;
+let topology = null, topologyLoading = false, topologyDetailKey = null;
 function date(value) {
   if (!value) return null;
   const legacy = String(value).match(/^\/Date\((\d+)/);
@@ -18,7 +20,7 @@ function badge(text, kind = '') { return `<span class="badge ${kind}">${escape(t
 function icon(name) { return `<i data-lucide="${name}"></i>`; }
 function section(title, content, meta = '') { return `<section class="section"><div class="section-heading"><h2>${escape(title)}</h2><span>${escape(meta)}</span></div>${content}</section>`; }
 function empty(text) { return `<div class="empty">${escape(text)}</div>`; }
-function terminal(stage = '') { return stage === 'Completed' || stage.startsWith('Plans only') || stage === 'Stopped with error'; }
+function terminal(stage = '') { return stage === 'Completed' || stage.startsWith('Plans only') || stage.startsWith('Detection complete') || stage.startsWith('Stopped safely') || stage === 'Stopped with error'; }
 function active() { return !!(state?.job?.running || state?.locks?.Agent || state?.locks?.Experiment); }
 function setMessage(message, error = false) { $('#action-message').textContent = message; $('#action-message').classList.toggle('error', error); }
 function toast(message) { $('#toast').textContent = message; $('#toast').hidden = false; setTimeout(() => { $('#toast').hidden = true; }, 5000); }
@@ -44,7 +46,7 @@ async function refresh() {
   } catch {
     $('#connection').hidden = false;
     $('#connection').textContent = 'Connection lost. Displayed evidence is the last received snapshot; controls are unavailable.';
-    $('#preview').disabled = $('#execute').disabled = $('#stop').disabled = true;
+    $('#detect').disabled = $('#preview').disabled = $('#execute').disabled = $('#stop').disabled = true;
   } finally { polling = false; }
 }
 
@@ -64,8 +66,8 @@ function render() {
   $('#stop-banner').hidden = !state.stop;
   $('#reset-stop').disabled = active() || pending || !state.controls;
   $('#switch-status').textContent = state.stop ? 'STOP requested' : 'Armed';
-  $('#stop').disabled = !state.controls || pending;
-  $('#preview').disabled = $('#execute').disabled = !state.controls || active() || pending || state.stop;
+  $('#stop').disabled = !state.controls || stopPending;
+  $('#detect').disabled = $('#preview').disabled = $('#execute').disabled = !state.controls || active() || pending || state.stop;
   $('#download').disabled = !session;
   if (state.locks.error) setMessage(state.locks.error, true);
   else if (!state.controls) setMessage('Read-only dashboard.');
@@ -94,7 +96,7 @@ function currentStage(session) {
   if (!session) return state.job?.running ? state.job.stage : 'Ready';
   const updated = date(session.UpdatedUtc) || idDate(session.RunId);
   if (!terminal(session.Stage) && !active() && state.locks.checked && !state.locks.error && updated && Date.now()-updated.getTime()>30000) return 'Incomplete session / agent inactive';
-  if (session.Stage?.startsWith('Executing') && session.liveExperiment && (!session.UpdatedUtc || date(session.liveExperiment.UpdatedUtc)>=date(session.UpdatedUtc))) return session.liveExperiment.Stage;
+  if ((session.Stage?.startsWith('Executing') || session.Stage === 'Injection worker running') && session.liveExperiment && (!session.UpdatedUtc || date(session.liveExperiment.UpdatedUtc)>=date(session.UpdatedUtc))) return session.liveExperiment.Stage;
   return session.Stage;
 }
 
@@ -122,9 +124,9 @@ function pipeline(session) {
   const stage = currentStage(session) || '';
   let current = 0;
   if (/Planning|Ranking|Ranked plan|Plan validated|Plans only/.test(stage)) current = 1;
-  if (/Injecting|Fault|Preflight|Executing/.test(stage)) current = 2;
+  if (/Injecting|Injection|Fault|Preflight|Executing/.test(stage)) current = 2;
   if (/Restor|Verifying|Recovered/.test(stage)) current = 3;
-  if (/Analyz|analysis recorded|Completed/.test(stage)) current = 4;
+  if (/Analyz|Detection|Recommendation|analysis recorded|Completed/.test(stage)) current = 4;
   const finished = session?.Stage === 'Completed';
   const names = [['Baseline','gauge','Healthy gate'], ['Plan','brain-circuit','Allowlist validated'], ['Inject','zap','Bounded fault'], ['Recover','rotate-ccw','Restoration verified'], ['Analyze','file-chart-column','Evidence referenced']];
   let content = `<div class="pipeline">${names.map((item,index) => `<div class="pipeline-step ${index === current ? 'current' : index < current || finished ? 'done' : ''}"><span class="step-icon">${icon(item[1])}</span><strong>${item[0]}</strong><small>${item[2]}</small></div>`).join('')}</div>`;
@@ -134,15 +136,44 @@ function pipeline(session) {
     content += `<div class="progress"><span data-progress="${percent}"></span></div><div class="progress-label"><span>${list(live.Samples).length} recorded probes</span><span>${Math.round(live.ElapsedSeconds)} / ${live.DurationSeconds} sec</span></div>`;
   }
   if (session?.Error) content += `<div class="error-block">${escape(session.Error)}</div>`;
+  const roles = list(session?.Workers);
+  if (roles.length) {
+    const duties = { Discovery: 'Finds observed weaknesses and potential dependency risks', Planner: 'Ranks experiments from dependencies and baseline', Injection: 'Runs bounded faults and verifies restoration', Detection: 'Measures availability and latency anomalies', Recommendation: 'Explains evidence and suggests fixes' };
+    const rows = roles.map(role => `<tr><td><strong>${escape(role.Role)}</strong></td><td>${escape(duties[role.Role] || '')}</td><td>${badge(role.Status, role.Status === 'Failed' ? 'bad' : role.Status === 'Running' ? 'teal' : '')}</td><td>${escape(role.ProcessId || '--')}</td><td>${escape(role.Error || (role.UpdatedUtc ? time(role.UpdatedUtc) : '--'))}</td></tr>`).join('');
+    content += `<div class="table-wrap"><table aria-label="Agent workers"><thead><tr><th>Worker</th><th>Responsibility</th><th>Status</th><th>PID</th><th>Latest update</th></tr></thead><tbody>${rows}<tr><td><strong>Live detector</strong></td><td>Independent read-only monitoring</td><td>${badge(state.monitor?.error ? 'Degraded' : state.monitor?.checked ? 'Monitoring' : 'Starting', state.monitor?.error ? 'bad' : 'teal')}</td><td>Dashboard</td><td>${escape(state.monitor?.checked ? time(state.monitor.checked) : '--')}</td></tr></tbody></table></div>`;
+  }
   return section('Agent lifecycle', content, stage);
 }
 
 function healthSection() {
   const content = ['CustomerManagement', 'VehicleManagement', 'WorkshopManagement'].map(name => {
     const row = state.health.modules.find(item => item.name === name);
-    return `<div class="health-item ${row && !row.healthy ? 'failed' : ''}"><strong><span class="dot ${!row ? 'unknown' : row.healthy ? '' : 'bad'}"></span>${moduleLabels[name]}</strong><span class="health-value">${row ? `${row.latency}<small> ms</small>` : '--'}</span><small>${row ? row.healthy ? 'Page responding' : row.timeout ? 'Timeout / connection failure' : 'Offline fallback / failed status' : 'Awaiting probe'}</small></div>`;
+    return `<div class="health-item ${row && !row.healthy ? 'failed' : ''}"><strong><span class="dot ${!row ? 'unknown' : row.healthy ? '' : 'bad'}"></span>${moduleLabels[name]}</strong><span class="health-value">${row ? `${row.latency}<small> ms</small>` : '--'}</span><small>${row ? row.healthy ? 'Page responding' : escape(row.failureMode || 'Failed probe') : 'Awaiting probe'}</small></div>`;
   }).join('');
   return section('Live module probes', `<div class="health-grid">${content}</div>`, state.health.checked ? `${time(state.health.checked)} / 2 sec timeout` : 'Current sandbox');
+}
+
+function monitorSection(compact = false) {
+  const monitor = state.monitor;
+  if (!monitor?.enabled) return section('Automatic failure detection', empty('Monitoring unavailable on this server'));
+  const activeIncidents = list(monitor.incidents).filter(item => item.status !== 'Recovered');
+  const recovered = list(monitor.incidents).filter(item => item.status === 'Recovered').reverse();
+  const rows = compact ? activeIncidents.slice(0, 3) : [...activeIncidents, ...recovered.slice(0, 20)];
+  const status = `<div class="monitor-summary">${badge(`${activeIncidents.length} open`, activeIncidents.length ? 'bad' : 'good')}${badge(`${recovered.length} recovered`, 'teal')}<span class="muted">${monitor.checked ? `Checked ${escape(time(monitor.checked))}` : 'Starting probes'} / ${monitor.cycles} observations</span>${compact ? '<button data-monitor-open class="icon-button" title="Open failure monitor" aria-label="Open failure monitor">'+icon('arrow-up-right')+'</button>' : '<button data-monitor-download class="icon-button" title="Download incident evidence" aria-label="Download incident evidence">'+icon('download')+'</button>'}</div>`;
+  const content = rows.map(item => {
+    const diagnosis = item.diagnosis || {}, ai = item.ai || {};
+    const symptom = item.kind === 'Page unavailable' ? 'The page did not respond normally or showed an offline message.' : item.kind === 'Latency regression' ? 'The page responded more slowly than its usual baseline.' : 'The service stopped, went missing, or failed its health check.';
+    const aiLabel = ai.status === 'Queued' ? 'Waiting for AI analysis' : ai.status === 'Analyzing' ? 'Generating explanation and fixes' : ai.status === 'Completed' ? 'Explanation ready' : ai.status || 'Not configured';
+    return `<article class="finding ${item.status === 'Recovered' ? 'low' : 'high'} monitor-incident"><div class="plan-title">${badge(item.status, item.status === 'Recovered' ? 'good' : 'bad')}${badge(item.kind)}<span class="muted">${escape(time(item.detected))}</span></div><h3>${escape(moduleLabels[item.subject] || item.subject)}</h3><p class="incident-summary">${escape(symptom)} ${item.status === 'Recovered' ? 'Recovery was confirmed by healthy checks.' : 'Recovery has not yet been confirmed.'}</p>${compact ? '' : `<dl class="incident-timing"><div><dt>First seen</dt><dd>${escape(time(item.firstObserved))}</dd></div><div><dt>Recovered</dt><dd>${item.recovered ? escape(time(item.recovered)) : 'Not yet'}</dd></div><div><dt>Observed duration</dt><dd>${item.recovered ? `${Number(item.durationSeconds).toFixed(1)} sec` : 'Ongoing'}</dd></div></dl><div class="incident-block"><h3>Possible reason</h3><p>${escape(diagnosis.cause)}</p><p class="review-label">${escape(diagnosis.confidence)}</p></div><div class="incident-block"><h3>Suggested investigation and fixes</h3><ol class="monitor-fixes">${list(diagnosis.solutions).map(value => `<li>${escape(value)}</li>`).join('')}</ol></div><div class="monitor-ai"><h3>AI recommendations</h3>${badge(aiLabel, ai.status === 'Completed' ? 'good' : 'warn')}${ai.status === 'Completed' ? `<p>${escape(ai.explanation)}</p><p><strong>Possible cause:</strong> ${escape(ai.possibleCause)}</p><ol class="monitor-fixes">${list(ai.solutions).map(value => `<li>${escape(value)}</li>`).join('')}</ol><p class="review-label">${escape(ai.caveat)} Analysis at ${escape(time(ai.at))}; later evidence may differ.</p>` : ''}</div><details class="incident-evidence"><summary>Technical evidence</summary><p class="refs">${escape(item.context)}</p><p class="refs">${escape(list(diagnosis.evidence).join('; ') || 'No unhealthy container state observed; inspect application logs.')}<br>${escape(list(item.observations).slice(-1).map(row => row.name ? `Last incident sample: HTTP ${row.status ?? 'no response'}, ${row.latency} ms${row.thresholdMs ? ` / latency threshold ${Math.round(row.thresholdMs)} ms` : ''}` : `${row.service}: ${row.state}, ${row.health || 'no health check'}`).join(''))}</p></details>`}</article>`;
+  }).join('');
+  const notice = monitor.error || state.health.dockerError;
+  const baseline = list(monitor.baselines).map(row => `${moduleLabels[row.module] || row.module}: ${row.count} samples${row.count < 6 ? ' (6 needed)' : ''}${row.medianMs !== null ? `, median ${row.medianMs} ms` : ''}`).join(' / ');
+  return section('Automatic failure detection', status + (notice ? `<div class="error-block">${escape(notice)}</div>` : '') + (content || empty(monitor.checked ? 'No confirmed failures observed' : 'Awaiting first monitoring cycle')) + (compact ? '' : `<div class="evidence-note">${escape(monitor.limits)}<br>${escape(baseline)}<br>Local AI: ${monitor.aiEnabled ? monitor.aiPending ? 'Analyzing incident' : state.health.model.available ? 'Ready when the configured model is installed' : 'Unavailable; evidence-based diagnosis remains active' : 'Disabled'}</div>`), 'Read-only / independent of experiment history');
+}
+
+function monitoringView() {
+  const events = list(state.monitor?.events).slice(-40).reverse();
+  return healthSection() + monitorSection() + section('Live monitoring latency', '<div class="legend"><span><i class="customer"></i>Customer</span><span><i class="vehicle"></i>Vehicle</span><span><i class="workshop"></i>Workshop</span></div><div class="chart-wrap"><canvas id="latency-chart" role="img" aria-label="Continuous application monitoring latency"></canvas></div>') + section('Detected changes', events.length ? `<ol class="timeline">${events.map(item => `<li><time>${escape(time(item.at))}</time><span><strong>${escape(item.subject)}</strong> / ${escape(item.kind)} / ${escape(item.change)}</span></li>`).join('')}</ol>` : empty('No failure or recovery transitions recorded'));
 }
 
 function chartData(session) {
@@ -163,9 +194,14 @@ function chartSection(session) {
 }
 
 function plansSection(session) {
+  const discovery = session?.Discovery;
+  if (session?.DetectOnly) {
+    return section('Automatically detected failures and risks', `<div class="plan-list">${list(discovery?.Findings).map(item => `<div>${badge(item.Type, item.Type === 'Observed failure' ? 'bad' : 'warn')}<h3>${escape(moduleLabels[item.Subject] || item.Subject)}</h3><p>${escape(item.Summary)}</p><span class="muted">${escape(item.Source)}</span></div>`).join('') || empty('No measured failure or mapped risk identified')}</div>`, 'Read-only detection / no catalog or injection');
+  }
+  const discovered = discovery ? section('Discovered weaknesses and possible tests', `<div class="plan-list">${list(discovery.Findings).map(item => `<div><div class="plan-title">${badge(item.Type, item.Type === 'Observed failure' ? 'bad' : 'warn')}<strong>${escape(moduleLabels[item.Subject] || item.Subject)}</strong></div><p>${escape(item.Summary)}</p><span class="muted">${escape(item.Source)}</span></div>`).join('') || empty('No measured failure or mapped risk identified')}<div class="evidence-note">${escape(discovery.Limitations)}</div></div><h3>Proposed tests / not executable</h3><ul class="monitor-fixes">${list(discovery.ProposedTests).map(item => `<li><strong>${escape(item.Name)}:</strong> ${escape(item.Reason)}</li>`).join('')}</ul>`, discovery.HealthyBaseline ? 'Healthy baseline / bounded experiments allowed' : 'Unhealthy baseline / injection blocked') : '';
   const content = list(session?.Plans).map((plan, index) => `<article class="plan"><span class="plan-number">${index + 1}</span><div><div class="plan-title"><strong>${escape(labels[plan.id] || plan.id)}</strong>${badge(`${plan.durationSeconds} sec`)}${badge('Validated', 'teal')}</div><p>${escape(plan.reason)}</p><div class="hypothesis"><strong>Predicted impact:</strong> ${escape(plan.expectedImpact)}</div></div></article>`).join('');
   const ranking = list(session?.Rankings).map((plan,index)=>`<li><strong>${index+1}. ${escape(labels[plan.id]||plan.id)}</strong><span>${escape(plan.reason)}</span></li>`).join('');
-  return (ranking ? section('AI experiment ranking',`<ol class="timeline">${ranking}</ol>`,'Ranked from dependency map and baseline') : '') + section('Selected plans', `<div class="plan-list">${content || empty('No plans selected yet')}</div>`, session?.Model ? 'AI hypothesis / not an observed result' : 'Fixed catalog order');
+  return discovered + (ranking ? section('AI experiment ranking',`<ol class="timeline">${ranking}</ol>`,'Ranked from dependency map and baseline') : '') + section('Selected plans', `<div class="plan-list">${content || empty('No plans selected yet')}</div>`, session?.Model ? 'AI hypothesis / not an observed result' : session?.AutoDiscover ? 'Evidence-prioritized catalog' : 'Fixed catalog order');
 }
 
 function resultsSection(session) {
@@ -203,13 +239,47 @@ function dependenciesSection() {
   return section('Mapped dependencies', content, 'Compose and source map / current sandbox health') + section('Map provenance', `<div class="evidence-note">${escape(map?.source)}<br>${escape(map?.limitations)}</div>`);
 }
 
+function topologySection() {
+  return `<section class="section topology-section"><div class="section-heading"><h2>Service topology</h2><span id="topology-checked">Current sandbox</span></div><div class="topology-toolbar"><label>Service<select id="topology-service" aria-label="Inspect 3D service">${list(state.dependencies?.services).map(id => `<option value="${escape(id)}" ${id === 'workshopmanagementapi' ? 'selected' : ''}>${escape(id)}</option>`).join('')}</select></label><div class="topology-tools"><button class="icon-button" data-topology-action="rotate" aria-pressed="${!matchMedia('(prefers-reduced-motion: reduce)').matches}" title="Toggle rotation" aria-label="Toggle rotation">${icon('rotate-cw')}</button><button class="icon-button" data-topology-action="in" title="Zoom in" aria-label="Zoom in">${icon('plus')}</button><button class="icon-button" data-topology-action="out" title="Zoom out" aria-label="Zoom out">${icon('minus')}</button><button class="icon-button" data-topology-action="reset" title="Reset camera" aria-label="Reset camera">${icon('maximize')}</button></div></div><div class="topology-surface"><canvas id="topology-canvas" tabindex="0" role="img" aria-label="Interactive 3D Pitstop service dependencies with live health status"></canvas><div id="topology-message" class="topology-message" role="status">Loading service topology...</div></div><div class="graph-key"><span><span class="dot"></span> Healthy</span><span><span class="dot bad"></span> Failed probe / container</span><span><span class="dot unknown"></span> Unknown</span></div><div id="topology-detail" aria-live="polite"></div></section>`;
+}
+
+function inspectTopology(item) {
+  const key = JSON.stringify(item);
+  if (key === topologyDetailKey) return;
+  topologyDetailKey = key;
+  $('#topology-service').value = item.id;
+  $('#topology-detail').innerHTML = `<div class="section-heading"><h2>${escape(item.title)}</h2>${badge(item.healthy === null ? 'Unknown' : item.healthy ? 'Healthy' : 'Failure observed', item.healthy === null ? '' : item.healthy ? 'good' : 'bad')}</div><div class="muted">${escape(item.id)} / ${escape(item.state)} / ${escape(item.health)} / ${escape(item.probe)}</div><div class="edge-list">${item.links.map(edge => `<div><strong>${escape(edge.from)}</strong> &rarr; ${escape(edge.to)}<small>${escape(edge.type)}</small></div>`).join('') || empty('No mapped application connections')}</div>`;
+}
+
+async function renderTopology() {
+  if (!$('#topology-canvas')) { topologyDetailKey = null; $('#view').innerHTML = topologySection(); }
+  $('#topology-checked').textContent = state.health.checked ? `Health ${time(state.health.checked)}` : 'Awaiting health';
+  if (topology) { topology.update(state); $('[data-topology-action=rotate]').setAttribute('aria-pressed',String(topology.rotating())); return; }
+  if (topologyLoading) return;
+  topologyLoading = true;
+  const canvas = $('#topology-canvas');
+  try {
+    const { mountTopology } = await import('/topology.js');
+    if (tab !== 'topology' || !canvas.isConnected) return;
+    topology = mountTopology(canvas, inspectTopology); topology.update(state);
+    $('#topology-message').hidden = true;
+  } catch {
+    if (canvas.isConnected) $('#topology-message').textContent = '3D is unavailable in this browser. The Dependencies view remains available.';
+  } finally { topologyLoading = false; icons(); }
+}
+
 function renderView(session) {
   const logOpen = $('#view details')?.open;
-  $('#view').innerHTML = tab === 'dependencies' ? dependenciesSection() : tab === 'evidence' ? evidenceSection(session) : pipeline(session) + healthSection() + chartSection(session) + resultsSection(session) + plansSection(session) + activitySection(session);
+  $('#metrics').hidden = $('#status-line').hidden = $('#session-label').hidden = ['monitor','topology'].includes(tab);
+  $('h1').textContent = tab === 'topology' ? '3D topology' : tab === 'monitor' ? 'Failure monitor' : 'Agent overview';
+  if (tab === 'topology') { void renderTopology(); return; }
+  if (topology) { topology.dispose(); topology = null; }
+  $('#view').innerHTML = tab === 'monitor' ? monitoringView() : tab === 'dependencies' ? dependenciesSection() : tab === 'evidence' ? evidenceSection(session) : pipeline(session) + healthSection() + monitorSection(true) + chartSection(session) + resultsSection(session) + plansSection(session) + activitySection(session);
   if (logOpen && $('#view details')) $('#view details').open = true;
   const progress = $('#view [data-progress]');
   if (progress) progress.style.width = `${progress.dataset.progress}%`;
   if (tab === 'overview') drawChart(chartData(session));
+  if (tab === 'monitor') drawChart(list(state.monitor?.samples));
   if (tab === 'dependencies') drawGraph();
 }
 
@@ -225,8 +295,8 @@ function canvasContext(selector) {
 function drawChart(samples) {
   const surface = canvasContext('#latency-chart'); if (!surface) return;
   const { context: ctx, width, height } = surface;
-  ctx.fillStyle = '#fff'; ctx.fillRect(0,0,width,height); ctx.font = '10px Segoe UI';
-  if (!samples.length) { ctx.fillStyle = '#63727b'; ctx.textAlign = 'center'; ctx.fillText('No measured samples yet', width/2,height/2); return; }
+  ctx.fillStyle = '#191c20'; ctx.fillRect(0,0,width,height); ctx.font = '12px Segoe UI';
+  if (!samples.length) { ctx.fillStyle = '#a7b0b8'; ctx.textAlign = 'center'; ctx.fillText('No measured samples yet', width/2,height/2); return; }
   const rows = samples.filter(row => Number.isFinite(Number(row.LatencyMs))).sort((a,b) => Date.parse(a.TimestampUtc)-Date.parse(b.TimestampUtc));
   const left = 45, top = 20, bottom = height-27, right = width-10;
   const max = Math.max(100, ...rows.map(row => Number(row.LatencyMs))) * 1.12;
@@ -238,12 +308,12 @@ function drawChart(samples) {
   for (const row of rows) { if (row.Phase !== phase) { if (phase) phases.push([phase,phaseStart,x(row)]); phase = row.Phase; phaseStart = x(row); } }
   phases.push([phase,phaseStart,right]);
   for (const [label, from, to] of phases) {
-    ctx.fillStyle = label === 'fault' ? '#fff0f3' : label === 'recovery' ? '#ecf7f2' : '#f7f9fa'; ctx.fillRect(from,top,to-from,bottom-top);
-    if (to-from > 50) { ctx.fillStyle = '#82939b'; ctx.fillText(label,from+5,top+12); }
+    ctx.fillStyle = label === 'fault' ? '#35212b' : label === 'recovery' ? '#1c3029' : '#23272c'; ctx.fillRect(from,top,to-from,bottom-top);
+    if (to-from > 50) { ctx.fillStyle = '#b8c1c8'; ctx.fillText(label,from+5,top+12); }
   }
   for (let tick=0;tick<=4;tick++) {
-    const value = max/4*tick, pos = y(value); ctx.strokeStyle = '#e3e9ec'; ctx.beginPath(); ctx.moveTo(left,pos); ctx.lineTo(right,pos); ctx.stroke();
-    ctx.fillStyle = '#7b8b94'; ctx.textAlign = 'right'; ctx.fillText(value >= 1000 ? `${(value/1000).toFixed(1)}s` : `${Math.round(value)}ms`,left-7,pos+3);
+    const value = max/4*tick, pos = y(value); ctx.strokeStyle = '#3b4249'; ctx.beginPath(); ctx.moveTo(left,pos); ctx.lineTo(right,pos); ctx.stroke();
+    ctx.fillStyle = '#b8c1c8'; ctx.textAlign = 'right'; ctx.fillText(value >= 1000 ? `${(value/1000).toFixed(1)}s` : `${Math.round(value)}ms`,left-7,pos+3);
     ctx.textAlign = 'center'; const timestamp = start+(end-start)*tick/4;
     ctx.fillText(time(new Date(timestamp).toISOString()).slice(3),left+(right-left)*tick/4,height-8);
   }
@@ -277,29 +347,32 @@ function drawGraph() {
     const x=xx*w,y=yy*h;
     const moduleName = { customermanagementapi:'CustomerManagement',vehiclemanagementapi:'VehicleManagement',workshopmanagementapi:'WorkshopManagement' }[name];
     const row=state.health.modules.find(item=>item.name===moduleName);
-    ctx.fillStyle=name==='webapp'?'#182126':'#fff';ctx.strokeStyle=row && !row.healthy?'#cf2858':'#bccbd2';ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(x-box/2,y-boxH/2,box,boxH,4);ctx.fill();ctx.stroke();
-    ctx.fillStyle=name==='webapp'?'#fff':'#314a57';ctx.font=`${w<400?9:11}px Segoe UI`;ctx.textAlign='center';ctx.fillText(label,x,y+(second?-2:4));if(second){ctx.font='9px Segoe UI';ctx.fillText(second,x,y+11);}
+    ctx.fillStyle=name==='webapp'?'#3a3120':'#272c32';ctx.strokeStyle=row && !row.healthy?'#f17895':'#78838c';ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(x-box/2,y-boxH/2,box,boxH,4);ctx.fill();ctx.stroke();
+    ctx.fillStyle=name==='webapp'?'#f0d18b':'#e5ebef';ctx.font=`${w<400?9:11}px Segoe UI`;ctx.textAlign='center';ctx.fillText(label,x,y+(second?-2:4));if(second){ctx.font='9px Segoe UI';ctx.fillText(second,x,y+11);}
     if(row){ctx.fillStyle=row.healthy?'#198457':'#cf2858';ctx.beginPath();ctx.arc(x+box/2-6,y-boxH/2+6,2.5,0,Math.PI*2);ctx.fill();}
   }
 }
 
 function getConfig(mode) {
   if (!$('#run-form').reportValidity()) return null;
-  const experiments = [...document.querySelectorAll('input[name=experiment]:checked')].map(input=>input.value);
-  if (!experiments.length) { setMessage('Select at least one registered experiment.',true); return null; }
-  return { mode, engine:$('input[name=engine]:checked').value, baseline:Number($('#baseline').value), budget:Number($('#budget').value), model:$('#model').value, experiments };
+  const experiments = mode === 'detect' ? [] : [...document.querySelectorAll('input[name=experiment]:checked')].map(input=>input.value);
+  if (mode !== 'detect' && !experiments.length) { setMessage('Select at least one registered experiment.',true); return null; }
+  return { mode, engine:$('input[name=engine]:checked').value, autoDiscover:$('#auto-discover').checked, baseline:Number($('#baseline').value), budget:Number($('#budget').value), model:$('#model').value, experiments };
 }
 
 async function command(route, payload={}) {
-  if (!state?.token || pending) return null;
-  pending=true;render();
+  const stopping = route === 'stop';
+  if (!state?.token || (stopping ? stopPending : pending)) return null;
+  if (stopping) { stopPending=true;setMessage('Requesting emergency stop...'); }
+  else pending=true;
+  render();
   try {
     const response=await fetch(`/api/${route}`,{method:'POST',headers:{'Content-Type':'application/json','X-Dashboard-Token':state.token},body:JSON.stringify(payload),signal:AbortSignal.timeout(15000)});
     const data=await response.json();if(!response.ok)throw new Error(data.error||'Command rejected.');
     if(data.message){toast(data.message);setMessage(data.message);}
     return data;
   } catch(error){setMessage(error.message,true);return null;}
-  finally{pending=false;await refresh();}
+  finally{if(stopping)stopPending=false;else pending=false;await refresh();}
 }
 
 async function start(config) {
@@ -310,6 +383,7 @@ async function start(config) {
 function syncTabs(){document.querySelectorAll('[data-tab]').forEach(button=>button.classList.toggle('selected',button.dataset.tab===tab));}
 function download(artifact){if(selectedId)window.location.assign(`/api/download/${selectedId}/${artifact}`);}
 $('#run-form').addEventListener('submit',event=>{event.preventDefault();const config=getConfig('preview');if(config)start(config);});
+$('#detect').addEventListener('click',()=>{const config=getConfig('detect');if(config)start(config);});
 $('#execute').addEventListener('click',()=>{
   formConfig=getConfig('execute');if(!formConfig)return;
   $('#confirm-summary').textContent=`Up to ${formConfig.budget} experiments after a ${formConfig.baseline}-second baseline. Candidates: ${formConfig.experiments.map(id=>labels[id]).join(', ')}.`;
@@ -324,8 +398,17 @@ $('#download').addEventListener('click',()=>download('evidence'));
 $('#mobile-session').addEventListener('change',event=>{selectedId=event.target.value;chartScope=null;refresh();});
 $('#session-list').addEventListener('click',event=>{const button=event.target.closest('[data-session]');if(button){selectedId=button.dataset.session;chartScope=null;refresh();}});
 document.querySelector('.tabs').addEventListener('click',event=>{const button=event.target.closest('[data-tab]');if(button){tab=button.dataset.tab;syncTabs();if(state)renderView(state.selected);icons();}});
-$('#view').addEventListener('change',event=>{if(event.target.id==='chart-scope'){chartScope=event.target.value;drawChart(chartData(state.selected));}});
-$('#view').addEventListener('click',event=>{if(event.target.closest('#download-findings'))download('findings');});
+$('#view').addEventListener('change',event=>{if(event.target.id==='chart-scope'){chartScope=event.target.value;drawChart(chartData(state.selected));}if(event.target.id==='topology-service')topology?.select(event.target.value);});
+$('#view').addEventListener('click',event=>{
+  const action=event.target.closest('[data-topology-action]');
+  if(action&&topology){const command=action.dataset.topologyAction;if(command==='rotate')action.setAttribute('aria-pressed',String(topology.toggleRotation()));if(command==='in')topology.zoom(0.85);if(command==='out')topology.zoom(1.15);if(command==='reset')topology.reset();}
+  if(event.target.closest('#download-findings'))download('findings');
+  if(event.target.closest('[data-monitor-open]')){tab='monitor';syncTabs();renderView(state.selected);icons();}
+  if(event.target.closest('[data-monitor-download]')){
+    const url=URL.createObjectURL(new Blob([JSON.stringify(state.monitor,null,2)],{type:'application/json'}));
+    const link=document.createElement('a');link.href=url;link.download='monitor-incidents.json';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+  }
+});
 document.querySelectorAll('input[name=engine]').forEach(input=>input.addEventListener('change',()=>{$('#model').disabled=input.value==='rules'&&input.checked;}));
-window.addEventListener('resize',()=>{if(!state)return;if(tab==='overview')drawChart(chartData(state.selected));if(tab==='dependencies')drawGraph();});
+window.addEventListener('resize',()=>{if(!state)return;if(tab==='overview')drawChart(chartData(state.selected));if(tab==='monitor')drawChart(list(state.monitor?.samples));if(tab==='dependencies')drawGraph();});
 icons();refresh();setInterval(()=>{if($('#live').checked)refresh();},2000);

@@ -14,6 +14,11 @@ test('only bounded registered tools can be requested', () => {
   for (const change of [{budget:5},{baseline:1},{mode:'shell'},{experiments:['other-container']},{experiments:['workshop-crash','workshop-crash']},{command:'docker kill anything'},{model:'--command'},{mode:'execute'}]) assert.throws(()=>validateRun({...config,...change}));
   assert.equal(validateRun({...config,mode:'execute',confirmed:true}).confirmed,true);
   assert.equal(validateRun({...config,experiments:['workshop-crash-with-load']}).experiments[0],'workshop-crash-with-load');
+  assert.equal(validateRun({...config,autoDiscover:true,experiments:['workshop-delay-high']}).autoDiscover,true);
+  assert.throws(()=>validateRun({...config,autoDiscover:'true'}));
+  assert.equal(validateRun({...config,mode:'detect',experiments:[]}).mode,'detect');
+  assert.throws(()=>validateRun({...config,mode:'detect',experiments:['workshop-crash']}));
+  assert.throws(()=>validateRun({...config,mode:'detect',experiments:[],confirmed:true}));
   assert.equal(validId('../outside'),false);
 });
 
@@ -66,6 +71,8 @@ test('read-only mode disables all commands',async()=>{
 
 test('retained Day-2 sessions resolve only canonical evidence folders',async()=>{
   const root=await mkdtemp(path.join(os.tmpdir(),'pitstop-retained-test-'));
+  const previous=process.env.DASHBOARD_SHOW_RETAINED;
+  process.env.DASHBOARD_SHOW_RETAINED='1';
   try{
     const id='20261010T120000000Z',run='20261010T120020000Z';
     const dir=path.join(root,'docs/evidence/day2',id),results=path.join(root,'docs/evidence/day2',run);
@@ -78,5 +85,5 @@ test('retained Day-2 sessions resolve only canonical evidence folders',async()=>
     assert.equal((await store.detail(sessions[0])).baseline.Healthy,true);
     assert.equal((await store.detail(sessions[0])).experiments[0].report.Recovered,true);
     assert.throws(()=>store.sessionDirectory({RunId:'../outside',RetainedDay2:true}));
-  }finally{await rm(root,{recursive:true,force:true});}
+  }finally{if(previous===undefined)delete process.env.DASHBOARD_SHOW_RETAINED;else process.env.DASHBOARD_SHOW_RETAINED=previous;await rm(root,{recursive:true,force:true});}
 });

@@ -1,0 +1,14 @@
+{
+  "StartedUtc": "2026-10-10T21:28:33.447Z",
+  "Url": "http://127.0.0.1:7005",
+  "Customer": "Team28 Demo 712346",
+  "License": "HAC-712-346",
+  "Passed": true,
+  "Steps": [
+    "Customer registered",
+    "Vehicle registered",
+    "Maintenance planned",
+    "Job completed"
+  ],
+  "FinishedUtc": "2026-10-10T21:28:47.706Z"
+}

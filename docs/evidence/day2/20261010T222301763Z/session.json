@@ -1,0 +1,313 @@
+﻿{
+    "RunId":  "20261010T222301763Z",
+    "StartedUtc":  "2026-10-10T22:23:02.7963979Z",
+    "UpdatedUtc":  "2026-10-10T22:23:33.3938944Z",
+    "MaxExperiments":  1,
+    "BaselineSeconds":  3,
+    "Events":  [
+                   {
+                       "TimestampUtc":  "2026-10-10T22:23:02.9439742Z",
+                       "Stage":  "Collecting baseline"
+                   },
+                   {
+                       "TimestampUtc":  "2026-10-10T22:23:07.6547220Z",
+                       "Stage":  "Discovery worker running"
+                   },
+                   {
+                       "TimestampUtc":  "2026-10-10T22:23:08.4120862Z",
+                       "Stage":  "Discovery worker completed"
+                   },
+                   {
+                       "TimestampUtc":  "2026-10-10T22:23:08.4951864Z",
+                       "Stage":  "Discovery recorded"
+                   },
+                   {
+                       "TimestampUtc":  "2026-10-10T22:23:08.5702384Z",
+                       "Stage":  "Planning"
+                   },
+                   {
+                       "TimestampUtc":  "2026-10-10T22:23:08.6923538Z",
+                       "Stage":  "Plan validated"
+                   },
+                   {
+                       "TimestampUtc":  "2026-10-10T22:23:08.7340657Z",
+                       "Stage":  "Executing workshop-crash-with-load"
+                   },
+                   {
+                       "TimestampUtc":  "2026-10-10T22:23:08.8188636Z",
+                       "Stage":  "Injection worker running"
+                   },
+                   {
+                       "TimestampUtc":  "2026-10-10T22:23:31.4249529Z",
+                       "Stage":  "Injection worker completed"
+                   },
+                   {
+                       "TimestampUtc":  "2026-10-10T22:23:31.4786929Z",
+                       "Stage":  "Analyzing workshop-crash-with-load"
+                   },
+                   {
+                       "TimestampUtc":  "2026-10-10T22:23:31.5913289Z",
+                       "Stage":  "Detection worker running"
+                   },
+                   {
+                       "TimestampUtc":  "2026-10-10T22:23:32.4208947Z",
+                       "Stage":  "Detection worker completed"
+                   },
+                   {
+                       "TimestampUtc":  "2026-10-10T22:23:32.5150001Z",
+                       "Stage":  "Recommendation worker running"
+                   },
+                   {
+                       "TimestampUtc":  "2026-10-10T22:23:33.2414626Z",
+                       "Stage":  "Recommendation worker completed"
+                   },
+                   {
+                       "TimestampUtc":  "2026-10-10T22:23:33.3432639Z",
+                       "Stage":  "Recovery and analysis recorded"
+                   },
+                   {
+                       "TimestampUtc":  "2026-10-10T22:23:33.3938944Z",
+                       "Stage":  "Completed"
+                   }
+               ],
+    "Stage":  "Completed",
+    "Mode":  "Rule-based; no AI used",
+    "Execute":  true,
+    "Model":  null,
+    "Rankings":  [
+
+                 ],
+    "Plans":  [
+                  {
+                      "id":  "workshop-crash-with-load",
+                      "durationSeconds":  20,
+                      "reason":  "Observe Workshop outage with bounded local read traffic: two connections, ten requests per second, no writes.",
+                      "expectedImpact":  "Measure page availability, latency, and verified recovery; this is a fixed catalog plan."
+                  }
+              ],
+    "Experiments":  [
+                        {
+                            "ExperimentId":  "workshop-crash-with-load",
+                            "RunId":  "20261010T222309536Z",
+                            "Category":  "combined crash and read traffic",
+                            "ReportPath":  "C:\\Users\\arpit\\OneDrive\\Desktop\\pitstop\\chaos-scripts\\results\\20261010T222309536Z\\report.json",
+                            "AnalysisPath":  "C:\\Users\\arpit\\OneDrive\\Desktop\\pitstop\\chaos-scripts\\results\\20261010T222309536Z\\anomalies.json",
+                            "Recovered":  true,
+                            "RecoverySeconds":  4.55,
+                            "RollbackReason":  "Manual kill switch",
+                            "AnomalyCount":  4,
+                            "AiStatus":  "Not configured",
+                            "ProbeScore":  {
+                                               "Value":  75.5,
+                                               "AvailabilityFraction":  0.66666666666666663,
+                                               "HealthyWithinLatencyBudgetFraction":  0.66666666666666663,
+                                               "RecoveryComponent":  0.96208333333333329,
+                                               "Method":  "Read-probe score / 100 = 50*healthy fault fraction + 20*healthy within max(3*baseline median, median+250ms) fraction + 30*max(0,1-recovery seconds/120). Unverified recovery contributes zero.",
+                                               "Limitations":  "Heuristic for this experiment only; unequal sampling and censored timeouts. Not an AI score, calibrated SLA, write-correctness or durability guarantee."
+                                           }
+                        }
+                    ],
+    "Error":  null,
+    "Workers":  [
+                    {
+                        "Role":  "Discovery",
+                        "Status":  "Completed",
+                        "ProcessId":  2488,
+                        "UpdatedUtc":  "2026-10-10T22:23:08.4090946Z",
+                        "Error":  null
+                    },
+                    {
+                        "Role":  "Planner",
+                        "Status":  "Idle",
+                        "ProcessId":  null,
+                        "UpdatedUtc":  null,
+                        "Error":  null
+                    },
+                    {
+                        "Role":  "Injection",
+                        "Status":  "Completed",
+                        "ProcessId":  28184,
+                        "UpdatedUtc":  "2026-10-10T22:23:31.4249529Z",
+                        "Error":  null
+                    },
+                    {
+                        "Role":  "Detection",
+                        "Status":  "Completed",
+                        "ProcessId":  25120,
+                        "UpdatedUtc":  "2026-10-10T22:23:32.4208947Z",
+                        "Error":  null
+                    },
+                    {
+                        "Role":  "Recommendation",
+                        "Status":  "Completed",
+                        "ProcessId":  5152,
+                        "UpdatedUtc":  "2026-10-10T22:23:33.2404510Z",
+                        "Error":  null
+                    }
+                ],
+    "AutoDiscover":  true,
+    "Discovery":  {
+                      "HealthyBaseline":  true,
+                      "Findings":  [
+                                       {
+                                           "Type":  "Recorded incident",
+                                           "Subject":  "workshopmanagementapi",
+                                           "Summary":  "Page unavailable, last recorded state: Recovered. Historical evidence is not proof of a current failure.",
+                                           "Source":  "Monitor history (last 24 hours)"
+                                       },
+                                       {
+                                           "Type":  "Recorded incident",
+                                           "Subject":  "customermanagementapi",
+                                           "Summary":  "Container health failure, last recorded state: Recovered. Historical evidence is not proof of a current failure.",
+                                           "Source":  "Monitor history (last 24 hours)"
+                                       },
+                                       {
+                                           "Type":  "Recorded incident",
+                                           "Subject":  "vehiclemanagementapi",
+                                           "Summary":  "Container health failure, last recorded state: Recovered. Historical evidence is not proof of a current failure.",
+                                           "Source":  "Monitor history (last 24 hours)"
+                                       },
+                                       {
+                                           "Type":  "Recorded incident",
+                                           "Subject":  "customermanagementapi",
+                                           "Summary":  "Page unavailable, last recorded state: Recovered. Historical evidence is not proof of a current failure.",
+                                           "Source":  "Monitor history (last 24 hours)"
+                                       },
+                                       {
+                                           "Type":  "Recorded incident",
+                                           "Subject":  "workshopmanagementapi",
+                                           "Summary":  "Page unavailable, last recorded state: Recovered. Historical evidence is not proof of a current failure.",
+                                           "Source":  "Monitor history (last 24 hours)"
+                                       },
+                                       {
+                                           "Type":  "Recorded incident",
+                                           "Subject":  "vehiclemanagementapi",
+                                           "Summary":  "Page unavailable, last recorded state: Recovered. Historical evidence is not proof of a current failure.",
+                                           "Source":  "Monitor history (last 24 hours)"
+                                       },
+                                       {
+                                           "Type":  "Recorded incident",
+                                           "Subject":  "workshopmanagementapi",
+                                           "Summary":  "Page unavailable, last recorded state: Recovered. Historical evidence is not proof of a current failure.",
+                                           "Source":  "Monitor history (last 24 hours)"
+                                       },
+                                       {
+                                           "Type":  "Recorded incident",
+                                           "Subject":  "workshopmanagementapi",
+                                           "Summary":  "Container health failure, last recorded state: Recovered. Historical evidence is not proof of a current failure.",
+                                           "Source":  "Monitor history (last 24 hours)"
+                                       },
+                                       {
+                                           "Type":  "Recorded incident",
+                                           "Subject":  "workshopmanagementapi",
+                                           "Summary":  "Page unavailable, last recorded state: Recovered. Historical evidence is not proof of a current failure.",
+                                           "Source":  "Monitor history (last 24 hours)"
+                                       },
+                                       {
+                                           "Type":  "Recorded incident",
+                                           "Subject":  "workshopmanagementapi",
+                                           "Summary":  "Container health failure, last recorded state: Recovered. Historical evidence is not proof of a current failure.",
+                                           "Source":  "Monitor history (last 24 hours)"
+                                       },
+                                       {
+                                           "Type":  "Recorded incident",
+                                           "Subject":  "customermanagementapi",
+                                           "Summary":  "Latency regression, last recorded state: Recovered. Historical evidence is not proof of a current failure.",
+                                           "Source":  "Monitor history (last 24 hours)"
+                                       },
+                                       {
+                                           "Type":  "Recorded incident",
+                                           "Subject":  "vehiclemanagementapi",
+                                           "Summary":  "Latency regression, last recorded state: Recovered. Historical evidence is not proof of a current failure.",
+                                           "Source":  "Monitor history (last 24 hours)"
+                                       },
+                                       {
+                                           "Type":  "Recorded incident",
+                                           "Subject":  "workshopmanagementapi",
+                                           "Summary":  "Latency regression, last recorded state: Recovered. Historical evidence is not proof of a current failure.",
+                                           "Source":  "Monitor history (last 24 hours)"
+                                       },
+                                       {
+                                           "Type":  "Recorded incident",
+                                           "Subject":  "workshopmanagementapi",
+                                           "Summary":  "Page unavailable, last recorded state: Recovered. Historical evidence is not proof of a current failure.",
+                                           "Source":  "Monitor history (last 24 hours)"
+                                       },
+                                       {
+                                           "Type":  "Recorded incident",
+                                           "Subject":  "vehiclemanagementapi",
+                                           "Summary":  "Container health failure, last recorded state: Recovered. Historical evidence is not proof of a current failure.",
+                                           "Source":  "Monitor history (last 24 hours)"
+                                       },
+                                       {
+                                           "Type":  "Recorded incident",
+                                           "Subject":  "customermanagementapi",
+                                           "Summary":  "Container health failure, last recorded state: Recovered. Historical evidence is not proof of a current failure.",
+                                           "Source":  "Monitor history (last 24 hours)"
+                                       },
+                                       {
+                                           "Type":  "Recorded incident",
+                                           "Subject":  "customermanagementapi",
+                                           "Summary":  "Page unavailable, last recorded state: Recovered. Historical evidence is not proof of a current failure.",
+                                           "Source":  "Monitor history (last 24 hours)"
+                                       },
+                                       {
+                                           "Type":  "Recorded incident",
+                                           "Subject":  "vehiclemanagementapi",
+                                           "Summary":  "Page unavailable, last recorded state: Recovered. Historical evidence is not proof of a current failure.",
+                                           "Source":  "Monitor history (last 24 hours)"
+                                       },
+                                       {
+                                           "Type":  "Recorded incident",
+                                           "Subject":  "workshopmanagementapi",
+                                           "Summary":  "Page unavailable, last recorded state: Recovered. Historical evidence is not proof of a current failure.",
+                                           "Source":  "Monitor history (last 24 hours)"
+                                       },
+                                       {
+                                           "Type":  "Recorded incident",
+                                           "Subject":  "workshopmanagementapi",
+                                           "Summary":  "Container health failure, last recorded state: Recovered. Historical evidence is not proof of a current failure.",
+                                           "Source":  "Monitor history (last 24 hours)"
+                                       },
+                                       {
+                                           "Type":  "Potential risk",
+                                           "Subject":  "sqlserver",
+                                           "Summary":  "6 mapped connections share this dependency. An outage could propagate; test evidence is required.",
+                                           "Source":  "Dependency map"
+                                       },
+                                       {
+                                           "Type":  "Potential risk",
+                                           "Subject":  "rabbitmq",
+                                           "Summary":  "8 mapped connections share this dependency. An outage could propagate; test evidence is required.",
+                                           "Source":  "Dependency map"
+                                       }
+                                   ],
+                      "Candidates":  [
+                                         {
+                                             "Id":  "workshop-crash-with-load",
+                                             "Priority":  50,
+                                             "Target":  "workshopmanagementapi",
+                                             "Reason":  "Observe Workshop outage with bounded local read traffic: two connections, ten requests per second, no writes."
+                                         }
+                                     ],
+                      "ProposedTests":  [
+                                            {
+                                                "Name":  "Packet loss",
+                                                "Reason":  "Requires a bounded network-loss tool with verified cleanup.",
+                                                "Executable":  false
+                                            },
+                                            {
+                                                "Name":  "Database contention",
+                                                "Reason":  "Requires a dedicated test database, bounded workload and cancellation.",
+                                                "Executable":  false
+                                            },
+                                            {
+                                                "Name":  "Disk exhaustion",
+                                                "Reason":  "Requires a disposable size-limited volume; never fill the host or database volume.",
+                                                "Executable":  false
+                                            }
+                                        ],
+                      "Limitations":  "Read probes and recorded incidents cannot find every latent fault or establish root cause. Proposed tests are not executable. Only registered tools may be injected."
+                  },
+    "Architecture":  "Coordinator with isolated role workers; one fault at a time; continuous read-only dashboard detector runs independently."
+}

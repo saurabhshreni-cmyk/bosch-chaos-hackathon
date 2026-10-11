@@ -97,12 +97,24 @@ function Invoke-TrafficControl {
 
 function Restore-Target {
     if ($FailureType -eq 'Crash') {
-        Invoke-Docker -DockerArgs @('start', $container) | Out-Null
+        $state = (Invoke-Docker -DockerArgs @('inspect', '-f', '{{.State.Running}}', $container) | Out-String).Trim()
+        if ($state -ne 'true') {
+            try { Invoke-Docker -DockerArgs @('start', $container) | Out-Null }
+            catch {
+                $state = (Invoke-Docker -DockerArgs @('inspect', '-f', '{{.State.Running}}', $container) | Out-String).Trim()
+                if ($state -ne 'true') { throw }
+            }
+        }
     }
     else {
         $qdisc = Invoke-TrafficControl -TcArgs @('qdisc', 'show', 'dev', 'eth0') | Out-String
         if ($qdisc -match 'qdisc netem 28: root') {
-            Invoke-TrafficControl -TcArgs @('qdisc', 'del', 'dev', 'eth0', 'root', 'handle', '28:') | Out-Null
+            try { Invoke-TrafficControl -TcArgs @('qdisc', 'del', 'dev', 'eth0', 'root', 'handle', '28:') | Out-Null }
+            catch {
+                # The watchdog may have removed our rule concurrently; verify before accepting cleanup.
+                $after = Invoke-TrafficControl -TcArgs @('qdisc', 'show', 'dev', 'eth0') | Out-String
+                if ($after -match 'qdisc netem 28: root') { throw }
+            }
         }
     }
 }
@@ -172,18 +184,37 @@ try {
     }
 
     # The independent watchdog restores the service even if a request stalls.
-    $watchdog = Start-Job -ArgumentList $container, $DurationSeconds, $FailureType, $netImage -ScriptBlock {
-        param($target, $duration, $type, $image)
-        Start-Sleep -Seconds $duration
-        if ($type -eq 'Crash') { & docker start $target }
+    $faultReady = Join-Path $outputDir 'fault-ready'
+    if (Test-Path $stopFile) { throw 'Manual kill switch before injection. No fault was injected.' }
+    $watchdog = Start-Job -ArgumentList $container, $DurationSeconds, $FailureType, $netImage, $stopFile, $faultReady -ScriptBlock {
+        param($target, $duration, $type, $image, $stop, $ready)
+        $timer = [Diagnostics.Stopwatch]::StartNew()
+        while ($timer.Elapsed.TotalSeconds -lt $duration) {
+            if ((Test-Path -LiteralPath $ready) -and (Test-Path -LiteralPath $stop)) { break }
+            Start-Sleep -Milliseconds 100
+        }
+        if ($type -eq 'Crash') {
+            $running = (& docker inspect -f '{{.State.Running}}' $target) -join ''
+            if ($LASTEXITCODE -ne 0) { throw 'Watchdog could not inspect the container.' }
+            if ($running.Trim() -ne 'true') {
+                & docker start $target
+                if ($LASTEXITCODE -ne 0) {
+                    $running = (& docker inspect -f '{{.State.Running}}' $target) -join ''
+                    if ($LASTEXITCODE -ne 0 -or $running.Trim() -ne 'true') { throw 'Watchdog could not restore the container.' }
+                }
+            }
+        }
         else {
             $qdisc = & docker run --rm --pull=never --network "container:$target" --cap-add NET_ADMIN $image tc qdisc show dev eth0
             if ($LASTEXITCODE -ne 0) { throw 'Watchdog traffic-control check failed.' }
             if ($qdisc -match 'qdisc netem 28: root') {
                 & docker run --rm --pull=never --network "container:$target" --cap-add NET_ADMIN $image tc qdisc del dev eth0 root handle 28:
+                if ($LASTEXITCODE -ne 0) {
+                    $after = & docker run --rm --pull=never --network "container:$target" --cap-add NET_ADMIN $image tc qdisc show dev eth0
+                    if ($LASTEXITCODE -ne 0 -or $after -match 'qdisc netem 28: root') { throw 'Watchdog could not verify traffic-control cleanup.' }
+                }
             }
         }
-        if ($LASTEXITCODE -ne 0) { throw 'Watchdog could not restore the container.' }
     }
     $injected = $true
     $faultAt = [DateTime]::UtcNow
@@ -191,6 +222,7 @@ try {
     Write-LiveProgress
     if ($FailureType -eq 'Crash') { Invoke-Docker -DockerArgs @('kill', $container) | Out-Null }
     else { Invoke-TrafficControl -TcArgs @('qdisc', 'add', 'dev', 'eth0', 'root', 'handle', '28:', 'netem', 'delay', "${DelayMilliseconds}ms") | Out-Null }
+    New-Item -ItemType File -Path $faultReady -Force | Out-Null
     $reason = 'Maximum fault duration reached'
     $liveStage = 'Fault active'
     Write-LiveProgress

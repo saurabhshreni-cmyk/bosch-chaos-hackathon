@@ -1,0 +1,194 @@
+﻿{
+    "RunId":  "20261010T192503110Z",
+    "TargetService":  "workshopmanagementapi",
+    "Method":  "Deterministic availability checks and baseline median/MAD latency thresholds; not a trained AI model",
+    "Limitations":  "Small baseline; sequential read probes only; timeouts are censored latencies; no proof of data loss or write correctness.",
+    "Recovered":  true,
+    "RecoverySeconds":  2.93,
+    "ModuleStats":  [
+                        {
+                            "Module":  "CustomerManagement",
+                            "BaselineSamples":  3,
+                            "BaselineMedianMs":  22.3,
+                            "LatencyThresholdMs":  272.3,
+                            "ObservedSamples":  9,
+                            "FailedSamples":  0
+                        },
+                        {
+                            "Module":  "VehicleManagement",
+                            "BaselineSamples":  3,
+                            "BaselineMedianMs":  18.6,
+                            "LatencyThresholdMs":  268.6,
+                            "ObservedSamples":  9,
+                            "FailedSamples":  0
+                        },
+                        {
+                            "Module":  "WorkshopManagement",
+                            "BaselineSamples":  3,
+                            "BaselineMedianMs":  24.1,
+                            "LatencyThresholdMs":  274.1,
+                            "ObservedSamples":  9,
+                            "FailedSamples":  8
+                        }
+                    ],
+    "Anomalies":  [
+                      {
+                          "EvidenceId":  "E1",
+                          "Module":  "WorkshopManagement",
+                          "TimestampUtc":  "2026-10-10T19:25:10.5760898Z",
+                          "Phase":  "fault",
+                          "Kind":  "Availability failure",
+                          "Severity":  "high",
+                          "LatencyMs":  2123.5,
+                          "BaselineMedianMs":  24.1,
+                          "ThresholdMs":  274.1,
+                          "StatusCode":  200,
+                          "OfflinePage":  true
+                      },
+                      {
+                          "EvidenceId":  "E2",
+                          "Module":  "WorkshopManagement",
+                          "TimestampUtc":  "2026-10-10T19:25:13.4826904Z",
+                          "Phase":  "fault",
+                          "Kind":  "Availability failure",
+                          "Severity":  "high",
+                          "LatencyMs":  1724.9,
+                          "BaselineMedianMs":  24.1,
+                          "ThresholdMs":  274.1,
+                          "StatusCode":  200,
+                          "OfflinePage":  true
+                      },
+                      {
+                          "EvidenceId":  "E3",
+                          "Module":  "WorkshopManagement",
+                          "TimestampUtc":  "2026-10-10T19:25:16.6704053Z",
+                          "Phase":  "fault",
+                          "Kind":  "Availability failure",
+                          "Severity":  "high",
+                          "LatencyMs":  2018.4,
+                          "BaselineMedianMs":  24.1,
+                          "ThresholdMs":  274.1,
+                          "StatusCode":  200,
+                          "OfflinePage":  true
+                      },
+                      {
+                          "EvidenceId":  "E4",
+                          "Module":  "WorkshopManagement",
+                          "TimestampUtc":  "2026-10-10T19:25:19.5625209Z",
+                          "Phase":  "fault",
+                          "Kind":  "Availability failure",
+                          "Severity":  "high",
+                          "LatencyMs":  1708.4,
+                          "BaselineMedianMs":  24.1,
+                          "ThresholdMs":  274.1,
+                          "StatusCode":  200,
+                          "OfflinePage":  true
+                      },
+                      {
+                          "EvidenceId":  "E5",
+                          "Module":  "WorkshopManagement",
+                          "TimestampUtc":  "2026-10-10T19:25:22.5236780Z",
+                          "Phase":  "fault",
+                          "Kind":  "Availability failure",
+                          "Severity":  "high",
+                          "LatencyMs":  1773.2,
+                          "BaselineMedianMs":  24.1,
+                          "ThresholdMs":  274.1,
+                          "StatusCode":  200,
+                          "OfflinePage":  true
+                      },
+                      {
+                          "EvidenceId":  "E6",
+                          "Module":  "WorkshopManagement",
+                          "TimestampUtc":  "2026-10-10T19:25:25.7230895Z",
+                          "Phase":  "fault",
+                          "Kind":  "Availability failure",
+                          "Severity":  "high",
+                          "LatencyMs":  2017,
+                          "BaselineMedianMs":  24.1,
+                          "ThresholdMs":  274.1,
+                          "StatusCode":  200,
+                          "OfflinePage":  true
+                      },
+                      {
+                          "EvidenceId":  "E7",
+                          "Module":  "WorkshopManagement",
+                          "TimestampUtc":  "2026-10-10T19:25:28.6264470Z",
+                          "Phase":  "fault",
+                          "Kind":  "Availability failure",
+                          "Severity":  "high",
+                          "LatencyMs":  1730.6,
+                          "BaselineMedianMs":  24.1,
+                          "ThresholdMs":  274.1,
+                          "StatusCode":  200,
+                          "OfflinePage":  true
+                      },
+                      {
+                          "EvidenceId":  "E8",
+                          "Module":  "WorkshopManagement",
+                          "TimestampUtc":  "2026-10-10T19:25:29.9781700Z",
+                          "Phase":  "recovery",
+                          "Kind":  "Availability failure",
+                          "Severity":  "high",
+                          "LatencyMs":  14.8,
+                          "BaselineMedianMs":  24.1,
+                          "ThresholdMs":  274.1,
+                          "StatusCode":  200,
+                          "OfflinePage":  true
+                      },
+                      {
+                          "EvidenceId":  "E9",
+                          "Module":  "WorkshopManagement",
+                          "TimestampUtc":  "2026-10-10T19:25:32.7132984Z",
+                          "Phase":  "recovery",
+                          "Kind":  "Latency increase",
+                          "Severity":  "medium",
+                          "LatencyMs":  529.8,
+                          "BaselineMedianMs":  24.1,
+                          "ThresholdMs":  274.1,
+                          "StatusCode":  200,
+                          "OfflinePage":  false
+                      }
+                  ],
+    "AiStatus":  "Completed; interpretations require human review",
+    "AiModel":  "qwen2.5:1.5b",
+    "AiFindings":  [
+                       {
+                           "evidenceIds":  [
+                                               "E1",
+                                               "E2",
+                                               "E3",
+                                               "E4",
+                                               "E5",
+                                               "E6",
+                                               "E7"
+                                           ],
+                           "explanation":  "Multiple anomalies in the \u0027WorkshopManagement\u0027 module indicate high latency and availability failures, with some showing recovery but still exceeding the baseline threshold.",
+                           "confidence":  "high",
+                           "severity":  "high",
+                           "title":  "High Latency and Availability Failures in \u0027WorkshopManagement\u0027 Module",
+                           "recommendedFix":  "Review and optimize the module\u0027s performance, possibly by reducing database queries or improving network latency."
+                       },
+                       {
+                           "evidenceIds":  [
+                                               "E8"
+                                           ],
+                           "explanation":  "A \u0027recovery\u0027 event in the \u0027WorkshopManagement\u0027 module indicates that the system has recovered from an availability failure, but the latency is still above the baseline threshold.",
+                           "confidence":  "high",
+                           "severity":  "high",
+                           "title":  "Recovery from Availability Failure with High Latency",
+                           "recommendedFix":  "Ensure that the system\u0027s recovery process does not introduce additional latency."
+                       },
+                       {
+                           "evidenceIds":  [
+                                               "E9"
+                                           ],
+                           "explanation":  "A \u0027Latency increase\u0027 event in the \u0027WorkshopManagement\u0027 module shows that the system\u0027s latency has increased, but the availability is still above the baseline threshold.",
+                           "confidence":  "medium",
+                           "severity":  "medium",
+                           "title":  "Latency Increase with High Availability",
+                           "recommendedFix":  "Analyze the system\u0027s network or database performance to identify potential bottlenecks."
+                       }
+                   ],
+    "AiError":  null
+}

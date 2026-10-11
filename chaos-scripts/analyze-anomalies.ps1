@@ -2,6 +2,8 @@
 param(
     [Parameter(Mandatory)][string]$ReportPath,
     [string]$Model,
+    [string]$DetectionPath,
+    [ValidateSet('anomalies.json', 'detection.json')][string]$OutputName = 'anomalies.json',
     [ValidateRange(1, 10)][double]$LatencyMultiplier = 3,
     [ValidateRange(1, 10000)][int]$MinLatencyIncreaseMs = 250
 )
@@ -22,6 +24,7 @@ function Get-Median {
     return ($sorted[$middle - 1] + $sorted[$middle]) / 2
 }
 
+if (-not $DetectionPath) {
 foreach ($module in @($report.Samples.Module | Select-Object -Unique)) {
     $baseline = @($report.Samples | Where-Object { $_.Module -eq $module -and $_.Phase -eq 'baseline' -and $_.Healthy })
     if ($baseline.Count -eq 0) { throw "No healthy baseline for $module." }
@@ -61,6 +64,14 @@ $analysis = [ordered]@{
     Recovered = $report.Recovered; RecoverySeconds = $report.RecoverySeconds
     ModuleStats = @($stats.ToArray()); Anomalies = @($anomalies.ToArray())
     AiStatus = 'Not configured'; AiModel = $null; AiFindings = $null; AiError = $null
+}
+} else {
+    $analysis = Get-Content -LiteralPath $DetectionPath -Raw | ConvertFrom-Json
+    if ($analysis.RunId -ne $report.RunId -or $analysis.TargetService -ne $report.TargetService -or
+        $null -eq $analysis.Anomalies -or $null -eq $analysis.ModuleStats -or $analysis.AiStatus -ne 'Not configured') {
+        throw 'Detection evidence does not match this report or is not a detector-only result.'
+    }
+    foreach ($entry in @($analysis.Anomalies)) { $anomalies.Add($entry) }
 }
 if ($Model) {
     try {
@@ -116,7 +127,7 @@ if ($Model) {
         Write-Warning $analysis.AiError
     }
 }
-$outputPath = Join-Path $reportFile.DirectoryName 'anomalies.json'
+$outputPath = Join-Path $reportFile.DirectoryName $OutputName
 $analysis | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath $outputPath -Encoding UTF8
 Write-Host "Detected $($anomalies.Count) anomalous samples. AI: $($analysis.AiStatus)"
 Write-Host "Analysis: $outputPath"

@@ -1,17 +1,19 @@
 import http from 'node:http';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { randomBytes } from 'node:crypto';
+import { randomBytes, createHash } from 'node:crypto';
 import { readFile, mkdir, writeFile, unlink, access, appendFile } from 'node:fs/promises';
 import { spawn, execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { EvidenceStore, readJson, validId, validateRun } from './store.mjs';
+import { FailureMonitor } from './monitor.mjs';
 
 const directory = path.dirname(fileURLToPath(import.meta.url));
 const exec = promisify(execFile);
 const exists = async file => { try { await access(file); return true; } catch { return false; } };
 const now = () => new Date().toISOString();
 const runId = () => now().replace(/[-:.]/g, '');
+const importMapHash = createHash('sha256').update('{"imports":{"three":"/vendor/three.module.js"}}').digest('base64');
 
 async function dockerPath() {
   const executable = process.platform === 'win32' ? 'docker.exe' : 'docker';
@@ -43,6 +45,9 @@ export function createDashboard({ root = path.dirname(directory), controls = tru
   let lockPending = null;
   let health = { modules: [], containers: [], model: { available: false, models: [] }, checked: null };
   let healthPending = null;
+  const monitor = new FailureMonitor({ root, ai: process.env.MONITOR_AI !== '0' });
+  let monitorReady = Promise.resolve();
+  let monitorTimer;
 
   async function locks(fresh = false) {
     if (!probes) return lockState;
@@ -67,8 +72,8 @@ export function createDashboard({ root = path.dirname(directory), controls = tru
           const response = await fetch(`http://127.0.0.1:7005/${name}`, { signal: AbortSignal.timeout(2000) });
           const content = await response.text();
           const healthy = response.status === 200 && !/module is offline|management\s*-\s*offline/i.test(content) && content.includes(name.replace('Management', ' Management'));
-          return { name, healthy, status: response.status, latency: Math.round(performance.now() - started), checked: now() };
-        } catch { return { name, healthy: false, status: null, latency: Math.round(performance.now() - started), checked: now(), timeout: true }; }
+          return { name, healthy, status: response.status, failureMode: healthy ? null : response.status !== 200 ? 'HTTP error' : /module is offline|management\s*-\s*offline/i.test(content) ? 'Offline fallback' : 'Unexpected page content', latency: Math.round(performance.now() - started), checked: now() };
+        } catch (error) { return { name, healthy: false, status: null, failureMode: error.name === 'TimeoutError' || error.name === 'AbortError' ? 'Request timeout' : 'Connection failure', latency: Math.round(performance.now() - started), checked: now(), timeout: true }; }
       }));
       let model = { available: false, models: [] };
       try {
@@ -84,12 +89,17 @@ export function createDashboard({ root = path.dirname(directory), controls = tru
         containers = parsed.map(row => ({ service: row.Service, state: row.State, health: row.Health || null }));
       } catch { dockerError = 'Docker status unavailable'; }
       health = { modules, containers, model, checked: now(), dockerError };
+      await monitorReady;
+      const experimentActive = !!(job?.running || lockState.Agent || lockState.Experiment);
+      const activityKnown = !!lockState.checked && !lockState.error;
+      await monitor.observe(health, { experimentActive, activityKnown });
+      if (!experimentActive && activityKnown) void monitor.analyze(model.available && model.models.includes('qwen2.5:1.5b'));
     })().finally(() => { healthPending = null; });
   }
 
   const server = http.createServer(async (request, response) => {
     const send = (status, value, type = 'application/json') => {
-      response.writeHead(status, { 'Content-Type': `${type}; charset=utf-8`, 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'no-referrer', 'Content-Security-Policy': "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'" });
+      response.writeHead(status, { 'Content-Type': `${type}; charset=utf-8`, 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'no-referrer', 'Content-Security-Policy': `default-src 'self'; script-src 'self' 'sha256-${importMapHash}'; style-src 'self'; img-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'` });
       response.end(type === 'application/json' ? JSON.stringify(value) : value);
     };
     try {
@@ -105,11 +115,17 @@ export function createDashboard({ root = path.dirname(directory), controls = tru
         const payload = JSON.parse(body || '{}');
         if (url.pathname === '/api/stop') {
           await writeFile(stopFile, 'Dashboard emergency stop\n', { flag: 'w' });
-          return send(200, { message: 'STOP requested. The runner restores between bounded probes; an AI request may finish first.' });
+          return send(200, { message: 'STOP requested. AI worker cancellation and fault restoration requested; wait for verified recovery before clearing STOP.' });
         }
         if (url.pathname === '/api/reset-stop') {
           const status = await locks(true);
           if (job?.running || status.Agent || status.Experiment || status.error) return send(409, { error: 'Wait for the agent and experiment to finish before clearing STOP.' });
+          if (probes) {
+            health.checked = null;
+            await refreshHealth();
+            if (healthPending) await healthPending;
+            if (health.modules.length !== 3 || health.modules.some(module => !module.healthy)) return send(409, { error: 'STOP stays active until all three application modules have verified healthy probes.' });
+          }
           try { await unlink(stopFile); } catch (error) { if (error.code !== 'ENOENT') throw error; }
           return send(200, { message: 'STOP cleared.' });
         }
@@ -124,7 +140,9 @@ export function createDashboard({ root = path.dirname(directory), controls = tru
             const current = job;
             const runtime = path.join(directory, 'runtime');
             await mkdir(runtime, { recursive: true });
-            const args = ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', path.join(directory, 'launch-agent.ps1'), '-Mode', config.mode, '-Engine', config.engine, '-Budget', String(config.budget), '-Baseline', String(config.baseline), '-Model', config.model, '-SessionId', current.id, '-Experiments', config.experiments.join(',')];
+            const args = ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', path.join(directory, 'launch-agent.ps1'), '-Mode', config.mode, '-Engine', config.engine, '-Budget', String(config.budget), '-Baseline', String(config.baseline), '-Model', config.model, '-SessionId', current.id];
+            if (config.experiments.length) args.push('-Experiments', config.experiments.join(','));
+            if (config.autoDiscover) args.push('-AutoDiscover');
             const docker = await dockerPath();
             const child = spawn('powershell.exe', args, { cwd: root, windowsHide: true, shell: false, env: childEnvironment(docker) });
             current.stage = 'Starting';
@@ -152,7 +170,7 @@ export function createDashboard({ root = path.dirname(directory), controls = tru
         if (selected && !validId(selected)) return send(400, { error: 'Invalid session ID.' });
         const session = selected ? sessions.find(item => item.RunId === selected) : sessions[0];
         const detail = await store.detail(session);
-        return send(200, { token, controls, now: now(), stop: await exists(stopFile), locks: lockState, health, job, sessions: sessions.slice(0, 80).map(item => ({ id: item.RunId, stage: item.Stage, mode: item.Mode, execute: item.Execute, count: (item.Experiments ?? []).length, retained: !!item.Retained })), selected: detail, dependencies: await readJson(store.file('agent', 'dependencies.json')), catalog: await readJson(store.file('agent', 'experiments.json')) });
+        return send(200, { token, controls, now: now(), stop: await exists(stopFile), locks: lockState, health, monitor: probes ? monitor.snapshot() : { enabled: false, incidents: [], events: [], samples: [] }, job, sessions: sessions.slice(0, 80).map(item => ({ id: item.RunId, stage: item.Stage, mode: item.Mode, execute: item.Execute, count: (item.Experiments ?? []).length, retained: !!item.Retained })), selected: detail, dependencies: await readJson(store.file('agent', 'dependencies.json')), catalog: await readJson(store.file('agent', 'experiments.json')) });
       }
       if (url.pathname.startsWith('/api/download/')) {
         const parts = url.pathname.split('/');
@@ -168,6 +186,10 @@ export function createDashboard({ root = path.dirname(directory), controls = tru
       const staticFiles = {
         '/': ['public/index.html', 'text/html'], '/app.js': ['public/app.js', 'text/javascript'], '/styles.css': ['public/styles.css', 'text/css'],
         '/lucide.js': ['node_modules/lucide/dist/umd/lucide.js', 'text/javascript'],
+        '/topology.js': ['public/topology.js', 'text/javascript'],
+        '/vendor/three.module.js': ['node_modules/three/build/three.module.js', 'text/javascript'],
+        '/vendor/three.core.js': ['node_modules/three/build/three.core.js', 'text/javascript'],
+        '/vendor/OrbitControls.js': ['node_modules/three/examples/jsm/controls/OrbitControls.js', 'text/javascript'],
       };
       if (url.pathname === '/garage.png') {
         const bitmap = await readFile(store.file('pitstop-garage.png'));
@@ -178,6 +200,13 @@ export function createDashboard({ root = path.dirname(directory), controls = tru
       send(200, await readFile(path.join(directory, file[0]), 'utf8'), file[1]);
     } catch (error) { send(400, { error: error instanceof SyntaxError ? 'Invalid JSON.' : 'Request could not be completed.' }); }
   });
+  server.on('listening', () => {
+    if (!probes || monitorTimer) return;
+    monitorReady = monitor.load();
+    const tick = () => { void locks(); void refreshHealth().catch(error => { monitor.error = error.message; }); };
+    tick(); monitorTimer = setInterval(tick, 5000); monitorTimer.unref();
+  });
+  server.on('close', () => { clearInterval(monitorTimer); monitor.close(); });
   return server;
 }
 

@@ -1,11 +1,11 @@
 {
   "Passed": true,
-  "VerifiedUtc": "2026-10-10T17:49:47.171Z",
+  "VerifiedUtc": "2026-10-10T22:33:02.189Z",
   "ArchitecturePages": 1,
-  "VideoSeconds": 87.96,
+  "VideoSeconds": 88.4,
   "VideoWidth": 1280,
   "VideoHeight": 720,
   "NonblankFrames": 3,
-  "CombinedTrafficOverlapSeconds": 11.022,
+  "CombinedTrafficOverlapSeconds": 9.906,
   "PortalSubmitted": false
 }

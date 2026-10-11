@@ -45,10 +45,28 @@ Remove that environment variable before starting an interactive console again.
    this is your team's disposable local sandbox. Watch injection, degradation,
    restoration, verification, and analysis. Only run this after saving local data.
 6. Emergency stop creates `chaos-scripts/STOP`. The runner restores the target
-   between bounded probes and abandons remaining experiments. Clear STOP only
-   after the agent and experiment have finished. Verify the module pages again.
+   using both the probe loop and an independent STOP-aware watchdog, and abandons
+   remaining experiments. AI planner/recommendation workers are cancelled without
+   killing the injection worker that owns cleanup. STOP remains clickable while
+   another dashboard request is pending. Clear STOP only after the agent and
+   experiment have finished; the API also requires three healthy module probes.
 
 ## Data And Limitations
+
+### 3D Topology
+
+Open **3D topology** for the interactive Three.js service map. Select a service
+from the menu or click its block to inspect live health and mapped connections.
+Drag to orbit, use the zoom controls or scroll, and use Reset camera to reframe.
+The rotation button pauses/resumes motion. With the canvas focused, arrow keys
+orbit, `+`/`-` zoom, and Home resets. Reduced-motion preferences disable initial
+rotation. The original Dependencies view is unchanged and works without WebGL.
+
+Health lamps use current page/container probes: green healthy, pink failed,
+gray unknown. Lines are source-mapped dependencies, not measured live traffic.
+Background-service container health does not prove message delivery. The scene
+keeps its camera and selection during polling, and releases GPU resources when
+leaving the view. Three.js is served from local dependencies without a CDN.
 
 - Session history comes from `agent/runs/*/session.json`. A selected retained
   AI example in `docs/evidence/ai-live` also works on a fresh checkout.
@@ -65,9 +83,12 @@ Remove that environment variable before starting an interactive console again.
 - AI predictions and recommended fixes are interpretations, not proven root
   causes. Anomaly counts are statistical results. No fabricated resilience
   score is displayed. Read probes cannot prove writes or message durability.
-- The dashboard polls every two seconds. An in-flight model request or probe
-  may finish before STOP is noticed; emergency stop is not an immediate hard
-  process kill. Existing duration watchdogs and rollback controls remain intact.
+- The dashboard polls every two seconds. AI worker waits check STOP every 100 ms;
+  the fault watchdog checks STOP every 100 ms after injection readiness. Docker
+  restoration and healthy-page recovery can still take seconds. STOP is not a
+  hard kill of the injection worker; cleanup and recovery verification remain
+  mandatory. Cancelling the local AI worker does not guarantee that the model
+  server immediately stops all internal computation.
 
 ## Safety And Tests
 

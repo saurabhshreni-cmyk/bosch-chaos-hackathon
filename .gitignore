@@ -274,3 +274,5 @@ dotnet-install.sh
 /submission/validation/
 /submission/video-work/
 /submission/*.zip
+/agent/monitor/
+__pycache__/
