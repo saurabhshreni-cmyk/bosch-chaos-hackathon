@@ -1,0 +1,8 @@
+{
+  "criticality": 25,
+  "single_replica": 20,
+  "missing_controls": 20,
+  "static_findings": 15,
+  "resource_pressure": 10,
+  "health_anomalies": 10
+}
