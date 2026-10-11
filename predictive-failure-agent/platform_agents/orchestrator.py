@@ -202,13 +202,19 @@ class Platform:
         result = self.healing.verify(experiment, adapter)
         now = self.store.clock()
         passed = all(value for key, value in result["layers"].items() if key != "stability")
-        start = experiment.execution.get("stable_since") if passed else None
+        last = experiment.execution.get("last_verification_at")
+        consecutive = passed and last is not None and 0 <= now - last <= self.policy.max_verification_gap_seconds
+        start = experiment.execution.get("stable_since") if consecutive else None
         start = (start if start is not None else now) if passed else None
-        stable = start is not None and now - start >= self.policy.stability_seconds
+        samples = experiment.execution.get("stable_samples", 0) + 1 if consecutive else (1 if passed else 0)
+        stable = start is not None and samples >= 3 and now - start >= self.policy.stability_seconds
         result["layers"]["stability"] = stable
+        result["stability_evidence"] = {"consecutive_samples": samples, "since": start, "maximum_sample_gap_seconds": self.policy.max_verification_gap_seconds}
         self.store.event(experiment.id, "VERIFICATION", result)
         def record(current):
             current.execution["stable_since"] = start
+            current.execution["stable_samples"] = samples
+            current.execution["last_verification_at"] = now
             current.execution["verification_rounds"] = (current.execution["verification_rounds"] + [result])[-35:]
         current = self.store.change(experiment.id, {"VERIFY"}, record)
         # Ambiguous/failed Docker stop requests retain the lease for operator investigation.

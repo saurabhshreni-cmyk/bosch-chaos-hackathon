@@ -222,8 +222,9 @@ def test_mocked_end_to_end_functional_recovery_and_feedback(platform):
     p.tick()
     assert fake.starts
     p.tick()
-    now[0] += 12
-    p.tick()
+    for _ in range(12):
+        now[0] += 1
+        p.tick()
     result = p.store.get(e.id)
     assert result.state == "COMPLETED"
     assert all(result.report["verification"]["layers"].values())
@@ -425,3 +426,22 @@ def test_docker_constructor_failure_is_visible_and_bounded(platform):
     assert current.execution["watchdog_id"] == "watchdog-synthetic"
     assert (p.control_root / e.id / "ABORT").exists()
     assert "synthetic-docker-secret" not in str(p.store.events())
+
+
+def test_stability_does_not_count_unobserved_worker_gap(platform):
+    p, fake, now = platform
+    e = run(p, plan(p))
+    now[0] += 6
+    p.tick()
+    p.tick()
+    p.tick()
+    now[0] += 12
+    p.tick()
+    current = p.store.get(e.id)
+    assert current.state == "VERIFY"
+    assert not fake.released
+    assert current.execution["stable_samples"] == 1
+    for _ in range(2):
+        now[0] += 1
+        p.tick()
+    assert p.store.get(e.id).state == "COMPLETED"

@@ -130,6 +130,22 @@ is claimed. The existing RabbitMQ/customer event-integrity defect remains open.
 
 ## Earlier analysis evidence gaps
 
+## PR completion review
+
+- All three agent implementations, authenticated approval/execution APIs, dashboard pages,
+  durable state, restricted adapters, recovery playbooks, reporting and analysis feedback
+  are included in PR #11. Unsupported fault types are deliberate safety restrictions,
+  not executable placeholder adapters.
+- Corrected stability verification: at least three healthy samples are required and a
+  worker observation gap exceeding the configured maximum resets the stability window.
+- Follow-up regression: `.\.venv\Scripts\python.exe -m pytest -q` -> **149 passed in
+  30.01 seconds**, unit/mocked infrastructure/provider/API/Streamlit only.
+- PR remains draft because actual disposable watchdog/process-death recovery is unverified.
+  No live fault injection was performed and no general claim of complete operational
+  verification is made. The ordinary Pitstop stack remains outside the execution allowlist.
+
+## Original read-only evidence limitations
+
 No fault injection, disposable chaos integration, recovery demonstration, load
 generation, statistical failure prediction, live Groq, broker-management query,
 SQL query/pool inspection, packet-loss measurement or multi-host placement check

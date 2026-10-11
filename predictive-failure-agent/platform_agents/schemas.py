@@ -28,6 +28,7 @@ class Policy(StrictModel):
     max_targets: int = Field(default=1, ge=1, le=2)
     approval_ttl_seconds: int = Field(default=90, ge=10, le=120)
     stability_seconds: int = Field(default=5, ge=2, le=30)
+    max_verification_gap_seconds: int = Field(default=3, ge=1, le=10)
     max_failed_probes: int = Field(default=30, ge=0, le=30)
     watchdog_image: str = "docker:cli"
     probes: list[Probe] = Field(default_factory=list, max_length=30)

@@ -120,6 +120,9 @@ Do not remove a retained watchdog simply to clear a lease. Watchdog IDs are in e
 The watchdog verifies infrastructure only; full recovery requires the worker's configured
 readiness, dependency, functional and continuous stability checks. Container state alone is
 never success. Probes cannot prove message delivery or data integrity without dedicated evidence.
+Stability requires at least three healthy samples across the observation window. A gap
+longer than `max_verification_gap_seconds` (default three seconds) resets that window;
+time while the worker was not observing cannot be counted as verified stability.
 Unexpected unhealthy containers are inspected read-only every 15 seconds in the authorized
 environment; remediation is proposed and never auto-executed without separate authorization.
 
