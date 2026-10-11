@@ -150,7 +150,8 @@ to produce it:
   `dashboard/Ai/GroqClient.cs`. Nothing has retested through the application
   since, so the fix is **unproven**.
 - *Schema eliminated as the cause, offline.* The live schema from
-  `/api/ai/schema` was walked against strict structured-output rules: 3 objects,
+  `/api/ai/schema` was walked against strict structured-output rules (while the
+  client still used strict mode): 3 objects,
   all `additionalProperties: false`, every property in its object's `required`,
   and no unsupported keyword (`minimum`, `maxItems`, `pattern`, `format`,
   `allOf`, `default`, …). Zero findings. So the 400 was **not** a schema-shape

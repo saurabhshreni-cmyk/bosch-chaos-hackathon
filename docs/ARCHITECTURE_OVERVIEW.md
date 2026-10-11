@@ -31,7 +31,7 @@ flowchart TB
     end
 
     subgraph ai["AI providers — advisory only"]
-        groq["Groq<br/>gpt-oss-20b, strict schema"]
+        groq["Groq<br/>gpt-oss-20b, json_object"]
         ollama["Ollama<br/>qwen2.5:3b, local"]
         none["no recommendation"]
     end
@@ -86,8 +86,15 @@ dashboard chart draws.
 
 **AI provider and fallback.** `AiProviderRouter` degrades Groq → Ollama →
 nothing. "Nothing" is a designed outcome: no recommendation means nothing to
-approve. Groq uses strict JSON-schema structured output; Ollama takes the same
-raw schema. The provider that actually answered is always attributed in the UI,
+approve. Groq requests `json_object` and carries the contract in its system
+message; Ollama takes the raw schema in `format`. Groq's strict `json_schema`
+mode was dropped after it returned HTTP 400 on this contract — the trade-off is
+that the provider no longer enforces the shape, so **the server-side allowlist
+validation is the only thing standing between a malformed suggestion and the
+operator**. That validation is unchanged and is what every safety claim rests
+on. Note the 400 was last observed from a build predating the
+`max_completion_tokens` fix, so strict mode may now work; it has not been
+retested. The provider that actually answered is always attributed in the UI,
 so a fallback can never be mistaken for a Groq success.
 
 **The model boundary.** This is the core safety property. `ExperimentCatalog`
