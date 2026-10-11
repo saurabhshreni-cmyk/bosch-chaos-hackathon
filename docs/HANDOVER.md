@@ -1,23 +1,24 @@
-# Audit update, 11 October 2026
+# START HERE
 
-Recovery audit: network watchdog retention verified on disposable targets. The
-crash Start-Job watchdogs failed parent termination and session exit; both now
-use detached containers and all four scenarios pass. See
-docs/RECOVERY_SAFETY_AUDIT.md. No Pitstop fault was injected by the audit.
+> **Current state lives in `docs/AI_WORK_CHECKPOINT.md`, and the
+> requirement-by-requirement evidence in `docs/REQUIREMENTS_EVIDENCE.md`.**
+> If anything below disagrees with those two or with `git log`, trust them.
 
-Provider audit: wrong-envelope fallback, body deadlines and error-body privacy
-hardened; 132 unit/mocked tests passed. No live provider verification. See
-docs/AI_RELIABILITY_AUDIT.md.
-Experiment branch review: reject wholesale alternative architecture and shared-database crash execution. See docs/EXPERIMENT_COMPATIBILITY_AUDIT.md. No executable experiment imported.
-Reproducibility audit: setup and safe demo guide added in docs/REPRODUCIBLE_DEMO.md. Cold builds, live providers and a full fault demo remain unverified.# START HERE
+Recovery document for whichever coding agent picks this up next. Everything
+below was verified by running it.
 
-> **Resuming in a new session? Read `docs/NEXT_LLM_CHECKLIST.md` first.** It
-> carries the verified state, the open defects and a continuation prompt.
+**Last updated: 2026-10-11, commit `6b8ead1`.**
 
-Recovery document for whichever coding agent picks this up next (Claude Code,
-Antigravity, Codex). Everything below was verified by running it.
+## State in one paragraph
 
-Last updated: 2026-10-10, after the dashboard landed.
+Five executable experiments (`kill-service`, `kill-rabbitmq`, `network-delay`,
+`packet-loss`, `kill-database`), 193 tests and 56 recovery-contract assertions
+passing, 29 recorded runs, a resilience console with nine milestone areas and a
+baseline/impact/recovery chart drawn from real samples, and all five submission
+deliverables written. **Ollama is verified end to end through the real
+dashboard workflow** (HTTP 200, `provider: ollama`, `allowed: true`).
+**Groq is UNVERIFIED end to end** - see the checkpoint for the single command
+that would settle it. No video has been recorded.
 
 ## Where things are
 
@@ -154,23 +155,33 @@ outbox and is the largest remaining piece of work.
 
 ## Not done
 
-- **Groq has never run against the real API** — no key was available. Its path
-  is covered by 42 stubbed tests but is unverified live. Ollama **has** been
-  verified end to end against the real local model.
-- Durable publishing (transactional outbox). The spurious 30% is fixed; a real broker outage still loses the event.
-- No network-delay or database experiment.
-- Watchdog restore untested in both experiments (needs PowerShell killed mid-run).
-- Threshold rollback untested in `kill-rabbitmq.ps1` — pages stay healthy during a
-  broker outage so nothing trips it. Verified in `kill-service.ps1`.
+- **Groq end to end.** Its provider path returns 200 and its schema is
+  strict-compliant (checked offline), but no dashboard recommendation has
+  reported `provider: groq`. The last 400 came from a stale running build that
+  predated the `max_completion_tokens` fix. Ollama **is** verified end to end.
+- **Durable publishing (transactional outbox).** The spurious 30% is fixed; a
+  real broker outage still loses the event. This is the one open High finding.
+- **A hung process has never been injected.** `pause-customer-api` and
+  `pause-vehicle-api` stay `PREPARED - NOT REGISTERED - NOT EXECUTABLE`: a
+  paused container stays paused and no unpause watchdog exists. The run
+  endpoint refuses them by name, verified.
+- **Threshold rollback untested in `kill-rabbitmq.ps1`** - pages stay healthy
+  during a broker outage so nothing trips it. Verified in `kill-service.ps1`.
 - The broker experiment infers non-delivery from the broker being down rather
   than inspecting consumer state.
+- No load generator, so every measurement is from a near-idle system and is a
+  floor rather than a production figure.
 - The dashboard polls every 2–2.5s rather than streaming. Live, but not push.
+- **No demo video recorded.** The script is `docs/DEMO_SCRIPT.md`.
 
 ## Highest-priority next action
 
-Set `GROQ_API_KEY` (see `docs/AI_SETUP.md`) and make one real Groq call, to
-confirm the live contract matches what the stubbed tests assert. The local
-Ollama path already works without it.
+Start the dashboard from current `main` **in a window that has
+`GROQ_API_KEY` set in that same window**, and request one recommendation. A key
+set elsewhere is not inherited by the dashboard's process. If the provider badge
+reads `groq`, Groq is verified; if it 400s, capture the `failed_generation`
+tail the current build surfaces. Either way Ollama answers, so nothing is
+blocked on it.
 
 After that, the transactional outbox (option C in `docs/publish-integrity.md`),
 which is the one part of the integrity problem still open.

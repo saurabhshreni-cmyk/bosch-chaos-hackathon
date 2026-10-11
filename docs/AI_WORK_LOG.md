@@ -2,6 +2,54 @@
 
 Chronological. Newest first. Commits are real; anything unverified says so.
 
+## 2026-10-11 — Verification pass on the delivered build
+
+**State:** `main` @ `6b8ead1`, tree clean, 0/0 with `origin/main`. Nothing was
+changed in the application; this phase re-ran the claims.
+
+**Verified by running it, this session:**
+
+- Build succeeded. **193 tests passed, 0 failed.** **56** recovery-contract
+  assertions passed.
+- All five experiments registered with their real bounds: `kill-service` 5-60s,
+  `kill-rabbitmq` 5-120s (`-Execute`), `network-delay` 5-60s, `packet-loss`
+  5-60s, `kill-database` 5-30s (`-Execute`, tightest cap, widest blast radius).
+- Preflight `ok=true` with zero blockers for all five.
+- **`pause-*` genuinely non-executable:** absent from `ExperimentCatalog`,
+  listed as `PREPARED - NOT REGISTERED - NOT EXECUTABLE` with `canExecute:
+  false`, and the run endpoint refuses the name with "Not an allowlisted
+  experiment." Their scripts are not even on disk.
+- Approval still enforced: "Explicit operator approval is required before any
+  disruptive action."
+- **Ollama verified end to end through the real dashboard workflow:** HTTP 200
+  in 40.4s, `provider: ollama`, `allowed: true`, proposing `kill-rabbitmq ->
+  rabbitmq 5s`, zero rejections, 4 non-executable discoveries. The 40s is longer
+  than the 9-18s measured standalone because the dashboard sends system prompt
+  plus evidence plus the discoveries schema; well inside the 120s timeout.
+- `qwen2.5:3b` confirmed already installed. Nothing was downloaded.
+- All five deliverables report `Complete` through `/api/submission`, with
+  `videoRecorded: false`.
+- The RabbitMQ divergence is stated in README, findings report, team form and
+  evidence matrix, and claimed fixed in none of them.
+
+**The one thing found:** the dashboard the operator has been using on port 5280
+is a **stale build from 04:46** - binary `dashboard/bin/Debug/net10.0`, offering
+**3** experiments and 404ing `/api/submission`, against HEAD at 06:36. Every
+build this session used a temp output path precisely so that process, which
+holds the Groq key, was never disturbed. That staleness also explains the Groq
+400 recorded earlier: it came from a build without `max_completion_tokens`.
+
+The latest build was started on port 5399 and verified there: 5 experiments,
+13/13 services, `/api/submission` 200, provider status honest
+(`groq: false` with no key in that shell, `ollama: true`).
+
+**Groq: still UNVERIFIED.** No call was spent this session - the key is not in
+this shell, and the diagnosis did not need one.
+
+**Also updated `docs/HANDOVER.md`**, which `AGENTS.md` sends a resuming agent to
+first and which still claimed 132 tests, no network-delay or database
+experiment, and untested watchdog restore. All three were wrong.
+
 ## 2026-10-11 — Phases 0–6, final delivery
 
 **State at start:** `main` @ `d6a3eb5`, clean, synced. Ended at `285557b`.

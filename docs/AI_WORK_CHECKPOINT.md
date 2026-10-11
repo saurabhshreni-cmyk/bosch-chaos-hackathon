@@ -3,7 +3,13 @@
 Authoritative state. If this disagrees with a conversation summary, trust this
 file and `git log`.
 
-**Updated:** 2026-10-11 · **Branch:** `main` · **Commit:** see `git log -1`
+**Updated:** 2026-10-11 · **Branch:** `main` · **Commit:** `6b8ead1`
+
+**Re-verified on the delivered build:** 193 tests, 56 contract assertions,
+5 experiments registered and preflighting clean, `pause-*` refused by name,
+Ollama verified end to end (`provider: ollama`, `allowed: true`), all five
+deliverables `Complete`. **The dashboard on port 5280 is a stale 04:46 build**
+offering 3 experiments - restart it from `main` to pick up the rest.
 **Working tree:** clean · **Remote:** `origin/main` in sync
 
 ## Where the work is
